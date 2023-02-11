@@ -1,0 +1,15 @@
+include{common.tt}
+MySite.window_title{ Moving Organisms }
+MySite.body{
+
+Section{Moving Organisms}
+P{
+Click on Icon{tb_rctool.jpg}, and select the B{move organism} tool. Now you can click
+on any organism with the right mouse button and move it around by dragging your mouse to a new location.
+}
+
+P{
+Only organisms may be moved (not spores, organic material, or barriers).
+}
+
+} //{ MySite.body }

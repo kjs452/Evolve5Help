@@ -1,0 +1,1018 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Organisms and Cells }
+MySite.body{
+
+Section{Organisms and Cells}
+P{
+This page will discusss the mechanics of how cells and organisms interact
+with the universe.
+}
+
+SubSection{Theory of Operation}
+P{
+CELLs are CPUs that have a small repertoire of instructions for manipulating the world.
+All of the physics of the simulation are embodied by these instructions. The
+general physics to be maintained are: (1) Locality (most instructions operate on nearest neighbors).
+(2) Conservation of energy (energy is only ever transferred). (3) Exclusion principle (nothing
+can occupy the same grid location as something else).
+(4) Organism connectivity maintained.
+}
+
+P{
+These instructions can all be independenly enabled/disabled in your simulation.
+Each instruction can be tweaked and modified using LINK{ URL{modes.html} mode flags}.
+}
+
+P{
+These instructions need a programmatic way to specify what they want to
+happen. The most important detail is specifying (x,y) coordinates for the instruction.
+So coordinates will be discussed next.
+}
+
+SubSection{Table of Contents:}
+
+BulletList{
+Item{ LINK{ URL{#directions} Direction Vectors} }
+Item{ LINK{ URL{#normalized_vectors} Normalized Vectors} }
+Item{ LINK{ URL{#connectivity} Organism Connectivity} }
+Item{ LINK{ URL{#energy} Energy} }
+Item{ LINK{ URL{#omove} Instruction: B{OMOVE}} }
+Item{ LINK{ URL{#rotate} Instruction: B{ROTATE}} }
+Item{ LINK{ URL{#cmove} Instruction: B{CMOVE}} }
+Item{ LINK{ URL{#cshift} Instruction: B{CSHIFT}} }
+Item{ LINK{ URL{#grow} Instruction: B{GROW}} }
+Item{ LINK{ URL{#make-spore} Instruction: B{MAKE-SPORE}} }
+Item{ LINK{ URL{#eat} Instruction: B{EAT}} }
+Item{ LINK{ URL{#look} Instruction: B{LOOK}} }
+Item{ LINK{ URL{#nearest} Instruction: B{NEAREST}} }
+Item{ LINK{ URL{#farthest} Instruction: B{FARTHEST}} }
+Item{ LINK{ URL{#smell} Instructions: B{SMELL}, B{EXUDE}} }
+Item{ LINK{ URL{#cellular_communications} Communicating Between Cells} }
+Item{ LINK{ URL{#read_write} Instructions: B{READ}, B{WRITE}} }
+Item{ LINK{ URL{#reference} Organism Instruction Reference} }
+}
+
+HRULE{}
+
+REF{coordinates}
+SubSection{Coordinate System}
+P{The grid uses the following (x,y) coordinate system:}
+IMGC{coords.jpg}
+
+BREAK{}
+
+P{Here's a simulation screen showing the origin in the lower left.}
+IMGC{coords2.jpg}
+
+HRULE{}
+
+REF{directions}
+SubSection{Directions}
+P{
+Many of the instructions that cells execute require a vector. This vector
+is used to indicate a direction, or an adjacent square that the organism or
+cell will interact with. This diagram shows (x, y) coordinates for
+the eight directions surrounding a cell:
+}
+
+IMGC{directions.jpg}
+
+P{
+Most operations that interact with the universe using (x, y) coordinates will specify coordinates
+like these. This is called a I{normalized direction vector}.
+}
+
+P{
+Not shown is the direction B{(0, 0)} which correponds to the cell in the middle.
+This is normally the cell executing the instruction.
+}
+
+P{
+Some instructions use I{non-normalized} direction vectors, such as TT{MOOD} and TT{SEND}. In this case
+any values may be given for B{(x, y)} such as B{(-4, 2)}.
+}
+
+HRULE{}
+
+REF{normalized_vectors}
+P{
+SubSection{Normalized Vectors}
+Because most operations are restricted to the adjacent squares, B{(x,y)} vectors will often be
+I{normalized} before using them. Here is how Evolve instructions normalize coordinates to values of -1, 0, +1.
+}
+
+BulletList{
+Item{ S{values less than 0 (\< 0) } => map to -1. }
+Item{ S{values equal to 0 (= 0) } => map to 0. }
+Item{ S{values more than 0 (> 0) } => map to 1. }
+}
+
+P{
+For example,
+}
+
+Code<<_EOF_
+	-30  4   OMOVE		; move organism using vector (-1, 1)
+	  0 -4   CMOVE		; move cell using vector (0, -1)
+	  9 29 5 MAKE-SPORE	; make spore using vector (1, 1) (with energy 5)
+_EOF_
+
+HRULE{}
+
+REF{connectivity}
+SubSection{Organism Connectivity}
+P{
+Organisms consists of one or more cells. To ensure the shape of
+an organism remains coherent Evolve will enforce the connectivity constrain
+that B{a cell much be reachable in one of the 8 directions surrounding the cell}.
+}
+
+P{
+Here are examples of organisms:
+}
+
+IMG{connect1.gif}
+
+P{
+One of its corner cells has been killed,
+}
+
+IMG{connect2.gif}
+
+P{
+Our connectivity constraints are such that a multi-cellular organism must always have at least
+one neighbor in one of the 8 directions.
+}
+
+P{
+In this example, after the dead cell is removed, we have a properly connected organism.
+}
+
+IMG{connect3.gif}
+
+P{
+The "L" shaped region had the smaller number of cells, so it was killed off. This
+is how "organic material" gets created. It is left over material from such interactions.
+Each white square has a fraction of the original organisms energy amount.
+}
+
+P{
+Let's look at another example:
+}
+
+IMG{connect4.gif}
+
+P{
+In this case the death of this cell does not break the organism into multiple sections.
+So in this case we just kill of the cell in question.
+}
+
+IMG{connect5.gif}
+
+P{
+The following are examples of bogus organisms:
+}
+
+IMG{organism_bad1.gif}
+
+P{
+This is bogus because cell 2 doesn't connect to cell 4. And cell 4 doesn't
+connect to cell 5.
+}
+
+IMG{organism_bad2.gif}
+
+P{
+This organism is bogus because cell 1 doesn't connect to cell 3. The
+rest of the organism is okay though.
+}
+
+HRULE{}
+
+REF{energy}
+SubSection{Energy}
+P{
+Energy is an attribute of each organism. The total amount of energy in a simulation is
+equal to the amount of energy that the first organism(s) had when the simulation was
+created. The total energy never changes during a simulation (conservation of energy).
+}
+
+P{
+Every cell must have at least B{one} unit of energy just to be considered "alive".
+If some operation causes this value to go to zero, the cell is dead.
+}
+
+SubSection{Why Energy?}
+P{
+The purpose of energy is to introduce a limit on organism/cell growth. Without it, organisms
+would replicate without limit. Other constrains may be introduced that changes how energy
+is used to limit growth.
+}
+
+SubSection{Energy and Organic Material}
+P{
+When a cell is killed by being eaten, the connectivity algorithm must analyse the organism and kill of
+all but the largest region. Each cell in a region that is killed off will be converted
+to organic material. The amount of energy that this organic material will contain is equal to
+1/n th the amount of energy in the organism (where n is the number of cells in the organism)
+plus any stack elements beyond 10.
+}
+
+SubSection{Energy and Spores}
+P{
+A spore gets created with an energy amount (specified by the MAKE-SPORE instruction). If a spore
+gets eaten then this energy amount is transferred to the organism that ate it. If a spore
+is fertilized, then the new organism gets created with the sum of energy from the first
+and second MAKE-SPORE instructions.
+}
+
+SubSection{Energy and Other Operations}
+P{
+Energy is not needed to move, look, eat, etc.... Energy is only needed to Grow, Make a spore, Reproduce.
+}
+
+P{
+Use energy to control the overall population of your simulation:
+}
+
+BulletList{
+Item{ 100,000 units of energy equals about 1,000 organisms. }
+Item{ 500,000 units of energy equals about 2,000 - 3,000 organisms. }
+Item{ 1,000,000 units of energy equals about 5,000 - 8,000 organisms. }
+}
+
+P{
+Other things will determine the population you will see. Energy Requirements
+are configurable on the Modes tab.
+}
+
+HRULE{}
+
+REF{omove}
+SubSection{OMOVE}
+P{
+The B{OMOVE} instruction causes the entire organism to move in one of the 8 directions.
+}
+
+IMGB{omove1.gif}
+
+P{
+Assume that cell 2 has executed the instruction B{1 0 OMOVE}. The vector (1,0)
+means move right 1 square.
+}
+
+IMG{omove2.gif}
+
+P{
+Or assume that cell 1 has executed the instruction B{-1 -1 OMOVE}. The vector (-1, -1)
+means move left and down diagonally.
+}
+
+IMG{omove3.gif}
+
+P{
+The OMOVE instruction first checks that all squares that organism will move to, are
+vacant. Note that I{any} cell could have executed these instructions and the
+organism would have moved the same.
+}
+
+HRULE{}
+
+REF{rotate}
+SubSection{ROTATE}
+P{
+The ROTATE instruction causes the organism to be rotated.
+Because of the grid layout and the constraints on the shape of organisms, this instruction only rotates in 90 (or 45) degree units.
+Rotate takes a single integer off of the data stack. This value represents 90 (or 45) degree rotations.
+}
+
+P{
+Consider this organism, the cell with the B{dot} will execute a ROTATE instruction.
+(NOTE: In these examples the ROTATE mode is confugured for 90 degree rotations, and the center of rotation is
+the cell executing the instruction. These properties can be changed by changing the mode bits.)
+}
+
+
+IMGB{rotate1.gif}
+
+P{
+Here's what the organism looks like after a B{-1 ROTATE}:
+}
+
+IMGB{rotate2.gif}
+
+P{
+Here's what the organism looks like after a B{1 ROTATE} (from starting figure):
+}
+
+
+IMGB{rotate3.gif}
+
+P{
+This instruction requires that all grid locations that the rotated organism is to be moved
+are vacant.
+}
+
+HRULE{}
+
+REF{cmove}
+SubSection{CMOVE}
+P{
+CMOVE is a cool instruction. It allows a cell to move relative to the organism.
+The following pictures will demonstrate an organism morphing from one shape to
+another. The following instructions will be executed:
+}
+
+Code<<_EOF_
+	0 -1 CMOVE	; cell 1 executes this instruction
+	0 -1 CMOVE	; then cell 4 executes this instruction
+	1 1 CMOVE	; then cell 5 executes this instruction
+_EOF_
+
+IMG{cmove1.gif}
+
+Code<<_EOF_
+	0 -1 CMOVE	; <--- cell 1 executes this
+_EOF_
+
+IMG{cmove2.gif}
+
+Code<<_EOF_
+	0 -1 CMOVE	; <--- cell 4 executes this
+_EOF_
+
+IMG{cmove3.gif}
+
+Code<<_EOF_
+	1 1 CMOVE	; <--- cell 5 executes this
+_EOF_
+
+IMG{cmove4.gif}
+
+P{
+This last pictures shows what the creature looks like after these 3 CMOVE
+instructions.
+}
+
+P{
+For the the TT{CMOVE} operation to succeed the shape being morphed into must always be I{properly connected}.
+}
+
+HRULE{}
+REF{cshift}
+SubSection{CSHIFT}
+
+P{
+The CSHIFT instruction allows the shape of an organism to change by shifting cells along
+a line. As long as the final shape is properly connected the CSHIFT instruction is allowed.
+Here is the initial state of some organism. We will see
+it transform after executing three CSHIFT instructions.
+}
+
+IMG{cshift1.jpg}
+
+Code<<_EOF_
+   -1 0 CSHIFT   ; <--- cell 5 executes this
+_EOF_
+
+IMG{cshift2.jpg}
+
+Code<<_EOF_
+   -1 0 CSHIFT   ; <--- cell 5 executes this a second time
+_EOF_
+
+IMG{cshift3.jpg}
+
+Code<<_EOF_
+   0 -1 CSHIFT   ; <--- cell 2 executes this
+_EOF_
+
+IMG{cshift4.jpg}
+
+HRULE{}
+
+REF{grow}
+SubSection{GROW}
+P{
+The GROW instruction is how an organism (which always starts out life as a single
+cell) becoms multi-cellular.
+}
+
+P{
+Let's assume this is our organism:
+}
+
+IMG{grow1.jpg}
+
+P{
+To get to the state shown below cell 1 executes this:
+Code<<_EOF_
+	1 0 GROW ; executed by cell 1
+_EOF_
+}
+
+IMG{grow2.jpg}
+
+P{
+Another GROW operation produces the organism below.
+What are the possible operations that could create the organism?
+Here is the only possibility:
+}
+
+Code<<_EOF_
+	1 -1 GROW	; executed by cell 2
+_EOF_
+
+P{
+IMG{grow3.jpg}
+}
+
+P{
+As shown above, the GROW operation creates a new cell. The new cell recieves
+the execution context of the cell that executed the GROW instruction. The
+only difference is the new cell has a B{-1} on top of its
+data stack and the other cell has a B{1}.
+}
+
+P{
+Grow is very much like the TT{fork()} system call on Unix. Fork
+creates a new process. But fork does it by cloning the current process.
+The only way for a programmer to know which execution context they are in
+is by examining the return value of fork(). The same applies to the
+TT{GROW} instruction.
+}
+
+P{
+Grow also allows a creature to increase its processing power. An organism consisting
+of two cells has twice the processing power of a single celled creature.
+Such an organism can do twice the computations in the same amount of steps
+as a single celled creature. This is profound capability and any creature that
+makes the leap into multi-cellularism has a lot going for it.
+}
+
+P{
+Example KFORTH code using GROW,
+}
+
+CodeSample<<_EOF_
+
+main:
+{
+	1 0 GROW -1 = LeafCell if
+
+	brain call
+}
+
+LeafCell:
+{
+   1 0 EAT pop
+   -1 -1 EAT pop
+   1 ?loop
+}
+
+brain:
+{
+  ; ... creature brain goes here ...
+}
+
+_EOF_
+
+P{
+In this example a new cell is grown at coordinates (1, 0), and the new cell
+begins its life executing inside of the code block 'LeafCell'. The LeafCell just eat's
+forever. The parent cell continues to call the 'brain' routine to do the normal
+creature processing.
+}
+
+P{
+You can write your routine to encapsulate this common logic as follows:
+}
+
+CodeSample<<_EOF_
+
+main:
+{
+	1 0 LeafCell myGROW call
+	brain call
+}
+
+LeafCell:
+{
+    ; .... leaf cell stuff here ...
+}
+
+brain:
+{
+    ; ... brain cell stuff here ...
+}
+
+;
+; (x y cb -- )
+;
+; Grow and call 'cb' for the new cell
+;
+myGROW:
+{
+	-rot GROW -1 = { pop } ifelse
+}
+
+_EOF_
+
+HRULE{}
+
+REF{make-spore}
+SubSection{MAKE-SPORE}
+P{
+The MAKE-SPORE instruction is how reproduction occurs. In order to reproduce
+a spore must be created. But this isn't enough. Another spore must be
+created on top of the first one.
+}
+P{
+This mechanism allows both sexual and asexual reproduction. (see LINK{ URL{spores.html} spores} for more information).
+The following example shows an organism reproducing asexually:
+}
+
+IMG{makespore1.gif}
+
+P{
+So our happy organism wants to have a baby. Either cell 2 executes this instruction:
+}
+
+Code<<_EOF_
+	1 0 20 MAKE-SPORE  ; create spore with 20 units of energy
+_EOF_
+
+P{
+Or cell 3 executes this one:
+Code<<_EOF_
+	1 1 20 MAKE-SPORE  ; create spore with 20 units of energy
+_EOF_
+}
+
+P{
+In either case this is what the universe now looks like:
+}
+
+IMG{makespore2.gif}
+
+P{
+Now lets assume one of the following instructions gets executed:
+}
+
+Code<<_EOF_
+	1  0 12 MAKE-SPORE  ; cell 2 does this or....
+	1 -1 12 MAKE-SPORE  ; cell 3 does this
+_EOF_
+
+IMG{makespore3.gif}
+
+P{
+A new organism is born! Whooo hoo. The new organism will start out life
+with 32 units of energy (20 + 12).
+The new organism will inherit the genetic program of the parent organism.
+(with LINK{ URL{mutations.html#mutations} mutations}).
+}
+
+P{
+I{Sexual} reproduction occurs when two different organisms contribute a spore. In
+this case the genetic program from both parents is interlaced (this process is
+described elsewhere).
+}
+
+P{
+All organisms belong to a certain strain (by default strain 0). Strains allow you to
+tag a lineage of organisms from the first one to an evolved population. Therefore, SPORE's
+cannot be fertilized if the two organisms belong to different strains.
+}
+
+P{
+The first MAKE-SPORE operation must have an energy amount that is greather than 0. But the
+second MAKE-SPORE instruction can fertilize an existing spore using 0 energy.
+}
+
+HRULE{}
+
+REF{eat}
+SubSection{EAT}
+P{
+Eating is how an organism survives. The EAT instruction must be called to eat
+stuff that is touching the cell. The cell executing the EAT instruction
+will attempt to eat anything at the (x, y) offset.
+}
+
+P{
+B{EAT}'ing is basically the transfer of energy between cells.
+Related to this is the TT{SEND-ENERGY} instruction. It is like TT{EAT} except it allows a precise amount of energy
+to be transferred. SEND-ENERGY can be used when inventing ones own simulation rules.
+}
+
+P{
+In this example cell 2, executes the B{1 -1 EAT} instruction.
+}
+
+IMG{eat1.gif}
+
+P{
+After the instruction the white square (organic material) has
+been removed.
+}
+
+IMG{eat2.gif}
+
+P{
+Not shown is what happens when a cell tries to eat another living cell. In this
+case the cell being eaten is flagged as dead (it will show up RED). The organism
+which has dead cells will have to resolve that issue later in the simulation.
+}
+
+P{
+The precise rules for TT{EAT} and TT{SEND-ENERGY} are given by mode flags for
+LINK{ URL{organisms.html#ref_EAT} EAT } and
+LINK{ URL{organisms.html#ref_SEND-ENERGY} SEND-ENERGY }.
+}
+
+P{
+To eat the spore located at (0, -1) this instruction could be used: B{0 -1 EAT}.
+}
+
+HRULE{}
+
+REF{look}
+SubSection{LOOK}
+P{
+The LOOK instruction takes a normalized (x, y) vector and looks along that
+line until it finds something. The thing it finds (the 'what' value) and the distance
+in which it was found it returned on the data stack.
+}
+
+IMGB{look2.gif}
+
+P{
+This figure shows all 8 direction vectors from a single cell.
+The LOOK instruction would return the following for this cell:
+}
+
+Code<<_EOF_
+	 0  1 LOOK	; what = 8, where = 100
+	 1  1 LOOK	; what = 2, where = 3
+	 1  0 LOOK	; what = 1, where = 2
+	 1 -1 LOOK	; what = 8, where = 4
+	 0 -1 LOOK	; what = 4, where = 3
+	-1 -1 LOOK	; what = 8, where = 4
+	-1  0 LOOK	; what = 2, where = 7
+	-1  1 LOOK	; what = 4, where = 3
+
+	 0  0 LOOK      ; what = 0, where = 0
+_EOF_
+
+P{
+Vision using LOOK (and the other vision instructions) will look through the organism itself. This
+makes the vision instructions less evolutionary brittle, as an "eye" cell can evolve inside the middle
+of a multi-cellular organism.
+}
+
+P{
+The 'what' values are powers of 2, which allows them to be OR'd together for form a search mask
+(see NEAREST and FARTHEST).
+}
+
+P{
+A LOOK operation using the vector (0, 0) returns a what=0, where=0.
+}
+
+P{
+"What" values are assigned according to this key:
+}
+
+BulletList{
+Item{ 1 = Cell }
+Item{ 2 = Spore }
+Item{ 4 = Organic Material }
+Item{ 8 = Barrier }
+}
+
+P{
+When LOOK is configured to not be able to see through itself, then
+the additional bit B{16} will be set. Also LOOK can be configuired
+to reveal strain bits. Here is the addtional bits that can be returned
+by LOOK (and the other vision instructions).
+}
+
+BulletList{
+Item{ 1 = Cell }
+Item{ 2 = Spore }
+Item{ 4 = Organic Material }
+Item{ 8 = Barrier }
+Item{ B{16 = Self }}
+Item{ B{32 = Strain 0 }}
+Item{ B{64 = Strain 1 }}
+Item{ B{128 = Strain 2 }}
+Item{ B{256 = Strain 3 }}
+Item{ B{512 = Strain 4 }}
+Item{ B{1024 = Strain 5 }}
+Item{ B{2048 = Strain 6 }}
+Item{ B{4096 = Strain 7 }}
+}
+
+HRULE{}
+
+REF{nearest}
+SubSection{NEAREST}
+P{
+This instruction looks in all 8 directions surrounding a cell and returns the (x, y) vector that
+has the smallest distance.
+}
+
+P{
+This instruction takes a bit-mask which is an OR'ing of 'what' values. Only these types of
+things will be used when determining the nearest direction.
+}
+
+P{
+For example, a mask value of 5 (binary 0101), matches Cells and Organics (but not spores or barriers).
+So this code,
+}
+
+IMGB{look2.gif}
+
+CodeSample<<_EOF_
+
+   5 NEAREST	; returns (2, 0)
+
+_EOF_
+
+P{
+Would return vector (1, 0) because that direction has a "cell" at distance 2 (which is the
+smallest distance that matches the bit-mask).
+}
+
+P{
+For all vision instructions which take a B{'what'} mask, the matching criteria works as follows:
+We AND the two what values together. If non-zero then the object matched.
+If zero we stop searching along the line and report B{0 0}.
+This allows filtering for certain strains as well for certain types of blocks.
+}
+
+
+P{
+B{NOTE:} If more than one direction "tie" for seeing the nearest (or farthest)
+thing, then instructions NEAREST, FARTHEST, BIGGEST,
+SMALLEST, HOTTEST, COLDEST will resolve the tie by choosing one of
+the matches randomly.
+}
+
+P{
+B{NOTE 2:} The returned vector from these instructions are B{not normalized}. This
+means they return the distance as well as the direction. For example (-6, -6) is returned
+instead of (-1, -1) to indicate both the distance and direction. The TT{DIST}
+instruction can be applied to this vector to get the distance, B{6}.
+}
+
+HRULE{}
+
+REF{farthest}
+SubSection{FARTHEST}
+P{
+This instruction looks in all 8 directions surrounding a cell and returns the (x, y) vector that
+has the largest distance.
+}
+
+P{
+This instruction takes a bit-mask which is an OR'ing of 'what' values. Only these types of
+things will be used when determining the farthest direction.
+}
+
+P{
+For example, a mask value of 2 (binary 0010), matches only spores (but nothing else).
+So this code,
+}
+
+IMGB{look2.gif}
+
+CodeSample<<_EOF_
+
+   2 FARTHEST	; returns (-7, 0)
+
+_EOF_
+
+P{
+Would return vector (-7, 0) because that direction has a "spore" at distance 7 (which is the
+largest distance to any spore).
+}
+
+HRULE{}
+
+REF{smell}
+SubSection{SMELL}
+P{
+The grid contains an I{odor} value at each (x,y) coordinate. These instructions
+allow for this 16-bit value to be read/written.
+The smell instruction lets the cell read a value from the grid.
+}
+
+CodeSample<<_EOF_
+    1 -1 SMELL		; retrieves the value 2 from the grid
+_EOF_
+
+
+IMG{smell.jpg}
+
+SubSection{EXUDE}
+P{
+The exude instruction allows the cell to write a value to the grid.
+}
+
+CodeSample<<_EOF_
+    1 -1 SMELL		; retrieve the value 2 from the grid
+    125 -           ; 2 - 125 = -123
+    -1 0 EXUDE      ; writes the value -123 to the grid
+_EOF_
+
+IMG{exude.jpg}
+
+P{
+The SMELL and EXUDE instructions use normalized direction vectors to read and write
+the odor map values from the surrounding 9 squares.
+}
+
+HRULE{}
+
+REF{cellular_communications}
+Section{Communicating Between Cells}
+IMGC{cell_com.gif}
+Caption{Cellular Communications}
+
+P{
+Refer to this figure for the descriptions of the following instructions.
+The B{mood} register is something the cell sets, and others can look at. The B{message} register
+is something that others set, and this cell looks at.
+}
+
+SubSection{SEND}
+
+P{
+Using the instructions B{pack2, unpack2} two values can be combined into a
+single 16-bit integer and stored in the MOOD and MESSAGE registers. For example, to send 2 integers to
+another cell, this code could be used:
+}
+
+CodeSample<<_EOF_
+    23 -99 pack2        ; combined 2 (8-bit integers) into single 16-bit int.
+    -1 1 SEND           ; send to cell
+
+_EOF_
+
+SubSection{RECV}
+
+P{
+The recieving cell can extract the 2 values like so:
+}
+
+CodeSample<<_EOF_
+    RECV
+    unpack2         ; the values 23, -99 are now on the stack
+_EOF_
+
+SubSection{BROADCAST}
+P{
+This instruction broadcasts the same value to all cells in the organism.
+}
+
+CodeSample<<_EOF_
+	3200 BROADCAST    ; put 3200 in everybody's MESSAGE register
+_EOF_
+
+SubSection{SAY}
+P{
+The SAY instruction will send a message (a single 16-bit value) to another organism.
+The recieving organism uses the TT{RECV} instruction to get the message. The message
+is sent along the noramlize direction vector to the firs thing it encounters.
+}
+
+Code<<_EOF_
+	46 1 -1 SAY
+_EOF_
+
+IMG{say1.jpg}
+
+SubSection{LISTEN}
+P{
+The LISTEN instruction will retrieve the B{MOOD} register (a single 16-bit value) from another cell.
+The mood value is "heard" along the noramlize direction vector given by the (x,y) values on the data stack.
+The value of that other cell's MOOD register is put on this cells data stack.
+}
+
+Code<<_EOF_
+	1 -1 LISTEN		; retrieves the value 666
+_EOF_
+
+IMG{listen1.jpg}
+
+SubSection{SHOUT}
+P{
+Why speak when you can shout? The SHOUT instruction broadcasts a message
+(a single 16-bit value) along all 8 directions. Any cell in line will recieve
+this message.
+The recieving organism uses the TT{RECV} instruction to get the message.
+}
+
+Code<<_EOF_
+	46 SHOUT
+_EOF_
+
+IMG{shout1.jpg}
+
+SubSubSection{Interrupts}
+P{
+These communications instructions can be configured to interrupt the cell
+upon recieving a message. An interrupt uses the TRAP handlers to transfer control
+to a protected code block.
+See the mode flags for these instructions: SEND, BROADCAST, EAT, SEND-ENERGY, SHOUT, SAY, WRITE, KEY-PRESS.
+}
+
+HRULE{}
+
+REF{read_write}
+SubSection{WRITE}
+P{
+The WRITE instruction allows a cell to write data to another organism or spore (a spore is shown here).
+}
+
+IMG{write1.jpg}
+
+CodeSample<<_EOF_
+	0 1 2 8 WRITE pop    ; write code block 8 to spore at (0,1) code block 2
+_EOF_
+
+SubSection{READ}
+P{
+The READ instruction allows a cell to read data from another organism or spore (a spore is shown here).
+}
+
+IMG{read1.jpg}
+
+CodeSample<<_EOF_
+	0 1 5 3 READ       ; read code block 5 from spore at (0,1) put data in code block 3
+_EOF_
+
+P{
+These instructions allows organism to communicate large amounts of data between each other.
+Also, B{spores} can be used as storage devices to store and retrieve "files" of data.
+Note that these instructions can exchange code as well as data.
+}
+
+P{
+The READ/WRITE instructions give the simulator more I{core wars} style parasitism and other tricks.
+Genetic information can be spread in this way without using the normal replication instructions.
+}
+
+P{
+The purpose of the READ/WRITE instructions is to fill out the computational model of EvolveName{} universe.
+It allows data to be exchanged akin to files or records in an operating system. I like to think of
+spores as "files" that you can place on the grid, much like an operating system lets you place files
+in the file system.
+}
+
+HRULE{}
+REF{reference}
+
+Section{ORGANISM INSTRUCTION REFERENCE}
+P{
+The core KFORTH instruction (like dup, pop, +, *, /, etc..) are covered
+in the section entitled LINK{ URL{kforth.html#reference} the KFORTH Language}.
+What follows is a detailed reference guide for the instructions that control organisms and cells:
+}
+
+SubSection{Interacting with the universe:}
+InstructionTableOfContents{INTERACT}
+
+SubSection{Vision:}
+InstructionTableOfContents{VISION}
+
+SubSection{Communicating between cells:}
+InstructionTableOfContents{COMMS}
+
+SubSection{Query information about ourselves:}
+InstructionTableOfContents{QUERY}
+
+SubSection{Universe Instructions:}
+InstructionTableOfContents{UNIVERSE}
+
+SubSection{Misc. Instructions:}
+InstructionTableOfContents{MISC}
+
+HRULE{}
+
+InstructionDetails{INTERACT}
+InstructionDetails{VISION}
+InstructionDetails{COMMS}
+InstructionDetails{QUERY}
+InstructionDetails{UNIVERSE}
+InstructionDetails{MISC}
+
+BREAK{}
+BREAK{}
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

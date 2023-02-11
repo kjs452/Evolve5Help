@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+<title>{{logo}} Blog {{window_title}}</title>
+<!--Change this href to "msfunk_03.css" to give the page a different look!-->
+<link rel="stylesheet" type="text/css" href="blog.css" />
+</head>
+
+<body>
+<!--Begin headers-->
+<div id="title2" class="title2">
+<!-- <B>Git Date:</B> {{LastUpdated}} -->
+</div>
+
+<div id="title3" class="title3">
+<a name="title">{{title}} Blog</a>
+</div>
+
+<div id="subnav" class="subnav">
+	<a href="../index.html">Evolve Home</a>
+</div>
+<!--End headers-->
+
+<!--Begin nav-->
+<!-- ********************************************************************** -->
+<div id="menu">
+	{% for H in side %}
+		<h2>{{H.heading}}</h2>
+		{% for L in H.links %}
+			<p class="menu"><a href="{{L.url}}.html">{{L.text}}</a></p>
+		{% endfor %}
+    {% endfor %}
+</div>
+<!-- ********************************************************************** -->
+
+<!--End nav-->
+
+<!--Begin main text-->
+<div id="maintext" height="600px">
+
+<IMG SRC="e.gif"><B><FONT SIZE=5>VOLVE</FONT> &nbsp;&nbsp; <FONT SIZE=6>{{evolve_version}}</B></FONT>
+
+<br><br><table width="90%">
+<tr>
+	<td align="left">{{newer}}</td>
+	<td align="right">{{older}}</td>
+</table>
+
+{% for e in entries %}
+	<h1>{{e.title}}</h1>
+	<font color="grey" size="-1">{{e.timestamp}}</font><br><br>		
+	{{e.body}}		
+	<br><center><hr width="70%"></center><br>
+{% endfor %}
+
+<table width="90%">
+<tr>
+	<td align="left">{{newer}}</td>
+	<td align="right">{{older}}</td>
+</table>
+
+{{newlines}}
+
+</div>
+
+<div id="footer">
+<a href="mailto:{{email}}">E-mail</a> | <a href="{{homepage}}">Home</a>
+<br />
+&copy; {{year}} {{name}}. All rights reserved.<BR>
+Generated on: {{lastmodified}}
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+include{common.tt}
+
+MySite.window_title{ TITLE OF WINDOW }
+
+MySite.body{
+
+Title{TITLE TEXT}
+
+P{
+BODY
+}
+
+} //{ MySite.body }

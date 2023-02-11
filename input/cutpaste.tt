@@ -1,0 +1,48 @@
+include{common.tt}
+MySite.window_title{ Cut, Copy, Paste organisms }
+MySite.body{
+
+Section{Cut, Copy, & Paste Organisms}
+P{
+Organisms can be cut or copied from one simulation and pasted into another.
+Also you can delete an organism ( B{Del} key). Note: On MacOS use the TT{Command} key instead of
+the TT{Ctrl} key.
+}
+
+BulletList{
+Item{ LL{Copy Organism:}
+Select an organism  by left clicking on it. B{Ctrl-C} will copy the organism
+to the clip board. The simulation is not altered.
+}
+
+Item{ LL{Cut Organism:}
+Select an organism by left clicking on it. B{Ctrl-X} will cut the organism
+from the universe (it will be removed), and the organism will be placed
+in the clip board.
+}
+
+Item{ LL{Paste Organism:}
+If you have cut or copied an organism, then you can press B{Ctrl-V} to paste
+the organism into the current simulation. The organism is pasted somehwere
+near the center of your simulation.
+}
+
+Item{ LL{Delete Organism:}
+Select an organism  by left clicking on it. Pressing B{Del} will delete the
+organism from the universe.
+}
+}
+
+Section{Why do this?}
+P{
+If you find a clever organism and wish to experiment on it in seperate
+universe, you can use the copy/paste features to do so. Also you might want to see
+how successful a creature from one simulation is, when transplanted into another simulation.
+}
+
+P{
+(you will also find the B{Tweak Energy} and
+B{Move Organism} features useful for this kind of experimentation.)
+}
+
+} //{ MySite.body }

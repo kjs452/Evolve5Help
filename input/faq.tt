@@ -1,0 +1,391 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Frequently Asked Questions }
+MySite.body{
+
+Section{Frequently Asked Questions}
+
+HRULE{}
+
+SubSection{What is the latest version?}
+P{
+The latest version is Version{}. (Released on: ReleasedOn{})
+}
+
+HRULE{}
+
+SubSection{What is Evolve?}
+P{
+EvolveName{} is an artificial life simulator.
+}
+
+P{
+It is a mixture of Conway's "LIFE" and "Core Wars".
+Each organism has a genetic program which controls its behavior. The program has all
+the normal types of instructions you would expect from a programming language:
+flow control, arithmetic, subroutines, and so on. But, there are
+also special primitives for interacting with the universe. Such as EAT, LOOK, GROW,
+MOVE, MAKE-SPORE.
+}
+
+HRULE{}
+
+SubSection{Why would someone use this?}
+P{
+Some reasons,
+}
+
+NumberedList{
+Item{Interested in seeing evolution unfold.}
+Item{Testing evolutionary hypotheses.}
+Item{Interested in swarm intellegence.}
+Item{Interested in genetic algorithms.}
+Item{Enjoy programming challenges.}
+Item{A new kind of core wars competition platform.}
+Item{Teaching low-level programming concepts.}
+}
+
+Caption{There are 1,000 reasons we can think of to have this...}
+Caption{... but mostly it's for the reasons we can't think of.
+	( SC{Contact})}
+Caption{... mostly
+	( SC{Aliens})}
+
+HRULE{}
+
+SubSection{What is the purpose of Evolve?}
+P{
+My goal is to run a large-scale simulation and see evidence of
+really cool (perhaps intellegent) behavior. And then... well, if that
+happens I will enlist my ALife creatures to do my taxes.
+}
+
+HRULE{}
+
+SubSection{What is KFORTH?}
+P{
+KFORTH is a forth-like language. The 'K' stands for "Ken's". So KFORTH means Ken's Forth.
+Woo hoo.
+}
+
+P{
+This is the language used to control the cells in the simulator. This language has several
+properties that make it perfect for being used in an ALife context. It is simple to
+implement and parse. It has a very simple instruction set. It only has one data type (which
+is a 16-bit integer). KFORTH programs compile into a simple row/column matrix
+which is fast and easy to mutate.
+}
+
+HRULE{}
+
+SubSection{Any large-scale simulations happening?}
+P{
+No. Many years ago in 2007 I ran a B{"One Year of ALife"} project. I had a dedicated
+linux box that ran an Evolve 4.0 simulation for 1 year. Every day a snapshot
+is uploaded to my website. I never completed the full year as the simulation got stuck
+and uninteresting. I restarted several times. I think the most was like 50 days.
+}
+
+P{
+With the new B{EvolveName{}} I hope to get the chance to attempt another long term simulation.
+}
+
+HRULE{}
+
+SubSection{Have you ever seen any intellegent behaviors evolve with this software?}
+P{
+Sadly, no. But, let me add that (1) It
+has taken lots of tweaking to get to the current version of this simulator. And (2) only now
+that I have a dedicated linux box can I run this in the proper time frame needed to
+see cool things evolve.
+}
+
+P{
+It hasn't all been a waste. I have seen the essence of Darwinian selection many times.
+New innovations are constantly evolving and displacing other creatures. But when you
+observe their behaviors it is not "mind-blowing" or clever or intellegent.
+}
+
+P{
+My personal bench-mark for coolness will be if creatures evolve to use the "LOOK" instruction
+and actually evade/hunt other creatures. If this kind of behavior evolves I will be
+immensely happy.
+}
+
+HRULE{}
+
+SubSection{What does a KFORTH program look like?}
+P{
+Here's a sample:
+}
+
+Code<<_EOF_
+main:
+{
+	7 fact call
+}
+
+;
+; Recursive factorial algorithm:
+; ( n -- factorial(n) )
+;
+fact:
+{
+	dup 0 =
+		{ pop 1 }
+		{ dup 1 - fact call * } ifelse
+}
+_EOF_
+
+P{
+The 'fact' routine computes the factorial. This is how humans write KFORTH. But
+names like 'fact' and 'main' are really labels for code blocks, which make it
+easier for us humans to write in KFORTH. These labels
+are mapped to code block numbers (main is B{0}, and fact is B{1}).
+}
+
+P{
+Another aid for humans are the nested code blocks like, B{TT{\{ pop 1 \}}}.
+Again, when compiled these nested code blocks are pulled out and put into their own
+code block with their own code block number. In this case
+B{TT{\{ pop 1 \}}} becomes code block B{2}.
+}
+
+P{
+Here is the same program after being compiled:
+}
+
+Code<<_EOF_
+main:
+{
+	7 1 call 
+}
+
+row1:
+{
+	dup 0 = 2 3 ifelse 
+}
+
+row2:
+{
+	pop 1 
+}
+
+row3:
+{
+	dup 1 - 1 call * 
+}
+_EOF_
+
+P{
+Notice the nice grid-like layout of compiled KFORTH. This property makes it
+easy to merge 2 programs (during sexual recombination). Evolve just alternates
+rows of code blocks to form a new child program.
+}
+
+P{
+(click LINK{ URL{genes.gif} here} to see a graphical representation of this program as it
+would be stored internally)
+}
+
+P{
+Also notice that compiled programs have no real syntax requirements. Each row
+is simply a list of instructions or numbers. This means our mutation algorithm
+will be simpler because it doesn't have to worry about about preserving any special
+syntax crap.
+}
+
+P{
+Click LINK{ URL{kforth.html#examples} here} to see more KFORTH examples.
+}
+
+HRULE{}
+
+SubSection{What does an evolved KFORTH program look like?}
+P{
+Click LINK{ URL{evolved_kforth_samples.html} here} to see some sample
+KFORTH programs that evolved after running them in a simulation. These KFORTH programs can
+actually be used to seed your own simulations.
+}
+
+HRULE{}
+
+SubSection{Does KFORTH support recursion?}
+P{
+Yes it does (see the example above). This was the biggest limitation of
+my previous attempts at an ALife simulator. Previous versions used a gross half-baked
+assembly language with a fixed sized stack (stack size=4).
+}
+
+HRULE{}
+
+SubSection{What instructions do organisms have?}
+P{
+In addition to all the normal Forth-like operators, the following instructions
+cause the Cell executing them to interact with the universe:
+}
+
+BulletList{
+Item{ S{OMOVE:} Move the organism. }
+Item{ S{ROTATE:} Rotate the organism by 90 degree units. }
+Item{ S{CMOVE:} Move a cell relative to the organism }
+Item{ S{CSHIFT:} Move a line of cells relative to the organism }
+Item{ S{EAT:} Eat edible stuff near this cell. }
+Item{ S{MAKE-SPORE:} Create a spore nearby }
+Item{ S{SPAWN:} Create a new organism directly }
+Item{ S{GROW:} Add a cell to our organism }
+Item{ S{LOOK:} Look in a direction and return what was seen and its distance. }
+Item{ S{WHERE:} return distance to the thing seen while looking in a specified direction. }
+Item{ S{WHAT:} return 'what' value of the thing seen while looking in a specified direction. }
+Item{ S{NEAREST:} return direction to nearest thing after looking in all 8 directions. }
+Item{ S{FARTHEST:}  return direction to farthest thing after looking in all 8 directions. }
+Item{ S{MOOD:} query the mood variable of another cell within the same organism. }
+Item{ S{MOOD!:} set our mood variable. }
+Item{ S{BROADCAST:} send a value to all cell within the same organism. }
+Item{ S{SEND:} send a value to a particular cell (within the same organism). }
+Item{ S{RECV:} query our message buffer and put its value on to the data stack. }
+Item{ S{AGE:} query the age of our organism (number of simulation steps the organism has
+		been alive for). ("How old am I?") }
+Item{ S{NUM-CELLS:} query the number of cells in our organism. ("How big am I?") }
+Item{ S{HAS-NEIGHBOR:} query if the organism has a neighboring cell. }
+}
+
+P{
+And many more... See LINK{ URL{organisms.html#reference} this page} to learn more about B{all} the instructions.
+}
+
+HRULE{}
+
+SubSection{Can cells communicate?}
+P{
+Yes, lots of ways. Each cell has a "MOOD" register, which only they can set.
+Other cells can query this MOOD register. I guess the theory being that a creature
+could evolve to use this register. If it was in "EVADE" mode, or "FORAGE" mode, it
+could set its mood, and the other cells could act accordingly.
+}
+
+P{
+Also, every cell has a MESSAGE register. This can be set by the SEND instruction, which
+allows any cell to send a value to any other cell (within the same organism, of course).
+The organism can query its own MESSAGE register and act accordingly.
+As special case, the BROADCAST instruction will set the MESSAGE register for all cells
+in the organism.
+}
+
+P{
+Lastly, all the cells share the same program memory, which can be written to as well
+as read from.
+}
+
+P{
+I provided these primitives but I have no idea if anything will evolve to use them.
+My experience with ALIFE simulators indicates that what B{I} think is a useful idea,
+is not necessarily what B{evolution} will think is useful.
+More information on communicating between cells is
+available LINK{ URL{organisms.html#cellular_communications} here}.
+}
+
+HRULE{}
+
+SubSection{How do you limit/prevent runaway stack growth?}
+P{
+The kforth machine used by each cell has a fixed call stack and fixed data stack ( B{64} elements each).
+To limit growth the CPU simply stops pushing items on the stack, basically treating all instructions
+as NOP's unless they pop things off the stack.
+}
+
+HRULE{}
+
+SubSection{Do any simulations die off?}
+P{
+Yes, in some cases the simulation will
+reach a state where there are only a few organisms, and they don't reproduce
+for some reason (they are stuck in the wrong part of their genetic program).
+}
+
+P{
+When energy (and population) is too low you can have too much useful energy
+sitting around as spores or organic material and not enough moving creatures
+to eat it. So yes, some simulations will peter out.
+}
+
+HRULE{}
+
+SubSection{Has any creature evolved to LOOK around?}
+P{
+Yes, it is common nowadays. In older versions of the simulator it didn't occur.
+The vision system has been recently changed, and so far the results look good. But
+in the previous versions LOOK'ing  around was rare.
+}
+
+P{
+It is my goal to see creatures evolve that will make heavy use of the vision instructions. For
+me this represents a special kind of awareness for organisms. I believe evolution is progressive,
+in the sense that it tends to foster more and more awareness in creatures. Humans
+are therefore the best example of this trend in evolution. Hopefully this simulator
+will demonstrate a similar trend.
+}
+
+HRULE{}
+
+SubSection{How do I pan the simulation window?}
+P{
+Use the arrow keys to scroll the window when you are zoomed in. Or just click your mouse
+and drag the window.
+}
+
+HRULE{}
+
+SubSection{How do I create barriers?}
+P{
+Select the barrier right click tool. Now right click inside of the simulation
+window and drag your mouse to draw a barrier.
+If you want to erase, right click on an existing barrier first (now you're in
+erase mode). See the section on LINK{ URL{barriers.html} barriers} for more information.
+}
+
+HRULE{}
+
+SubSection{What is the Simulation file format?}
+P{
+The format is a self describing format called "Photon Ascii".
+Click LINK{ URL{ascii_example.html} here} to see an example of the ASCII file format.
+}
+
+HRULE{}
+
+SubSection{What is 'evolve_batch'?}
+P{
+TT{evolve_batch} is a command line utility. It runs on
+linux, macos and windows. The primary purpose is to run a simulation from
+a shell. See the section on LINK{ URL{evolve_batch.html} Evolve Batch} for
+more information.
+}
+
+HRULE{}
+
+SubSection{How fast is the Evolve simulator?}
+P{
+Assuming a 2.0 Ghz machine, then a simulation with a population
+of 3,000 will produce 100 steps/sec. (a population of 6,000 will give 50 steps/sec.).
+}
+
+P{
+Every day you can expect about 3 to 5 million simulation steps to elapse.
+}
+
+P{
+Every 4 or 5 days you can expect about 1 billion births/deaths.
+}
+
+HRULE{}
+
+SubSection{How long can simulations be run? Are there any overflow considerations?}
+P{
+The C data type used for counting things (like number of births, steps, etc...) all
+use 64-bit integers instead of the more standard 32-bit integers. This
+effectively removes any overflow issues associated with running a simulation
+for an extended period of time (Like the One Year of Alife project). The simulator is
+designed to be saved and restored without losing any state changes.
+}
+
+} //{ MySite.body }

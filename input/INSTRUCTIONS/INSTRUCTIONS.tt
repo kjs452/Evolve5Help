@@ -1,0 +1,6572 @@
+//{
+//
+// List of all the KFORTH Instruction in EvolveName{}
+//
+// This is the main repsitory of the documentation of these instructions.
+// It is used to generate documentation and code artifacts.
+//
+//}
+
+//{
+// //////////////////////////////////////////////////////////////////////
+// INSTRUCTION TYPES
+// //////////////////////////////////////////////////////////////////////
+//}
+
+InstructionsTypes{
+	CORE			//{ core kforth instructions} 
+	INTERACT		//{ interact with the universe }
+	VISION			//{ vision }
+	COMMS			//{ communicate between cells }
+	QUERY			//{ query info about ourselves  }
+	UNIVERSE		//{ universe instructions }
+	MISC			//{ miscellaneous }
+	FIND			//{	instruction used by find }
+}
+
+DEFINE{ VisionMask{
+	BulletList{
+	Item{ 1 = Cell }
+	Item{ 2 = Spore }
+	Item{ 4 = Organic Material }
+	Item{ 8 = Barrier }
+	Item{ 16 = Self }
+	Item{ 32 = Strain 0 }
+	Item{ 64 = Strain 1 }
+	Item{ 128 = Strain 2 }
+	Item{ 256 = Strain 3 }
+	Item{ 512 = Strain 4 }
+	Item{ 1024 = Strain 5 }
+	Item{ 2048 = Strain 6 }
+	Item{ 4096 = Strain 7 }
+	}
+}}
+
+//{
+// //////////////////////////////////////////////////////////////////////
+// CORE KFORTH INSTRUCTIONS
+// //////////////////////////////////////////////////////////////////////
+//}
+
+Instruction{
+	Name{call}
+	Type{CORE}
+	Usage{ ( code-block -- ) }
+	Mode{ }
+	CSymbol{call}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{call subroutine given by 'code-block'}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Subroutine call to another code block. The
+		code block number is given by 'code-block' on top
+		of the data stack.
+		If code block is invalid, the request is ignored.
+		In disassembly row123 is code-block 123, and so on.
+	}
+	Energy{ }
+
+	Algorithm{
+		BulletList{
+		Item{Un-protected code cannot call to protected code blocks.}
+		Item{This instruction is a no-op if 'code-block' is invalid.}
+		}
+	}
+
+	Help<<_EOF_
+		Subroutine call to another code block. The
+		code block number is given by 'code-block' on top
+		of the data stack.
+		If code block is invalid, the request is ignored.
+		In disassembly row123 is code-block 123, and so on.
+	_EOF_
+}
+
+Instruction{
+	Name{if}
+	Type{CORE}
+	Usage{ ( expr code-block -- ) }
+	Mode{ }
+	CSymbol{if}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{call code block if condition}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Removes two items from top of stack. If I{expr} is
+		non-zero then I{code-block} is called. Otherwise, execution
+		continues on the next instruction.
+	}
+	Energy{ }
+
+	Algorithm{
+		BulletList{
+		Item{Un-protected code cannot call to protected code blocks.}
+		Item{This instruction is a no-op if 'code-block' is invalid.}
+		}
+	}
+
+	Help<<_EOF_
+	remove two items from top of stack. If expr is 
+	non-zero then call code-block 'cb'. Code block numbers are relative 
+	to the current code block being executed.
+	_EOF_
+}
+
+Instruction{
+	Name{ifelse}
+	Type{CORE}
+	Usage{ ( expr true-block false-block -- ) }
+	Mode{ }
+	CSymbol{ifelse}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{call code blocks if condition}
+	Inputs{ }
+	Returns{ }
+	Description{
+		removes three items from top of stack. If I{expr} is 
+		non-zero then call I{true-block}, else call I{false-block}.
+	}
+	Energy{ }
+	Algorithm{
+		BulletList{
+		Item{Un-protected code cannot call to protected code blocks.}
+		Item{This instruction is a no-op if calling an invalid 'true-block' or 'false-block'.}
+		}
+	}
+
+	Help<<_EOF_
+	remove three items from top of stack. If expr is 
+	non-zero then call 'cb1', else call 'cb2'. Code block number 
+	are relative to the current code block being executed.
+	_EOF_
+}
+
+Instruction{
+	Name{?loop}
+	Type{CORE}
+	Usage{ ( n -- ) }
+	Mode{ }
+	CSymbol{loop_if}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{loop back to start of code block if true}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Remove 1 item from the stack. If value is non-zero 
+		jump to the start of the current code block. Otherwise 
+		continue with the next instruction after '?loop'.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Remove one item from the stack. If value is non-zero 
+	jump to the start of the current code block. Otherwise 
+	continue with the next instruction after '?loop'.
+	_EOF_
+}
+
+Instruction{
+	Name{?exit}
+	Type{CORE}
+	Usage{ ( n -- ) }
+	Mode{ }
+	CSymbol{exit_if}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{exit code block if true}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Remove 1 item from the stack. If non-zero then 
+		exit current code block.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Remove one item from the stack. If non-zero then 
+	exit current code block.
+	_EOF_
+}
+
+Instruction{
+	Name{pop}
+	Type{CORE}
+	Usage{ ( n -- ) }
+	Mode{ }
+	CSymbol{pop}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Remove item from stack and discard it.}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Remove item from stack and discard it.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Remove item from stack and discard it.
+	_EOF_
+}
+
+Instruction{
+	Name{dup}
+	Type{CORE}
+	Usage{ ( a -- a a ) }
+	Mode{ }
+	CSymbol{dup}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Duplicate item on top of the stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Duplicate item on top of the stack.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Duplicate item on top of the stack.
+	_EOF_
+}
+
+Instruction{
+	Name{swap}
+	Type{CORE}
+	Usage{ ( a b -- b a ) }
+	Mode{ }
+	CSymbol{swap}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Swap top two elements on the stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Swap top two elements on the stack.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Swap top two elements on the stack.
+	_EOF_
+}
+
+Instruction{
+	Name{over}
+	Type{CORE}
+	Usage{ ( a b -- a b a ) }
+	Mode{ }
+	CSymbol{over}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Copy second item from the stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Copy second item from the stack.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Copy second item from the stack.
+	_EOF_
+}
+
+Instruction{
+	Name{rot}
+	Type{CORE}
+	Usage{ ( a b c -- b c a ) }
+	Mode{ }
+	CSymbol{rot}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Rotate third item to top.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Rotate third item to top.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Rotate third item to top.
+	_EOF_
+}
+
+Instruction{
+	Name{?dup}
+	Type{CORE}
+	Usage{ ( n -- n n | 0 ) }
+	Mode{ }
+	CSymbol{dup_if}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Duplicate top element if non-zero.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Duplicate top element if non-zero.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Duplicate top element if non-zero.
+	_EOF_
+}
+
+Instruction{
+	Name{-rot}
+	Type{CORE}
+	Usage{ ( a b c -- c a b ) }
+	Mode{ }
+	CSymbol{reverse_rot}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Rotate top to third position.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Rotate top to third position.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Rotate top to third position.
+	_EOF_
+}
+
+Instruction{
+	Name{2swap}
+	Type{CORE}
+	Usage{ ( a b c d --  c d a b ) }
+	Mode{ }
+	CSymbol{2swap}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Swap pairs.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Swap pairs.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Swap pairs.
+	_EOF_
+}
+
+Instruction{
+	Name{2over}
+	Type{CORE}
+	Usage{ ( a b c d -- a b c d a b) }
+	Mode{ }
+	CSymbol{2over}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Leapfrog pair.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Leapfrog pair.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Leapfrog pair.
+	_EOF_
+}
+
+Instruction{
+	Name{2dup}
+	Type{CORE}
+	Usage{ ( a b -- a b a b ) }
+	Mode{ }
+	CSymbol{2dup}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Dupicate pair.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Dupicate pair.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Dupicate pair.
+	_EOF_
+}
+
+Instruction{
+	Name{2pop}
+	Type{CORE}
+	Usage{ ( a b  -- ) }
+	Mode{ }
+	CSymbol{2pop}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Remove pair.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Remove pair.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Remove pair.
+	_EOF_
+}
+
+Instruction{
+	Name{nip}
+	Type{CORE}
+	Usage{ ( a b -- b ) }
+	Mode{ }
+	CSymbol{nip}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Remove 2nd item from stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Remove 2nd item from stack.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Remove 2nd item from stack.
+	_EOF_
+}
+
+Instruction{
+	Name{tuck}
+	Type{CORE}
+	Usage{ ( a b -- b a b) }
+	Mode{ }
+	CSymbol{tuck}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Copy top item to third position.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Copy top item to third position.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Copy top item to third position.
+	_EOF_
+}
+
+Instruction{
+	Name{1+}
+	Type{CORE}
+	Usage{ ( n -- n+1 ) }
+	Mode{ }
+	CSymbol{increment}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Add 1 to the item on top of the stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Add 1 to the item on top of the stack.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Add 1 to the item on top of the stack.
+	_EOF_
+}
+
+Instruction{
+	Name{1-}
+	Type{CORE}
+	Usage{ ( n -- n-1 ) }
+	Mode{ }
+	CSymbol{decrement}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Subtract 1 from item on top of the stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Subtract 1 from item on top of the stack.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Subtract 1 from item on top of the stack.
+	_EOF_
+}
+
+Instruction{
+	Name{2+}
+	Type{CORE}
+	Usage{ ( n -- n+2 ) }
+	Mode{ }
+	CSymbol{increment2}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Add 2 to item on top of the stack}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Add 2 to item on top of the stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Add 2 to item on top of the stack
+	_EOF_
+}
+
+Instruction{
+	Name{2-}
+	Type{CORE}
+	Usage{ ( n -- n-2 ) }
+	Mode{ }
+	CSymbol{decrement2}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Subtract 2 from the item on top of the stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Subtract 2 from the item on top of the stack.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Subtract 2 from the item on top of the stack.
+	_EOF_
+}
+
+Instruction{
+	Name{2/}
+	Type{CORE}
+	Usage{ ( n -- n/2 ) }
+	Mode{ }
+	CSymbol{half}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Half value.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Half value.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Half value.
+	_EOF_
+}
+
+Instruction{
+	Name{2*}
+	Type{CORE}
+	Usage{ ( n -- n*2 ) }
+	Mode{ }
+	CSymbol{double}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Double value.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Double value.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Double value.
+	_EOF_
+}
+
+Instruction{
+	Name{abs}
+	Type{CORE}
+	Usage{ ( n -- abs(n) ) }
+	Mode{ }
+	CSymbol{abs}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Absolute value of n.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Absolute value of n.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Absolute value of n.
+	_EOF_
+}
+
+Instruction{
+	Name{sqrt}
+	Type{CORE}
+	Usage{ ( n -- sqrt(n) ) }
+	Mode{ }
+	CSymbol{sqrt }
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Square root. n must be positive.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Square root. n must be positive.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Square root. n must be positive. If n isn't positive then leave stack unchanged.
+	_EOF_
+}
+
+Instruction{
+	Name{+}
+	Type{CORE}
+	Usage{ ( a b -- a+b ) }
+	Mode{ }
+	CSymbol{plus}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Addition top to elements on stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Addition top to elements on stack.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Add top two elements on stack.
+	_EOF_
+}
+
+Instruction{
+	Name{-}
+	Type{CORE}
+	Usage{ ( a b -- a-b ) }
+	Mode{ }
+	CSymbol{minus}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Subtraction first item on stack from 2nd.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Subtraction first item on stack from 2nd.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Subtract first item on stack from the second item.
+	_EOF_
+}
+
+Instruction{
+	Name{*}
+	Type{CORE}
+	Usage{ ( a b -- a*b ) }
+	Mode{ }
+	CSymbol{multiply}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Multiply.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Multiply.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Multiply top two elements on the data stack.
+	_EOF_
+}
+
+Instruction{
+	Name{/}
+	Type{CORE}
+	Usage{ ( a b -- a/b ) }
+	Mode{ }
+	CSymbol{divide}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Divide.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Divide.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Divide.
+	_EOF_
+}
+
+Instruction{
+	Name{mod}
+	Type{CORE}
+	Usage{ ( a b -- a%b ) }
+	Mode{ }
+	CSymbol{modulos}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Modulos.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Modulos.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Modulos.
+	_EOF_
+}
+
+Instruction{
+	Name{/mod}
+	Type{CORE}
+	Usage{ ( a b -- a%b a/b ) }
+	Mode{ }
+	CSymbol{divmod}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Divide and modulos.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Divide and modulos.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Divide and modulos.
+	_EOF_
+}
+
+Instruction{
+	Name{negate}
+	Type{CORE}
+	Usage{ ( n -- -n ) }
+	Mode{ }
+	CSymbol{negate}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{negate top item on stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			negate top item on stack.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Negate item on stack
+	_EOF_
+}
+
+Instruction{
+	Name{2negate}
+	Type{CORE}
+	Usage{ ( a b -- -a -b ) }
+	Mode{ }
+	CSymbol{2negate}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{negate top two items on stack.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			negate top two items on stack. (useful for computing a "flee" direction
+	to evade something).
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	negate top two items on stack.
+	_EOF_
+}
+
+Instruction{
+	Name{\<\<}
+	Type{CORE}
+	Usage{ ( a b -- a \<\< b ) }
+	Mode{ }
+	CSymbol{lshift}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{left shift}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Left shift a by b bits.
+		Negative b will perform right shift.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Left shift a by b bits.
+		Negative b will perform right shift.
+	_EOF_
+}
+
+Instruction{
+	Name{>>}
+	Type{CORE}
+	Usage{ ( a b -- a >> b ) }
+	Mode{ }
+	CSymbol{rshift}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{right shift}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Right shift a by b bits.
+		Negative b will perform left shift.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Right shift a by b bits.
+		Negative b will perform left shift.
+	_EOF_
+}
+
+Instruction{
+	Name{=}
+	Type{CORE}
+	Usage{ ( a b -- EQ(a,b) ) }
+	Mode{ }
+	CSymbol{eq}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Equal to.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Equal to.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Equal to. 1 means 'a' and 'b' are the same, else 0.
+	_EOF_
+}
+
+Instruction{
+	Name{\<>}
+	Type{CORE}
+	Usage{ ( a b -- NE(a,b) ) }
+	Mode{ }
+	CSymbol{ne}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Not equal to.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Not equal to.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Not equal to. 1 means 'a' and 'b' are not equal, else 0.
+	_EOF_
+}
+
+Instruction{
+	Name{\<}
+	Type{CORE}
+	Usage{ ( a b -- LT(a,b) ) }
+	Mode{ }
+	CSymbol{lt}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Less than.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Less than.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Less than. 1 means 'a' is less than 'b', else 0.
+	_EOF_
+}
+
+Instruction{
+	Name{>}
+	Type{CORE}
+	Usage{ ( a b -- GT(a,b) ) }
+	Mode{ }
+	CSymbol{gt}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Greater than.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Greater than.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Greater than. 1 means 'a' is greater than 'b', else 0.
+	_EOF_
+}
+
+Instruction{
+	Name{\<=}
+	Type{CORE}
+	Usage{ ( a b -- LE(a,b) ) }
+	Mode{ }
+	CSymbol{le}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Less than or equal to.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Less than or equal to.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Less than or equal to.
+	_EOF_
+}
+
+Instruction{
+	Name{>=}
+	Type{CORE}
+	Usage{ ( a b -- GE(a,b) ) }
+	Mode{ }
+	CSymbol{ge}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Greater than or equal to.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Greater than or equal to.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Greater than or equal to.
+	_EOF_
+}
+
+Instruction{
+	Name{0=}
+	Type{CORE}
+	Usage{ ( n -- EQ(n,0) ) }
+	Mode{ }
+	CSymbol{equal_zero}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Is element on top of the stack equal to 0?}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Is element on top of the stack equal to 0?
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Is element on top of the stack equal to 0?
+	_EOF_
+}
+
+Instruction{
+	Name{or}
+	Type{CORE}
+	Usage{ ( a b -- a|b ) }
+	Mode{ }
+	CSymbol{or}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Bitwise OR}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Bitwise OR. Can be used as a logical OR operator too, because 
+		KFORTH boolean operators return 1 and 0.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Bitwise OR. Can be used as a logical OR operator too, because 
+	KFORTH boolean operators return 1 and 0.
+	_EOF_
+}
+
+Instruction{
+	Name{and}
+	Type{CORE}
+	Usage{ ( a b -- a&b ) }
+	Mode{ }
+	CSymbol{and}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Bitwise AND}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Bitwise AND. Can be used a a logical AND operator too, because 
+		KFORTH boolean operators return 1 and 0.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Bitwise AND. Can be used a a logical AND operator too, because 
+	KFORTH boolean operators return 1 and 0.
+	_EOF_
+}
+
+Instruction{
+	Name{not}
+	Type{CORE}
+	Usage{ ( n -- !n ) }
+	Mode{ }
+	CSymbol{not}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Logical NOT.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Logical NOT.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Logical NOT. Any non-zero value will be converted to 0. 0 will be converted to 1.
+	_EOF_
+}
+
+Instruction{
+	Name{invert}
+	Type{CORE}
+	Usage{ ( n -- ~n ) }
+	Mode{ }
+	CSymbol{invert}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Invert bits (Bitwise NOT).}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Invert bits (Bitwise NOT).
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Invert bits (Bitwise NOT).
+	_EOF_
+}
+
+Instruction{
+	Name{xor}
+	Type{CORE}
+	Usage{ ( a b -- a^b ) }
+	Mode{ }
+	CSymbol{xor}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{XOR function.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			XOR function.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	bitwise XOR function.
+	_EOF_
+}
+
+Instruction{
+	Name{min}
+	Type{CORE}
+	Usage{ ( a b -- min(a,b) ) }
+	Mode{ }
+	CSymbol{min}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Minimum value.}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Minimum value.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Minimum value.
+	_EOF_
+}
+
+Instruction{
+	Name{max}
+	Type{CORE}
+	Usage{ ( a b  -- max(a,b) ) }
+	Mode{ }
+	CSymbol{max}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{maximum of top 2 items}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Remove 2 items from stack and replace with 
+	maximum value.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Remove two items from stack and replace with 
+	maximum value.
+	_EOF_
+}
+
+Instruction{
+	Name{CB}
+	Type{CORE}
+	Usage{ ( -- CB ) }
+	Mode{ }
+	CSymbol{CB}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{current code block executing}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes the current code block number on the data stack. Can be used
+		to implement "relative" code block addressing.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes the current code block number on the data stack.
+	_EOF_
+}
+
+Instruction{
+	Name{R0}
+	Type{CORE}
+	Usage{ (   -- R0 ) }
+	Mode{ }
+	CSymbol{R0}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 0}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R0 on the data stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R0 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R1}
+	Type{CORE}
+	Usage{ (   -- R1 ) }
+	Mode{ }
+	CSymbol{R1}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 1}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R1 on the data stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R1 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R2}
+	Type{CORE}
+	Usage{ (   -- R2 ) }
+	Mode{ }
+	CSymbol{R2}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 2}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R2 on the data stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R2 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R3}
+	Type{CORE}
+	Usage{ (   -- R3 ) }
+	Mode{ }
+	CSymbol{R3}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 3}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R3 on the data stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R3 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R4}
+	Type{CORE}
+	Usage{ (   -- R4 ) }
+	Mode{ }
+	CSymbol{R4}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 4}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R4 on the data stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R4 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R5}
+	Type{CORE}
+	Usage{ (   -- R5 ) }
+	Mode{ }
+	CSymbol{R5}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 5}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R5 on the data stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R5 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R6}
+	Type{CORE}
+	Usage{ (   -- R6 ) }
+	Mode{ }
+	CSymbol{R6}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 6}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R6 on the data stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R6 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R7}
+	Type{CORE}
+	Usage{ (   -- R7 ) }
+	Mode{ }
+	CSymbol{R7}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 7}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R7 on the data stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R7 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R8}
+	Type{CORE}
+	Usage{ (   -- R8 ) }
+	Mode{ }
+	CSymbol{R8}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 8}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R8 on the data stack
+	
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R8 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R9}
+	Type{CORE}
+	Usage{ (   -- R9 ) }
+	Mode{ }
+	CSymbol{R9}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{Register 9}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Pushes register R9 on the data stack
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Pushes register R9 on the data stack
+	_EOF_
+}
+
+Instruction{
+	Name{R0!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r0}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 0}
+	Inputs{ }
+	Returns{}
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R0
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R0
+	_EOF_
+}
+
+Instruction{
+	Name{R1!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r1}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 1}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R1
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R1
+	_EOF_
+}
+
+Instruction{
+	Name{R2!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r2}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 2}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R2
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R2
+	_EOF_
+}
+
+Instruction{
+	Name{R3!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r3}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 3}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R3
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R3
+	_EOF_
+}
+
+Instruction{
+	Name{R4!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r4}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 4}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R4
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R4
+	_EOF_
+}
+
+Instruction{
+	Name{R5!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r5}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 5}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R5
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R5
+	_EOF_
+}
+
+Instruction{
+	Name{R6!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r6}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 6}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R6
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R6
+	_EOF_
+}
+
+Instruction{
+	Name{R7!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r7}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 7}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R7
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R7
+	_EOF_
+}
+
+Instruction{
+	Name{R8!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r8}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 8}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R8
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R8
+	_EOF_
+}
+
+Instruction{
+	Name{R9!}
+	Type{CORE}
+	Usage{ ( val -- ) }
+	Mode{ }
+	CSymbol{set_r9}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{write to register 9}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R9
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	Removes 1 item 'val' from the data stack 
+	and stores 'val' into register R9
+	_EOF_
+}
+
+Instruction{
+	Name{SIGN}
+	Type{CORE}
+	Usage{ ( n -- SIGN(n) ) }
+	Mode{ }
+	CSymbol{SIGN}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{sign}
+	Inputs{ }
+	Returns{ }
+	Description{
+			Compute sign of 'n'. If n is negative, SIGN will return -1. if
+	n is greater than 0, SIGN will return 1. If n is 0, SIGN will
+	return 0.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	return sign of 'n'. If n is negative this instruction 
+	returns -1. If n is positive this instruction returns 1.
+	If n is 0, returns 0.
+	_EOF_
+}
+
+Instruction{
+	Name{PACK2}
+	Type{CORE}
+	Usage{ ( a b -- n ) }
+	Mode{ }
+	CSymbol{PACK2}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{combine 2 8-bit integers}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Combine two 8-bit integers 'a' and 'b' into a single 16-bit value 'n'.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	combines 2 8-bit integers into a single value 'n'
+	_EOF_
+}
+
+Instruction{
+	Name{UNPACK2}
+	Type{CORE}
+	Usage{ ( n -- a b ) }
+	Mode{ }
+	CSymbol{UNPACK2}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{unpack 2 8-bit integers}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Extract two 8-bit integers 'a' and 'b' from the 16-bit value 'n'.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	does the opposite of pack2.
+	_EOF_
+}
+
+Instruction{
+	Name{MAX_INT}
+	Type{CORE}
+	Usage{ ( -- max_int ) }
+	Mode{ }
+	CSymbol{MAX_INT}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{maximum integer}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Push the maximum signed integer on the data stack. Which is 32767.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	minimum signed integer
+	_EOF_
+}
+
+Instruction{
+	Name{MIN_INT}
+	Type{CORE}
+	Usage{ ( -- min_int ) }
+	Mode{ }
+	CSymbol{MIN_INT}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{minimum integer}
+	Inputs{ }
+	Returns{ }
+	Description{
+		Push the minimum signed integer on the data stack. Which is -32768.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+	maximum signed integer
+	_EOF_
+}
+
+Instruction{
+	Name{HALT}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{HALT}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{end the current program}
+	Inputs{ }
+	Returns{ }
+	Description{
+		End the current program. This means the cell will be
+		flagged as Dead (shows up red).
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		end the current program
+	_EOF_
+}
+
+Instruction{
+	Name{NOP}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{NOP}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{no operation}
+	Inputs{ }
+	Returns{ }
+	Description{
+		No operation. Do nothing.
+	}
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		No operation. Do nothing.
+	_EOF_
+}
+
+//{ R0 ###################################################################### }
+Instruction{
+	Name{R0++}
+	Type{CORE}
+	Usage{ (-- R0++) }
+	Mode{ }
+	CSymbol{r0_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R0 }
+	Inputs{ }
+
+	Returns{
+		The value of R0 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R0. Returns the value of R0
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R0. Returns the value of R0
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R0}
+	Type{CORE}
+	Usage{ (-- --R0) }
+	Mode{ }
+	CSymbol{r0_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R0 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R0 after decrementing it.
+	}
+
+	Description{
+		Decrements R0 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R0 by 1, and returns it.
+	_EOF_
+}
+
+//{ R1 ###################################################################### }
+Instruction{
+	Name{R1++}
+	Type{CORE}
+	Usage{ (-- r1++) }
+	Mode{ }
+	CSymbol{r1_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R1 }
+	Inputs{ }
+
+	Returns{
+		The value of R1 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R1. Returns the value of R1
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R1. Returns the value of R1
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R1}
+	Type{CORE}
+	Usage{ (-- --r1) }
+	Mode{ }
+	CSymbol{r1_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R1 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R1 after decrementing it.
+	}
+
+	Description{
+		Decrements R1 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R1 by 1, and returns it.
+	_EOF_
+}
+
+//{ R2 ###################################################################### }
+Instruction{
+	Name{R2++}
+	Type{CORE}
+	Usage{ (-- r2++) }
+	Mode{ }
+	CSymbol{r2_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R2 }
+	Inputs{ }
+
+	Returns{
+		The value of R2 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R2. Returns the value of R2
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R2. Returns the value of R2
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R2}
+	Type{CORE}
+	Usage{ (-- --r2) }
+	Mode{ }
+	CSymbol{r2_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R2 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R2 after decrementing it.
+	}
+
+	Description{
+		Decrements R2 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R2 by 1, and returns it.
+	_EOF_
+}
+
+//{ R3 ###################################################################### }
+Instruction{
+	Name{R3++}
+	Type{CORE}
+	Usage{ (-- r3++) }
+	Mode{ }
+	CSymbol{r3_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R3 }
+	Inputs{ }
+
+	Returns{
+		The value of R3 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R3. Returns the value of R3
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R3. Returns the value of R3
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R3}
+	Type{CORE}
+	Usage{ (-- --r3) }
+	Mode{ }
+	CSymbol{r3_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R3 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R3 after decrementing it.
+	}
+
+	Description{
+		Decrements R3 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R3 by 1, and returns it.
+	_EOF_
+}
+
+//{ R4 ###################################################################### }
+Instruction{
+	Name{R4++}
+	Type{CORE}
+	Usage{ (-- r4++) }
+	Mode{ }
+	CSymbol{r4_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R4 }
+	Inputs{ }
+
+	Returns{
+		The value of R4 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R4. Returns the value of R4
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R4. Returns the value of R4
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R4}
+	Type{CORE}
+	Usage{ (-- --r4) }
+	Mode{ }
+	CSymbol{r4_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R4 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R4 after decrementing it.
+	}
+
+	Description{
+		Decrements R4 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R4 by 1, and returns it.
+	_EOF_
+}
+
+//{ R5 ###################################################################### }
+Instruction{
+	Name{R5++}
+	Type{CORE}
+	Usage{ (-- r5++) }
+	Mode{ }
+	CSymbol{r5_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R5 }
+	Inputs{ }
+
+	Returns{
+		The value of R5 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R5. Returns the value of R5
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R5. Returns the value of R5
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R5}
+	Type{CORE}
+	Usage{ (-- --r5) }
+	Mode{ }
+	CSymbol{r5_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R5 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R5 after decrementing it.
+	}
+
+	Description{
+		Decrements R5 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R5 by 1, and returns it.
+	_EOF_
+}
+
+//{ R6 ###################################################################### }
+Instruction{
+	Name{R6++}
+	Type{CORE}
+	Usage{ (-- r6++) }
+	Mode{ }
+	CSymbol{r6_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R6 }
+	Inputs{ }
+
+	Returns{
+		The value of R6 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R6. Returns the value of R6
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R6. Returns the value of R6
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R6}
+	Type{CORE}
+	Usage{ (-- --r6) }
+	Mode{ }
+	CSymbol{r6_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R6 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R6 after decrementing it.
+	}
+
+	Description{
+		Decrements R6 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R6 by 1, and returns it.
+	_EOF_
+}
+
+//{ R7 ###################################################################### }
+Instruction{
+	Name{R7++}
+	Type{CORE}
+	Usage{ (-- r7++) }
+	Mode{ }
+	CSymbol{r7_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R7 }
+	Inputs{ }
+
+	Returns{
+		The value of R7 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R7. Returns the value of R7
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R7. Returns the value of R7
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R7}
+	Type{CORE}
+	Usage{ (-- --r7) }
+	Mode{ }
+	CSymbol{r7_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R7 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R7 after decrementing it.
+	}
+
+	Description{
+		Decrements R7 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R7 by 1, and returns it.
+	_EOF_
+}
+
+//{ R8 ###################################################################### }
+Instruction{
+	Name{R8++}
+	Type{CORE}
+	Usage{ (-- r8++) }
+	Mode{ }
+	CSymbol{r8_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R8 }
+	Inputs{ }
+
+	Returns{
+		The value of R8 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R8. Returns the value of R8
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R8. Returns the value of R8
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R8}
+	Type{CORE}
+	Usage{ (-- --r8) }
+	Mode{ }
+	CSymbol{r8_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R8 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R8 after decrementing it.
+	}
+
+	Description{
+		Decrements R8 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R8 by 1, and returns it.
+	_EOF_
+}
+
+//{ R9 ###################################################################### }
+Instruction{
+	Name{R9++}
+	Type{CORE}
+	Usage{ (-- r9++) }
+	Mode{ }
+	CSymbol{r9_inc}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ post increment R9 }
+	Inputs{ }
+
+	Returns{
+		The value of R9 before incrementing it by 1.
+	}
+
+	Description{
+		Post Increment the register R9. Returns the value of R9
+		before it has been incremented.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Post Increment the register R9. Returns the value of R9
+		before it has been incremented.
+	_EOF_
+}
+
+Instruction{
+	Name{--R9}
+	Type{CORE}
+	Usage{ (-- --r9) }
+	Mode{ }
+	CSymbol{r9_dec}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ decrements R9 by 1, and returns it }
+	Inputs{ }
+
+	Returns{
+		The value of R9 after decrementing it.
+	}
+
+	Description{
+		Decrements R9 by 1, and returns it.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Decrements R9 by 1, and returns it.
+	_EOF_
+}
+
+//{ PEEK ###################################################################### }
+Instruction{
+	Name{PEEK}
+	Type{CORE}
+	Usage{ (n -- value) }
+	Mode{ }
+	CSymbol{peek}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ get the n'th data stack item from bottom, or -n'th item from top }
+	Inputs{ }
+
+	Returns{
+		Returns the value of n'th stack item.
+		If 'n' is invalid (negative or too big), then return -1.
+		If 'n' is valid and positive then return the n'th item from the bottom (0-based).
+		If 'n' is valid and negative then return the n'th item from the top (-1-based).
+	}
+
+	Description{
+		Get the n'th data stack item from bottom, or -n'th item from top.
+		If 'n' is invalid (too big or too small), then return -1.
+		If 'n' is valid and positive then return the n'th item from the bottom (0-based).
+		If 'n' is valid and negative then return the n'th item from the top (-1-based).
+		'n' is relative to the state of the stack after 'n' has been removed by this instruction.
+	}
+	Energy{ }
+	Algorithm{
+		P{
+		The only valid positive values if 'n' are: 0 up to the current
+		stack size minus 1. 0 \<= n \< stack-size-1.
+		}
+
+		P{
+		The valid negative values if 'n' are: -1 down to the minus current
+		stack size. -(stack-size) \<= n \<= -1.
+		}
+	}
+
+	Help<<_EOF_
+		Get the n'th data stack item from back, or -n'th item from front.
+	_EOF_
+}
+
+//{ POKE ###################################################################### }
+Instruction{
+	Name{POKE}
+	Type{CORE}
+	Usage{ (value n --) }
+	Mode{ }
+	CSymbol{poke}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ set the n'th data stack item from bottom, or -n'th item from top }
+	Inputs{ }
+
+	Returns{
+		Returns nothing.
+	}
+
+	Description{
+		If 'n' is invalid (negative or too big), then don't set anything.
+		If 'n' is valid and positive then set the n'th item from the bottom (0-based).
+		If 'n' is valid and negative then set the n'th item from the top (-1-based).
+		'n' is relative to the state of the stack after 'n' and 'value' have been removed by this instruction.
+	}
+
+	Energy{ }
+	Algorithm{
+		P{
+		The only valid positive values if 'n' are: 0 up to the current
+		stack size minus 1. 0 \<= n \< stack-size-1.
+		}
+
+		P{
+		The valid negative values if 'n' are: -1 down to the minus current
+		stack size. -(stack-size) \<= n \<= -1.
+		}
+	}
+
+	Help<<_EOF_
+		Set the n'th data stack item from back, or -n'th item from front.
+	_EOF_
+}
+
+//{ CBLEN ###################################################################### }
+Instruction{
+	Name{CBLEN}
+	Type{CORE}
+	Usage{ (cb -- len) }
+	Mode{ }
+	CSymbol{cblen}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ return the length of codeblock 'cb' }
+	Inputs{ }
+
+	Returns{
+		Returns length of code block. -1 is returned if the code block
+		is invalid.
+	}
+
+	Description{
+		Returns the length of a code block. The code block number to use
+		is given by 'cb'.
+	}
+
+	Energy{ }
+	Algorithm{
+		BulletList{
+			Item{Un-protected code cannot query the length of a protected code block. returns -1}
+		}
+	}
+
+	Help<<_EOF_
+		Returns the length of a code block. The code block number to use
+		is given by 'cb'. -1 is returned for invalid code block numbers.
+	_EOF_
+}
+
+
+//{ DSLEN ###################################################################### }
+Instruction{
+	Name{DSLEN}
+	Type{CORE}
+	Usage{ ( -- len) }
+	Mode{ }
+	CSymbol{dslen}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ return the length of data stack }
+	Inputs{ }
+
+	Returns{
+		Returns length of data stack (before the 'len'  was pushed).
+	}
+
+	Description{
+		This instruction returns how many data values are pushed onto the
+		data stack (excludeding 'len').
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		This instruction returns how many data values are pushed onto the
+		data stack (excludeding 'len').
+	_EOF_
+}
+
+//{ CSLEN ###################################################################### }
+Instruction{
+	Name{CSLEN}
+	Type{CORE}
+	Usage{ ( -- len) }
+	Mode{ }
+	CSymbol{cslen}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ return the length of call stack }
+	Inputs{ }
+
+	Returns{
+		returns how many items are pushed on the call stack.
+	}
+
+	Description{
+		Length of the call stack.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Length of the call stack.
+	_EOF_
+}
+
+//{ TRAP1 ###################################################################### }
+Instruction{
+	Name{TRAP1}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{trap1}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ call to code block 1 }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Call code block 1. This allows un-protected code
+		to call into protected code.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Call code block 1. This allows un-protected code
+		to call into protected code.
+	_EOF_
+}
+
+//{ TRAP2 ###################################################################### }
+Instruction{
+	Name{TRAP2}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{trap2}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ call to code block 2 }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Call code block 2. This allows un-protected code
+		to call into protected code.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Call code block 2. This allows un-protected code
+		to call into protected code.
+	_EOF_
+}
+
+//{ TRAP3 ###################################################################### }
+Instruction{
+	Name{TRAP3}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{trap3}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ call to code block 3 }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Call code block 3. This allows un-protected code
+		to call into protected code.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Call code block 3. This allows un-protected code
+		to call into protected code.
+	_EOF_
+}
+
+//{ TRAP4 ###################################################################### }
+Instruction{
+	Name{TRAP4}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{trap4}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ call to code block 4 }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Call code block 4. This allows un-protected code
+		to call into protected code.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Call code block 4. This allows un-protected code
+		to call into protected code.
+	_EOF_
+}
+
+
+//{ TRAP5 ###################################################################### }
+Instruction{
+	Name{TRAP5}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{trap5}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ call to code block 5 }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Call code block 5. This allows un-protected code
+		to call into protected code.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Call code block 5. This allows un-protected code
+		to call into protected code.
+	_EOF_
+}
+
+
+//{ TRAP6 ###################################################################### }
+Instruction{
+	Name{TRAP6}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{trap6}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ call to code block 6 }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Call code block 6. This allows un-protected code
+		to call into protected code.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Call code block 6. This allows un-protected code
+		to call into protected code.
+	_EOF_
+}
+
+
+//{ TRAP7 ###################################################################### }
+Instruction{
+	Name{TRAP7}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{trap7}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ call to code block 7 }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Call code block 7. This allows un-protected code
+		to call into protected code.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Call code block 7. This allows un-protected code
+		to call into protected code.
+	_EOF_
+}
+
+
+//{ TRAP8 ###################################################################### }
+Instruction{
+	Name{TRAP8}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{trap8}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ call to code block 8 }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Call code block 8. This allows un-protected code
+		to call into protected code.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Call code block 8. This allows un-protected code
+		to call into protected code.
+	_EOF_
+}
+
+
+//{ TRAP9 ###################################################################### }
+Instruction{
+	Name{TRAP9}
+	Type{CORE}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{trap9}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ call to code block 9 }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Call code block 9. This allows un-protected code
+		to call into protected code.
+	}
+
+	Energy{ }
+	Algorithm{ }
+
+	Help<<_EOF_
+		Call code block 9. This allows un-protected code
+		to call into protected code.
+	_EOF_
+}
+
+//{ NUMBER ###################################################################### }
+Instruction{
+	Name{NUMBER}
+	Type{CORE}
+	Usage{ (cb pc -- value) }
+	Mode{ }
+	CSymbol{number}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ read number from program memory }
+	Inputs{ }
+
+	Returns{
+	BulletList{
+		Item{B{-1} is returned if cb is invalid}
+		Item{B{-2} is returned if pc is invalid}
+		Item{B{-3} is returned if (cb,pc) contains opcode}
+		Item{B{else} the 15-bit signed kforth program literal is returned.
+			'value' will be between -16384 and 16383.}
+	}}
+
+	Description{
+		Fetch a number from program memory and push that value onto the
+		data stack. This retrieves a value from the program memory.
+		'cb' is a code block number, 'pc' is the offset from the start of the
+		code block.
+		Note: KFORTH program literals are signed 15-bit integers.
+	}
+
+	Energy{ }
+
+	Algorithm{
+		BulletList{
+			Item{Un-protected code cannot retrieve a number from a protected code block. -1}
+		}
+	}
+
+	Help<<_EOF_
+		Fetch a number from program memory and push that value onto the
+		data stack. 'cb' is a code block number, 'pc' is the offset from
+		the start of the code block. This retrieves a value from the
+		program memory. Note: KFORTH program literals are signed
+		15-bit integers.
+	_EOF_
+}
+
+//{ NUMBER! ###################################################################### }
+Instruction{
+	Name{NUMBER!}
+	Type{CORE}
+	Usage{ (value cb pc -- ) }
+	Mode{ }
+	CSymbol{set_number}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ write number to program memory }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Write 'value' to program memory at location (cb, pc). 'cb' is the code block
+		number, and 'pc' is the offset into the code block. KFORTH program literals
+		are signed 15-bit integers, therefore  'value' will be reduced to 15-bits.
+		The 15-bit value range is: -16384 and 16383.
+	}
+
+	Energy{ }
+
+	Algorithm{
+		BulletList{
+			Item{Un-protected code cannot write a number to a protected code block.}
+			Item{'value' is reduced to 15-bits by ignoring its top bit. }
+		}
+	}
+
+	Help<<_EOF_
+		Write 'value' into program memory at (cb, pc). 'cb' is the code block
+		number, and 'pc' is the offset into the code block. KFORTH program literals
+		are signed 15-bit integers, therefore 'value' must be between  -16384 and 16383.
+	_EOF_
+}
+
+
+//{ ?NUMBER! ###################################################################### }
+Instruction{
+	Name{?NUMBER!}
+	Type{CORE}
+	Usage{ (value cb pc -- value|0) }
+	Mode{ }
+	CSymbol{test_set_number}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ test and set a number to program memory }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{0} - if the variable was non-zero. }
+		Item{ B{value} - if the variable was zero, and we updated it to be 'value'. }
+		}
+	}
+
+	Description{
+		Test (and then set) the KFORTH program memory location given by (cb, pc). If
+		it is zero then update it to contain 'value' and return value. Else return 0 and
+		leave location (cb,pc) unchanged. 'cb' is the code block number, and 'pc'
+		is the offset into the code block. KFORTH program literals are
+		signed 15-bit integers. 'value' will be reduced to 15-bits.
+		The 15-bit value range is: -16384 and 16383.
+	}
+
+	Energy{ }
+
+	Algorithm{
+		BulletList{
+			Item{Un-protected code cannot read/write a number to a protected code block. returns 0.}
+			Item{'value' is reduced to 15-bits by ignoring its top bit. }
+			Item{if this location (cb,pc) contains opcode, return 0}
+		}
+	}
+
+	Help<<_EOF_
+		Test (and then set) the KFORTH program memory location given by (cb, pc). If
+		it is zero then update it to contain 'value' and return value. Else return 0 and
+		leave location (cb,pc) unchanged. 'cb' is the code block number, and 'pc'
+		is the offset into the code block. KFORTH program literals are
+		signed 15-bit integers.
+	_EOF_
+}
+
+//{ OPCODE ###################################################################### }
+Instruction{
+	Name{OPCODE}
+	Type{CORE}
+	Usage{ (cb pc -- opcode) }
+	Mode{ }
+	CSymbol{opcode}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ read opcode from program memory }
+	Inputs{ }
+
+	Returns{
+	BulletList{
+		Item{B{-1} is returned if cb is invalid}
+		Item{B{-2} is returned if pc is invalid}
+		Item{B{-3} is returned if (cb,pc) contains number}
+		Item{B{-4} is returned if (cb,pc) contains a protected instruction}
+		Item{B{else} the numeric code for the opcode is returned. This number
+			is a small value between 0 and ~250. }
+	}}
+
+	Description{
+		Fetch an opcode from program memory and push its numeric code onto the
+		data stack. This retrieves the opcode from the program memory,
+		'cb' is a code block number, 'pc' is the offset from the start of the
+		code block. Opcodes are small integers between 0 and ~250. For example the
+		numeric code for the instruction '+' might be 75.
+	}
+
+	Energy{ }
+
+	Algorithm{
+		BulletList{
+			Item{Un-protected code cannot retrieve an opcode from a protected code block. Returns -1}
+			Item{Un-protected code cannot retrieve a protected instruction. Returns -4. This can happen
+				if the un-protected code was seeded with protected instructions.}
+		}
+	}
+
+	Help<<_EOF_
+		Fetch an opcode from program memory and push its numeric code onto the
+		data stack. This retrieves the opcode from the program memory,
+		'cb' is a code block number, 'pc' is the offset from the start of the
+		code block. Opcodes are small integers between 0 and ~250.
+	_EOF_
+}
+
+//{ OPCODE! ###################################################################### }
+Instruction{
+	Name{OPCODE!}
+	Type{CORE}
+	Usage{ (opcode cb pc -- ) }
+	Mode{ }
+	CSymbol{set_opcode}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ write opcode to program memory }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Write an opcode to program memory. This instruction writes code.
+		it writes 'opcode' to program memory, 'cb' is a code block number, 'pc'
+		is the offset from the start of the code block. Opcodes are small integers
+		between 0 and ~250. For example the numeric code for the instruction '+' might be 75.
+	}
+
+	Energy{ }
+
+	Algorithm{
+		BulletList{
+			Item{Un-protected code cannot write an opcode to a protected code block.}
+			Item{Un-protected code cannot write a numeric code corresponding to a protected instruction}
+			Item{cb must be valid}
+			Item{pc must valid}
+			Item{opcode must be a valid numeric code to a defined instruction}
+		}
+	}
+
+	Help<<_EOF_
+		Write an opcode to program memory. This instruction writes code.
+		it writes 'opcode' to program memory, 'cb' is a code block number, 'pc'
+		is the offset from the start of the code block. Opcodes are small integers
+		between 0 and ~250.
+	_EOF_
+}
+
+//{ OPCODE' ###################################################################### }
+Instruction{
+	Name{OPCODE'}
+	Type{CORE}
+	Usage{ ( -- opcode ) }
+	Mode{ }
+	CSymbol{lit_opcode}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ quote the next instruction }
+	Inputs{ }
+
+	Returns{
+	BulletList{
+		Item{B{-2} is returned if no next instruction}
+		Item{B{-3} is returned if next instruction contains a number}
+		Item{B{-4} is returned if next instruction is a protected instruction, when called
+			from un-protected code.}
+		Item{B{else} the numeric code for the opcode is returned. This number
+			is a small value between 0 and ~250. }
+	}}
+
+	Description{
+		Treat the instruction following the OPCODE' instruction as a literal.
+		Do not execute the next instruction,
+		rather return its opcode. Execution continues with the instruction following
+		the next instruction. The next instructions opcode
+		value will be pushed on to the data stack. Opcodes are small integers
+		between 0 and ~250. For example the numeric code for the
+		instruction '+' might be 75.
+	}
+
+	Energy{ }
+
+	Algorithm{
+		BulletList{
+			Item{Un-protected code cannot return the opcode for a protected instruction}
+			Item{there must be a next instruction}
+		}
+	}
+
+	Help<<_EOF_
+		Quote the next instruction and return its opcode. Don't execute the next instruction.
+		Execution continues with the instruction after the quoted instruction.
+		Opcodes are small integers between 0 and ~250.
+	_EOF_
+}
+
+
+//{
+// //////////////////////////////////////////////////////////////////////
+// INTERACT
+// //////////////////////////////////////////////////////////////////////
+//}
+
+Instruction{
+	Name{CMOVE}
+	Type{INTERACT}
+	Usage{ ( x y -- r ) }
+	Mode{ }
+	CSymbol{CMOVE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{
+			0={NOT USED}
+			1={NOT USED}
+		}
+	}
+	Summary{ move a cell relative to the organism }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{0} - cell could not be moved. }
+		Item{ B{1} - success. }
+		}
+	}
+
+	Description{
+		Move the cell that executes this instruction relative to the organism.
+	}
+
+	Energy{
+		Does not require any energy.
+	}
+
+	Algorithm{
+		NumberedList{
+		Item{ If there are not 2 elements on the data stack, then skip this instruction. }
+		Item{ Remove the (x, y) coordinates from the stack. }
+		Item{ Normalize the coordinates. }
+		Item{ Examine the destination square (as indicated by the offsets) and see if it
+			is vacant. If not, return 0. }
+		Item{ Check that the organism is propery connected after the move. If not return 0. }
+		Item{ Else, Move the cell to the new location and return 1. }
+		Item{ A CMOVE of (0,0) always fails and returns B{0}. }
+		}
+	}
+
+	Help<<_EOF_
+	Move Cell. The cell executing this instruction 
+	will be moved relative to the organism. The coordinates 
+	are normalized to (8, -9) becomes (1, -1). 
+	Cell must ensure that the organism is still connected 
+	after the move. 
+	On success r is 1, else r is 0.
+	_EOF_
+}
+
+Instruction{
+	Name{OMOVE}
+	Type{INTERACT}
+	Usage{ ( x y -- n ) }
+	Mode{ }
+	CSymbol{OMOVE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{
+			0={NOT USED}
+			1={NOT USED}
+		}
+	}
+	Summary{ move entire organism }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{0} - move failed. }
+		Item{ B{n} - success. where n is the number of cells moved was successful. }
+		}
+	}
+
+	Description{
+		Move entire organism by one square in the up, down, left, right, or diagonal direction.
+	}
+
+	Energy{
+		Does not require any energy.
+	}
+
+	Algorithm{
+		NumberedList{
+		Item{ If there are not 2 elements on the data stack, then skip this instruction. }
+		Item{ Remove the (x, y) coordinates from the stack. }
+		Item{ Normalize the coordinates. }
+		Item{ Examine every square that we may be moving to to make sure it is empty, or contains one of our cells. }
+		Item{ If the move is possible, reposition every cell in our organism by the (x, y) offset. }
+		Item{ A move using vector (0, 0) always fails, and returns 0. }
+		}
+	}
+
+	Help<<_EOF_
+	Move organism. Organism will move in the direction 
+	specified by (x, y). These coordinates are normalized, 
+	so that (-20, 15) maps to a direction of (-1, 1). 
+	r is 1 on success, else r is 0. 
+	_EOF_
+}
+
+Instruction{
+	Name{ROTATE}
+	Type{INTERACT}
+	Usage{ ( n -- r ) }
+	Mode{ }
+	CSymbol{ROTATE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{
+			0={use my location as the orgin of rotation}
+			1={use the organism center as the origin of rotation}
+		}
+		Bit1{
+			0={rotate in 45 degree units}
+			1={rotate in 90 degree units}
+		}
+	}
+	Summary{rotate organism}
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{0} - organism could not be rotated. }
+		Item{ B{r} - 'r' is the number of cells that were rotated. }
+		}
+	}
+	Description{
+		Rotate the organism by 45 degree units around the cell that executes
+		this instruction. The rotate direction is given by 'n'. A positive 'n' rotates the
+		organism is a clock-wise direction. A negative 'n' rotates the
+		organism by 45 degrees counter-clockwise.
+
+		P{
+		If 'n' is zero don't rotate the
+		organism and return 0.
+		}
+	}
+
+	Energy{Does not require any energy.}
+
+	Algorithm{
+		NumberedList{
+		Item{ If there is not 1 element on the data stack, then skip this instruction. }
+		Item{ Remove the rotation amount n from the stack. }
+		Item{ Translate all cells in the organism to the new location, and check that
+			the spot is vacant (or contains cells from this organism). If not, return 0. }
+		Item{ Else, rotate organism and return 1. }
+		Item{ A rotation value of B{0} always fails, and returns 0. }
+		}
+	}
+
+	Help<<_EOF_
+	rotate organism. 
+	rotate in 45 degree units. positive values are 
+	clockwise rotations, and negative values are counter-clockwise.
+	On success r is number of cells rotated.
+	_EOF_
+}
+
+Instruction{
+	Name{EAT}
+	Type{INTERACT}
+	Usage{ ( x y -- n ) }
+	Mode{ }
+	CSymbol{EAT}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+
+	Flags{
+		Bit0{
+			0={I cannot eat myself}
+			1={I can eat myself}
+		}
+
+		Bit1{
+			0={I can eat cells from other strains}
+			1={I cannot eat cells from other strains}
+		}
+
+		Bit2{
+			0={I can eat my own strain}
+			1={I cannot eat my own strain}
+		}
+
+		Bit3{
+			0={I can be eaten}
+			1={I cannot be eaten}
+		}
+
+		Bit4{
+			0={when calculating energy eaten, include remainder:
+					ENERGY_EATEN = ENERGY / NCELLS + ENERGY % NCELLS}
+			1={when calculating energy eaten, don't include remainder:
+					ENERGY_EATEN = ENERGY / NCELLS}
+		}
+
+		Bit5{
+			0={off}
+			1={use make-spore energy for maximum energy eaten}
+		}
+
+		Bit6{
+			0={off}
+			1={use grow energy for maximum energy eaten}
+		}
+
+		Bit7{
+			0={off}
+			1={use cell energy/2 + remainder}
+		}
+
+		Bit8{
+			0={off}
+			1={take as much energy as possible up to the number of units this cell has}
+		}
+
+		Bit9{
+			0={terminate cell eaten}
+			1={don't terminate cell eaten, unless energy per cell == 0}
+		}
+
+		Bit10{	0={do not interrupt me, when somebody EATS me}
+				1={interrupt me and bit 0 of the trap number shall be 1}
+		}
+
+		Bit11{	0={do not interrupt me, when somebody EATS me}
+				1={interrupt me and bit 1 of the trap number shall be 1}
+		}
+
+		Bit12{	0={do not interrupt me, when somebody EATS me}
+				1={interrupt me and bit 2 of the trap number shall be 1}
+		}
+	}
+
+	Summary{ eat energy from surrounding cells }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{0} - nothing was eaten }
+		Item{ B{n} - the amount of energy we were able to eat. }
+		}
+	}
+
+	Description{
+		Eat stuff at (x, y) from this cell. Return 'n' the amount of energy eaten.
+	}
+
+	Energy{
+		Does not require any energy.
+	}
+
+	Algorithm{
+		NumberedList{
+		Item{ Normalize the (x, y) coordinates. }
+		Item{ Try to eat whatever is at this location: }
+		Item{ Organic material (white squares) will be eaten and all its energy transferred
+			to this organism. }
+		Item{ Spores (blue squares) will be eaten and all their energy transferred to this organism.
+			Even spores created by this organism will be eaten (so be careful!). }
+		Item{ Depending on the modes, living tissue from other creatures will be eaten like this: }
+		}
+
+		BulletList{
+		Item{ The living tissue must be from ANOTHER organism, not itself.
+			The cell cannot eat itself! }
+
+		Item{ The cell being eaten must not already be flagged as dead (not already red). }
+
+		Item{ The cell being eaten is then flagged as dead (red square). }
+
+		Item{ 1/x units of energy (where x is the number of cells in the organism being eaten)
+			will be removed from the organism we ate, and transferred to this organism. }
+
+		Item{ any remainder from the integer "1/x" calculation is also removed from the organism
+			we ate and transferred to us. }
+		}
+	}
+
+	Help<<_EOF_
+	The cell executing this instruction will eat stuff at 
+	the (x, y) offset. The three things that can be eaten 
+	are Organic material, Spores, and Cells from other organisms. 
+	'e' will the amount of energy we gained by eating.
+	_EOF_
+}
+
+Instruction{
+	Name{SEND-ENERGY}
+	Type{INTERACT}
+	Usage{ (e x y -- rc) }
+	Mode{ }
+	CSymbol{SEND_ENERGY}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={i can give energy to other strains}
+				1={i cannot give energy to other strains}
+		}
+		Bit1{	0={i can take energy from other strains}
+				1={i cannot take energy from other strains}
+		}
+		Bit2{	0={i can give energy to spores}
+				1={i cannot give energy to spores}
+		}
+		Bit3{	0={i can take energy from spores}
+				1={i cannot take energy from spores}
+		}
+		Bit4{	0={do not interrupt me, when somebody gives energy to me}
+				1={interrupt me and bit 0 of the trap number shall be 1}
+		}
+		Bit5{	0={do not interrupt me, when somebody gives energy to me}
+				1={interrupt me and bit 1 of the trap number shall be 1}
+		}
+		Bit6{	0={do not interrupt me, when somebody gives energy to me}
+				1={interrupt me and bit 2 of the trap number shall be 1}
+		}
+		Bit7{	0={do not interrupt me, when somebody takes energy from me}
+				1={interrupt me and bit 0 of the trap number shall be 1}
+		}
+		Bit8{	0={do not interrupt me, when somebody takes energy from me}
+				1={interrupt me and bit 1 of the trap number shall be 1}
+		}
+		Bit9{	0={do not interrupt me, when somebody take energy from me}
+				1={interrupt me and bit 2 of the trap number shall be 1}
+		}
+		Bit10{	0={can give energy only to adjacent neighbors}
+				1={can give energy across distances along normalized vector}
+		}
+	}
+	Summary{ give/take energy to neighboring cell }
+	Inputs{ }
+
+	Returns{
+		Returns the number of units of energy given/taken. 0 is returned
+		if the operation failed.
+	}
+
+	Description{
+		send the energy to the cell at normalized coordinate (x,y).
+		negative 'e' values take from that cell. If there isn't enough
+		energy to perform the transfer (too little energy compared to 'e'))
+		then don't do anything.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		send the energy to the cell at normalized coordinate (x,y).
+		negative 'e' values take from that cell.
+	_EOF_
+}
+
+Instruction{
+	Name{MAKE-SPORE}
+	Type{INTERACT}
+	Usage{ ( x y e -- r ) }
+	Mode{ }
+	CSymbol{MAKE_SPORE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{
+			0={NOT USED}
+			1={NOT USED}
+		}
+		Bit1{
+			0={i can fertilize a spore i created}
+			1={i cannot fertilize a spore i created}
+		}
+		Bit2{
+			0={i can fertilize a spore created by others}
+			1={i cannot fertilize a spore created by others}
+		}
+		Bit3{
+			0={i can create a spore}
+			1={i cannot create a spore}
+		}
+		Bit4{
+			0={i can fertilize a spore}
+			1={i cannot fertilize a spore}
+		}
+		Bit5{
+			0={no energy is required to fertilize a spore}
+			1={minimum MAKE-SPORE Energy is required to fertilize a spore}
+		}
+	}
+	Summary{ create spore and reproduce }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{0} - could not make spore. }
+		Item{ B{1} - created spore. }
+		Item{ B{-1} - fertilized existing spore. }
+		}
+	}
+
+	Description{
+		Create new spore (or fertilize an existing spore).
+
+		P{
+		When a spore is fertilized, the original genetic program used to create the
+		spore, and the genetic program from the organism that fertilized the spore will be
+		first merged. Then the resulting genetic program is MUTATED. Then a new organism
+		is born. It will begin execution at the first instruction of code block 0 (main). It
+		will be given 'e' units of energy, which is the sum of the energy specified with
+		the first and second MAKE-SPORE instructions.
+		}
+
+		P{ B{MAKE-SPORE Energy:} This setting is available on the Strain Modes tab. The value
+		represents the minimum amount of energy required to create a spore. If 'e' is not big enough,
+		then this instruction will return 0.
+		A minimum of '1' units of energy is always required to create the initial spore.
+		}
+	}
+
+	Energy{
+		Requires 'e' units of energy.
+	}
+
+	Algorithm{
+		NumberedList{
+			Item{ If there are not 3 elements on the data stack, then skip this instruction. }
+			Item{ Remove energy 'e' from the stack. (this is the amount of energy that this
+				organism will give up and transfer to the new spore). }
+			Item{ Remove the (x, y) coordinates from the stack. }
+			Item{ Normalize the coordinates. }
+			Item{ For new spores, if energy 'e' is less than or equal to 0, then return 0. }
+			Item{ For fertilizing an existing spore, if energy 'e' is less than 0, then return 0. }
+			Item{ If energy 'e' is more than the amount of energy this organism has, then return 0. }
+
+			Item{ If the location indicated by the normalized (x, y) coordinates is not vacant
+					or is not a spore, then return 0. }
+
+			Item{ If the location is blank, then create the first spore. Transfer 'e' units of
+				energy from this organism and give it to the new spore. Return 1. }
+
+			Item{ If the location is a spore then fertilize the
+				existing spore. Transfer 'e' units of energy from this organism to the fertilized
+				spore. Return -1. }
+		}
+	}
+
+	Help<<_EOF_
+	A spore is created at the normalized coordinates (x, y). The 
+	spore will be given energy 'e'. Normalized coordinates mean 
+	that (-3, 0) becomes (-1, 0). s is set to 0 on failure. 
+	s is set to 1 if we created a spore. s is set to -1 if we 
+	fertilized an existing spore.
+	_EOF_
+}
+
+Instruction{
+	Name{GROW}
+	Type{INTERACT}
+	Usage{ ( x y -- r ) }
+	Mode{ }
+	CSymbol{GROW}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{
+			0={NOT USED}
+			1={NOT USED}
+		}
+	}
+	Summary{ add a new cell to the organism }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{0} - could not grow }
+		Item{ B{1} - grow succeeded (the cell that executed the GROW instruction) }
+		Item{ B{-1} - grow succeeded (the new cell) }
+		}
+	}
+
+	Description{
+		P{
+		Add a new cell to this organism. The new cell inherits the data stack, call stack and
+		registers of the parent cell. The parent and child can check the return value to
+		determine which one they are.
+		}
+
+		P{
+		B{GROW Energy:} This field is available on the Strain Modes tab. It sets the minimum
+		amount of energy required to grow a cell. Each organism has a total amount of energy.
+		If total energy divided by the number of cells isn't equal or greater to this value, then
+		the GROW operation will fail.
+		}
+
+		P{
+		B{GROW Max Size:} This field is available on the Strain Modes tab. It sets the maximum
+		number of cells that an organism can be. If this value is 0, then there is no maximum.
+		}
+	}
+
+	Energy{
+		Requires B{GROW Energy} units of energy.
+	}
+
+	Algorithm{
+		NumberedList{
+		Item{ If there are not 2 elements on the data stack, then skip this instruction. }
+
+		Item{ Remove the (x, y) coordinates from the stack. }
+
+		Item{ Normalize the coordinates. }
+
+		Item{ If the location specified by the coordinates is not blank, then return 0. }
+
+		Item{ Compute the amount of energy needed to grow (this is the sum of
+			the data stack size and the call stack size). }
+
+		Item{ If organims does not have enough energy to GROW a new cell, then return 0. }
+
+		Item{ Create new cell at location specified. Clone this cells data
+			and call stack (as well as registers, and so on). }
+
+		Item{ For the cell executing the GROW instruction return 1. }
+
+		Item{ For the new cell, just created, make it appear as if it returned -1. }
+		}
+	}
+
+	Help<<_EOF_
+	A new cell is added to the organism. The coordinates (x, y) are 
+	normalized, meaning (123, -999) becomes (1, -1). The new cell 
+	inherits the all the execution context of the cell that executed 
+	this instruction. returns 1=parent cell, -1=new cell, 0=failure.
+	_EOF_
+}
+
+//{
+// //////////////////////////////////////////////////////////////////////
+// VISION
+// //////////////////////////////////////////////////////////////////////
+//}
+
+Instruction{
+	Name{LOOK}
+	Type{VISION}
+	Usage{ ( x y -- what dist ) }
+	Mode{ }
+	CSymbol{LOOK}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={when looking along a line any cells that belong to my organism are ignored}
+				1={when looking along a line any cells that belong to my organism stop the looking and report nothing}
+		}
+		Bit1{	0={NOT USED}
+				1={NOT USED}
+		}
+		Bit2{	0={when reporting a 'what' bit mask, don't include strain bits}
+				1={when reporting a 'what' bit mask, include strain bits}
+		}
+		Bit3{	0={i am not invisible}
+				1={i am invisible}
+		}
+	}
+	Summary{ look along a line }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{what dist} - before reaching the end of the vector something was found. "something"
+			is one of ORGANIC MATERIAL, SPORE, or living cell. }
+
+		Item{ B{0 0} - when then (x, y) vector was (0, 0). }
+		}
+
+		P{B{What values:}}
+		VisionMask{}
+	}
+
+	Description{
+		Look along a normalized (x, y) direction vector. Return the thing it found, and the distance.
+
+		P{
+		NOTE: The B{LOOK Mode} settings apply to all the vision instructions such as NEAREST / FARTHEST, HOTTEST / COLDEST,
+		and SMALLEST / BIGGEST.
+		}
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+		NumberedList{
+		Item{ If there are not 2 elements on the data stack, then skip this instruction. }
+
+		Item{ Remove the (x, y) coordinates from the stack and normalize the coordinate. }
+
+		Item{ Look along the direction vector until something is found (or the edge of the
+		universe is reached). }
+
+		Item{ Ignore any cell that happens to be from the same organism as us. }
+
+		Item{ Push the type of thing ('what' value) on the data stack. (WHAT value Key: 1=cell,
+			2=spore, 4=organic material, 8=barrier). }
+
+		Item{ Push the distance ('dist' value) on the data stack. A distance of 1 means
+		    the thing seen is touching this cell. }
+		}
+	}
+
+	Help<<_EOF_
+	Look in direction (x, y) and return 'what' was seen, and how 
+	far away it was 'dist'.
+	_EOF_
+}
+
+Instruction{
+	Name{NEAREST}
+	Type{VISION}
+	Usage{ ( mask -- x y ) }
+	Mode{ }
+	CSymbol{NEAREST}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ find nearest object }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{x y} - the direction vector that is nearest and matches the 'mask' }
+		Item{ B{0 0} - nothing matched the 'mask' }
+		}
+	}
+
+	Description{
+		Looks in all 8 directions and return the (x, y) direction vector that corresponds
+		to the thing with the smallest distance (and matches a 'mask' value).
+		The returned (x,y) vector is not normalized, so it might return (-6,6) instead of (-1,1).
+
+		P{B{mask} values are the same as B{what} values. If any bit matches the B{what}
+		from LOOK'ing along that vector then we match.}
+		VisionMask{}
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+		NumberedList{
+		Item{ If there is not 1 element on the data stack, then skip this instruction. }
+		Item{ remove 'mask' value from data stack. }
+		Item{ strip all bits from the mask, except first 4 bits (e.g. 000001111) }
+		Item{ if mask bits are all 0, then return the vector (0, 0) }
+		Item{ Look in all 8 directions, beginning with a RANDOM direction and proceeding in
+			a clock-wise direction. }
+		Item{ Keep track of the closest thing seen (whose 'what' value is set in the bit-mask) }
+		Item{ Return the (x, y) direction vector. }
+		Item{ If nothing matched the bit-mask, then (0, 0) is returned. }
+		}
+	}
+
+	Help<<_EOF_
+	Returns the (x,y) coordinates for the vision data with the SMALLEST distance
+	that matches mask. 'mask' is an OR'ing of 'what' values.
+	If nothing matches (0,0) is returned.
+	_EOF_
+}
+
+Instruction{
+	Name{FARTHEST}
+	Type{VISION}
+	Usage{ ( mask -- x y ) }
+	Mode{ }
+	CSymbol{FARTHEST}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ find farthest object }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{x y} - the direction vector that is farthest and matches the 'mask' }
+		Item{ B{0 0} - nothing matched the 'mask' }
+		}
+	}
+
+	Description{
+		Looks in all 8 directions and return the (x, y) direction vector that corresponds
+		to the thing with the largest distance (and matches a 'mask' value).
+		The returned (x,y) vector is not normalized, so it might return (-6,6) instead of (-1,1).
+
+		P{B{mask} values are the same as B{what} values. If any bit matches the B{what}
+		from LOOK'ing along that vector then we match.}
+		VisionMask{}
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+		NumberedList{
+		Item{ If there is not 1 element on the data stack, then skip this instruction. }
+		Item{ remove 'mask' value from data stack. }
+		Item{ strip all bits from the mask, except first 4 bits (e.g. 000001111) }
+		Item{ if mask bits are all 0, then return the vector (0, 0) }
+		Item{ Look in all 8 directions, beginning with a RANDOM direction and proceeding in
+			a clock-wise direction. }
+		Item{ Keep track of the farthest thing seen (whose 'what' value is set in the bit-mask) }
+		Item{ Return the (x, y) direction vector. }
+		Item{ If nothing matched the bit-mask, then (0, 0) is returned. }
+		}
+	}
+
+	Help<<_EOF_
+	Returns the (x,y) coordinates for the vision data with the LARGEST distance 
+	that matches mask. 'mask' is an OR'ing of 'what' values. 
+	If nothing matches (0,0) is returned.
+	_EOF_
+}
+
+//{
+// //////////////////////////////////////////////////////////////////////
+// COMMS
+// //////////////////////////////////////////////////////////////////////
+//}
+
+Instruction{
+	Name{MOOD}
+	Type{COMMS}
+	Usage{ ( x y -- m ) }
+	Mode{ }
+	CSymbol{MOOD}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Query the MOOD of one of my cells }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		P{
+		Every cell has its own "MOOD" register. This instruction queries another cell
+		using an (x, y) vector. This vector B{is not normalized} which allows the cell
+		to query any other cell within its own organism (not just adjacent cells). For example,
+		if cell 2 executed the following instructions:
+		}
+
+		Code<<_EOF_
+			0 0 MOOD   ; returns -23
+			-1 0 MOOD   ; returns 123
+			-1 1 MOOD   ; returns 33
+			99 99 MOOD   ; returns 0
+		_EOF_
+
+		P{
+		If a bogus (x, y) is specified then 0 is pushed on the data stack.
+		We can query our own mood by specifying (0, 0).
+		}
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+	We examine one of our own cells at offset (x, y) and return the MOOD
+	of that cell. If (x, y) is invalid 0 is returned.
+	_EOF_
+}
+
+Instruction{
+	Name{MOOD!}
+	Type{COMMS}
+	Usage{ ( m -- ) }
+	Mode{ }
+	CSymbol{SET_MOOD}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Set MOOD register to a value }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		P{
+		The cell executing this instruction will set its own B{mood} register. It is not possible
+		to set others. The purpose of the B{mood} register is for a cell it advertise its "mood" to
+		other cells in the organism. For example, if cell 3 executed these instructions:
+		}
+
+		Code<<_EOF_
+			0 0 MOOD 1 + MOOD!
+		_EOF_
+
+		P{
+		Then cell 3's mood would be increased by 1. So it would be set to 34.
+		}
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+	The cell executing this instruction will set its mood variable to 'm'.
+	_EOF_
+}
+
+Instruction{
+	Name{BROADCAST}
+	Type{COMMS}
+	Usage{ ( m -- ) }
+	Mode{ }
+	CSymbol{BROADCAST}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={do not interrupt me, when somebody broadcasts a message to me}
+				1={interrupt me and bit 0 of the trap number shall be 1}
+		}
+		Bit1{	0={do not interrupt me, when somebody broadcasts a message to me}
+				1={interrupt me and bit 1 of the trap number shall be 1}
+		}
+		Bit2{	0={do not interrupt me, when somebody broadcasts a message to me}
+				1={interrupt me and bit 2 of the trap number shall be 1}
+		}
+	}
+	Summary{ broadcast a message to our cells }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		This instruction takes the value off of the top of the data stack and sets the B{message}
+		register for every cell in our organism. If interrupts are enabled every cell, except the
+		cell executing this instruction, will be interrupted.
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+	The message 'm' will be placed in the message buffer for every cell 
+	in our organism.
+	_EOF_
+}
+
+Instruction{
+	Name{SEND}
+	Type{COMMS}
+	Usage{ ( m x y -- ) }
+	Mode{ }
+	CSymbol{SEND}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={do not interrupt me, when somebody sends a message to me}
+				1={interrupt me and bit 0 of the trap number shall be 1}
+		}
+		Bit1{	0={do not interrupt me, when somebody sends a message to me}
+				1={interrupt me and bit 1 of the trap number shall be 1}
+		}
+		Bit2{	0={do not interrupt me, when somebody sends a message to me}
+				1={interrupt me and bit 2 of the trap number shall be 1}
+		}
+	}
+	Summary{ Set the MESSAGE register of one of my cells }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		P{
+		This instruction takes 3 arguments. An (x, y) vector and a value 'm'. The vector B{is NOT
+		normalized} so that the cell can send a message 'm' to any other cell in the same organism
+		(not just adjacent cells). For example, if cell 1 exectuted this these two instructions:
+		}
+
+		Code<<_EOF_
+			100     1 0 SEND   ; set cell 2's message register to 100
+			-46812  0 1 SEND   ; set cell 3's message register to -46812
+			0       0 0 SEND   ; set out message register to 0.
+			12   -99 99 SEND   ; does nothing because (-99, 99) is bogus
+		_EOF_
+
+		P{
+		A SEND operation using bogus coordinates will be ignored.
+		}
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+	The message 'm' will be placed in the message buffer for the cell 
+	indicated by the vector (x, y). Any cell offset can be speficied.
+	_EOF_
+}
+
+Instruction{
+	Name{RECV}
+	Type{COMMS}
+	Usage{ ( -- m ) }
+	Mode{ }
+	CSymbol{RECV}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ recieve message }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The RECV instruction just pushes a copy of our message register on top of
+		the data stack.
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+	Our message buffer 'm' is placed on top of the data stack.
+	_EOF_
+}
+
+//{
+// //////////////////////////////////////////////////////////////////////
+// QUERY
+// //////////////////////////////////////////////////////////////////////
+//}
+
+Instruction{
+	Name{ENERGY}
+	Type{QUERY}
+	Usage{ ( -- e ) }
+	Mode{ }
+	CSymbol{ENERGY}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ get energy of organism }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Get our organisms overall energy.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Get our organisms overall energy.
+	_EOF_
+}
+
+Instruction{
+	Name{AGE}
+	Type{QUERY}
+	Usage{ ( -- a ) }
+	Mode{ }
+	CSymbol{AGE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ return age of organism }
+	Inputs{ }
+
+	Returns{
+		P{The age of the organism}
+	}
+
+	Description{
+		Fetch the organisms "age" field (which is the number of elapsed simulation step)
+		and push this value on our data stack.
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Fetch the organisms 'age' field (which is the number of elapsed simulation step)
+		and push this value on our data stack.
+	_EOF_
+}
+
+Instruction{
+	Name{NUM-CELLS}
+	Type{QUERY}
+	Usage{ ( -- n ) }
+	Mode{ }
+	CSymbol{NUM_CELLS}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ number of cells }
+	Inputs{ }
+
+	Returns{
+		P{number of cells in this organism}
+	}
+
+	Description{
+		Push the number of cells that comprise this organism on our data stack.
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+	Get the number of cells in our organism 'n' on top of the data stack.
+	_EOF_
+}
+
+Instruction{
+	Name{HAS-NEIGHBOR}
+	Type{QUERY}
+	Usage{ ( x y -- r ) }
+	Mode{ }
+	CSymbol{HAS_NEIGHBOR}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ check for our cells }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{1} - at offset (x, y) is one of our cells. }
+		Item{ B{0} - at offset (x, y) it NOT one of our cells. }
+		}
+	}
+
+	Description{
+		Determine if a neighboring cell location contains our cell or not.
+	}
+
+	Energy{
+		Does not use energy.
+	}
+
+	Algorithm{
+		NumberedList{
+		Item{ On the data stack should be two values. If not, we ignore this instruction. }
+
+		Item{ The two values are popped off the stack (they are NOT normalized).
+			This forms an (x, y) vector that refers to one of our
+			nearby grid locations. }
+
+		Item{ If we have a cell at this (x, y) offset, then this instruction returns 1.
+		 Else 0 will be returned. }
+
+		Item{ The vector (0,0) is allowed, and always returns 1. }
+		}
+	}
+
+	Help<<_EOF_
+	check if we have a neighboring cell at the normalized coordinates (x, y). 
+	s is set to 1 if there is a neighbor, else s is set to 0.
+	_EOF_
+}
+
+//{ ======================================================================
+//
+// NEW INSTRUCTIONS
+//
+//}
+
+Instruction{
+	Name{MAKE-ORGANIC}
+	Type{INTERACT}
+	Usage{ (x y e -- s) }
+	Mode{ }
+	CSymbol{MAKE_ORGANIC}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={NOT USED}
+				1={NOT USED}
+		}
+	}
+
+	Summary{ create organic block }
+	Inputs{ }
+
+	Returns{
+		0 
+		Returns the amount of energy that was d
+	}
+
+	Description{
+		Create organic block at (x,y) offset with energy e.
+	}
+
+	Energy{
+		The energy 'e' is deducted from the organisms (or cells) energy.
+	}
+
+	Algorithm{
+		NumberedList{
+		Item{ Normalize the (x, y) ccoordinated, if the offset if not vacant return s=0. }
+		Item{ If organism doesn't have enough energy return s=0. }
+		Item{ If organic already exists, append 'e' energy to it and return s=e }
+		Item{ If blank exists then create new organic block with energy 'e'. return s=e }
+		}
+	}
+
+	Help<<_EOF_
+		Create organic block at (x,y) offset with energy 'e'.
+	_EOF_
+}
+
+
+Instruction{
+	Name{GROW.CB}
+	Type{INTERACT}
+	Usage{ (x y cb -- r) }
+	Mode{ }
+	CSymbol{GROW_CB}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ grow another cell }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{0} - could not create cell }
+		Item{ B{1} - new cell created }
+		}
+	}
+
+	Description{
+		Grow a new cell at (x,y) normalized offset. The new cell inherits the context
+		of the cell which executed the GROW.CB instruction. However, it will begin execution
+		at code block 'cb'.
+		Respects the B{Grow Max Size} setting. If the number of cells is already at the max size, then
+		GROW.CB will not succeed. Unprotected code cannot specify a protected code block number for B{cb}.
+	}
+
+	Energy{
+		Respects the B{Grow Energy} setting. If adding this cell would cause the total amount of energy per
+		cell to drop below the B{Grow Energy} amount, then GROW.CB fails.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Grow a new cell at (x,y) normalized offset. The new cell inherits the context
+		of the cell which executed the GROW.CB instruction. However, it will begin execution
+		at code block 'cb'.
+	_EOF_
+}
+
+Instruction{
+	Name{CSHIFT}
+	Type{INTERACT}
+	Usage{ (x y -- r) }
+	Mode{ }
+	CSymbol{CSHIFT}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={NOT USED}
+				1={NOT USED}
+		}
+	}
+	Summary{ shift a line of cells relative to the organism }
+	Inputs{ }
+
+	Returns{
+		Returns the number of cells that shifted.
+	}
+
+	Description{
+		This instruction is similar to CMOVE except a group of cells
+		move (or shift position in space) along a vector. If the shape
+		of the organism after the CSHIFT operation would violate the connectivity
+		of the organism then this instruction fails.
+	}
+
+	Energy{
+		Does not require energy.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Shift a line of cells along the normalized vector (x,y)
+		starting with the cell executing this instruction.
+	_EOF_
+}
+
+Instruction{
+	Name{SPAWN}
+	Type{INTERACT}
+	Usage{ (x y e strain cb -- r) }
+	Mode{ }
+	CSymbol{SPAWN}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={do not inherit cell register values}
+				1={inherit register values}
+		}
+		Bit1{	0={num. protected code blocks follows new strain}
+				1={num. protected code blocks follows old strain}
+		}
+		Bit2{	0={cannot spawn to a different strain}
+				1={can spawn to a different strain}
+		}
+		Bit3{	0={mutate the program using my strain's mutations settings}
+				1={do not mutate the program}
+		}
+		Bit4{	0={do not inherit data stack}
+				1={inherit N data stack items from top and bit-0 of N is 1}
+		}
+		Bit5{	0={do not inherit data stack}
+				1={inherit N data stack items from top and bit-1 of N is 1}
+		}
+		Bit6{	0={do not inherit data stack}
+				1={inherit N data stack items from top and bit-2 of N is 1}
+		}
+	}
+	Summary{ spawn a new organism of a particular strain }
+	Inputs{ }
+
+	Returns{
+		returns 1 if the spawn was successful, else 0.
+	}
+
+	Description{
+		Spawn a new organism at the (x,y) normalized offset.
+		Give it 'e' units of energy. Start running at code block 'cb.
+		The identity of the new organism will be strain 'strain'.
+		The cellular state of the spawned organism will inherit the cell
+		executing this instruction. Unprotected code cannot specify a protected
+		code block number for B{cb}.
+	}
+
+	Energy{
+		'e' units of energy are required.
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Spawn a new organism. Returns 1 on success, else 0.
+	_EOF_
+}
+
+Instruction{
+	Name{MAKE-BARRIER}
+	Type{INTERACT}
+	Usage{ (x y -- r) }
+	CSymbol{MAKE_BARRIER}
+	ReleaseLabel{ }
+
+	Mode{make_barrier_mode}
+	Min{0}
+	Max{3}
+	Flags{
+		Bit0{		
+			0={allowed to create a barrier}
+			1={not allowed to create a barrier}
+		}
+		Bit1{	
+			0={allowed to clear a barrier}
+			1={not allowed to clear a barrier}
+		}
+	}
+
+	Summary{ create (or clear) a barrier block }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+			Item{ B{0} - could not create barrier }
+			Item{ B{1} - could create barrier }
+		}
+	}
+
+	Description{
+		Creates a barrier block at the x y normalized offet.
+		If the location already contains a barrier block, then this instruction
+		will clear the barrier.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Creates a barrier block at the x y normalized offet. Returns 1 on
+		success and 0 on failure.
+	_EOF_
+}
+
+Instruction{
+	Name{SIZE}
+	Type{VISION}
+	Usage{ (x y -- size dist) }
+	Mode{ }
+	CSymbol{SIZE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ see the size of something }
+	Inputs{ }
+
+	Returns{
+		The number of cells (the 'size') in the organism seen along (x,y).
+		Also returns the distance.
+	}
+
+	Description{
+		Report the size (number of cells) of the object seen
+		along the normalized vector (x,y) from this cell.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Report the size (number of cells) of the object seen
+		along the normalized vector (x,y) from this cell.
+	_EOF_
+}
+
+Instruction{
+	Name{BIGGEST}
+	Type{VISION}
+	Usage{ (mask -- x y) }
+	Mode{ }
+	CSymbol{BIGGEST}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ find the biggest thing in view }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{x y} - the direction vector that is biggest and matches the 'mask' }
+		Item{ B{0 0} - nothing matched the 'mask' }
+		}
+	}
+
+	Description{
+		Look in all 8 directions. Return a B{non-normalized} (x,y) vector to
+		the biggest thing. This is the organism consisting of the most number of cells.
+		The returned (x,y) vector is not normalized, so it might return (-6,6) instead of (-1,1).
+		
+		P{B{mask} values are the same as B{what} values. If any bit matches the B{what}
+		from LOOK'ing along that vector then we match.}
+		VisionMask{}
+
+		P{This instruction also uses the LINK{URL{#ref_LOOK}LOOK Mode bits}.}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Look in all 8 directions. Return a non-normalized (x,y) vector to
+		the biggest thing. This is the organism consisting of the most number of cells.
+		The returned (x,y) vector is not normalized.
+	_EOF_
+}
+
+Instruction{
+	Name{SMALLEST}
+	Type{VISION}
+	Usage{ (mask -- x y) }
+	Mode{ }
+	CSymbol{SMALLEST}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ find the smallest thing in view }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{x y} - the direction vector that is smallest and matches the 'mask' }
+		Item{ B{0 0} - nothing matched the 'mask' }
+		}
+	}
+
+	Description{
+		Look in all 8 directions. Return a B{non-normalized} (x,y) vector to
+		the smallest thing. This is the organism with the least number of cells.
+		The returned (x,y) vector is not normalized, so it might return (-6,6) instead of (-1,1).
+
+		P{B{mask} values are the same as B{what} values. If any bit matches the B{what}
+		from LOOK'ing along that vector then we match.}
+		VisionMask{}
+
+		P{This instruction also uses the LINK{URL{#ref_LOOK}LOOK Mode bits}.}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Look in all 8 directions. Return a non-normalized (x,y) vector to
+		the smallest thing. This is the organism with the least number of cells.
+		The returned (x,y) vector is not normalized.
+	_EOF_
+}
+
+Instruction{
+	Name{TEMPERATURE}
+	Type{VISION}
+	Usage{ (x y -- energy dist) }
+	Mode{ }
+	CSymbol{TEMPERATURE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ get the energy of cell seen along (x,y) }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{energy dist} -  the energy and distance }
+		Item{ B{0 0} - nothing with energy found  }
+		}
+	}
+
+	Description{
+		Get the energy of cell seen along (x,y). This is B{per cell}. For organisms we divide the
+		total energy the organism has by the number of cells the organism has.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		get the energy of cell seen along (x,y)
+	_EOF_
+}
+
+Instruction{
+	Name{HOTTEST}
+	Type{VISION}
+	Usage{ (mask -- x y) }
+	Mode{ }
+	CSymbol{HOTTEST}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ find the most energetic cell in view }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{x y} - the direction vector that is hottest and matches the 'mask' }
+		Item{ B{0 0} - nothing matched the 'mask' }
+		}
+	}
+
+	Description{
+		Look in all 8 directions. Return a B{non-normalized} (x,y) vector to
+		the hottest thing. This is the organism with the most energy per cell.
+		The returned (x,y) vector is not normalized, so it might return (-6,6) instead of (-1,1).
+
+		P{B{mask} values are the same as B{what} values. If any bit matches the B{what}
+		from LOOK'ing along that vector then we match.}
+		VisionMask{}
+
+		P{This instruction also uses the LINK{URL{#ref_LOOK}LOOK Mode bits}.}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Look in all 8 directions. Return a non-normalized (x,y) vector to
+		the hottest thing. This is the organism with the most energy per cell.
+		The returned (x,y) vector is not normalized, so it might return (-6,6) instead of (-1,1).
+	_EOF_
+}
+
+Instruction{
+	Name{COLDEST}
+	Type{VISION}
+	Usage{ (mask -- x y) }
+	Mode{ }
+	CSymbol{COLDEST}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ find the least energetic cell in view }
+	Inputs{ }
+
+	Returns{
+		BulletList{
+		Item{ B{x y} - the direction vector that is coldest and matches the 'mask' }
+		Item{ B{0 0} - nothing matched the 'mask' }
+		}
+	}
+
+	Description{
+		Look in all 8 directions. Return a B{non-normalized} (x,y) vector to
+		the coldest thing. This is the organism with the least energy per cell.
+		The returned (x,y) vector is not normalized, so it might return (-6,6) instead of (-1,1).
+
+		P{B{mask} values are the same as B{what} values. If any bit matches the B{what}
+		from LOOK'ing along that vector then we match.}
+		VisionMask{}
+
+		P{This instruction also uses the LINK{URL{#ref_LOOK}LOOK Mode bits}.}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Look in all 8 directions. Return a non-normalized (x,y) vector to
+		the coldest thing. This is the organism with the least energy per cell.
+		The returned (x,y) vector is not normalized.
+	_EOF_
+}
+
+Instruction{
+	Name{SHOUT}
+	Type{COMMS}
+	Usage{ (m -- r) }
+	Mode{ }
+	CSymbol{SHOUT}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={i can shout thru myself}
+				1={i cannot shout thru myself}
+		}
+		Bit1{	0={i can shout at cells that belong to my strain}
+				1={i cannot shout at cells that belong to my strain}
+		}
+		Bit2{	0={i can shout at cells that belong to OTHER strains}
+				1={i cannot shout at cells that belong to OTHER strains}
+		}
+		Bit3{	0={other strains can shout at me}
+				1={other strains cannot shout at me}
+		}
+		Bit4{	0={do not interrupt me, when somebody shouts a message to me}
+				1={interrupt me and bit 0 of the trap number shall be 1}
+		}
+		Bit5{	0={do not interrupt me, when somebody shouts a message to me}
+				1={interrupt me and bit 1 of the trap number shall be 1}
+		}
+		Bit6{	0={do not interrupt me, when somebody shouts a message to me}
+				1={interrupt me and bit 2 of the trap number shall be 1}
+		}
+	}
+	Summary{ broadcast a message to another organism }
+	Inputs{ }
+
+	Returns{
+		The number of cells that recieved the message.
+	}
+
+	Description{
+		Broadcast a message to another organism.
+		Send the message 'm' outward in all 8 directions.
+		If a cell is reached, then set it's MESSAGE register to be 'm'.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Broadcast a message to another organism.
+		Send the message 'm' outward in all 8 directions.
+		If a cell is reached, then set it's MESSAGE register to be 'm'.
+	_EOF_
+}
+
+Instruction{
+	Name{SAY}
+	Type{COMMS}
+	Usage{ (m x y -- dist) }
+	Mode{ }
+	CSymbol{SAY}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={i can speak thru myself}
+				1={i cannot speak thru myself}
+		}
+		Bit1{	0={i can speak at cell that belong to my organism}
+				1={i cannot speak at cell that belong to my organism}
+		}
+		Bit2{	0={i can speak at cells that belong to my strain}
+				1={i cannot speak at cells that belong to my strain}
+		}
+		Bit3{	0={i can speak at cell that belong to OTHER strains}
+				1={i cannot speak at cell that belong to OTHER strains}
+		}
+		Bit4{	0={other strains can speak at me}
+				1={other strains cannot speak at me}
+		}
+		Bit5{	0={do not interrupt me, when somebody speaks a message to me}
+				1={interrupt me and bit 0 of the trap number shall be 1}
+		}
+		Bit6{	0={do not interrupt me, when somebody speaks a message to me}
+				1={interrupt me and bit 1 of the trap number shall be 1}
+		}
+		Bit7{	0={do not interrupt me, when somebody speaks a message to me}
+				1={interrupt me and bit 2 of the trap number shall be 1}
+		}
+	}
+	Summary{ send a message along a line to another organism }
+	Inputs{ }
+
+	Returns{
+		Returns non-zero on success. The returned value is
+		the distance to the cell that successfully recieved the message, or 0 if no message delivered.
+	}
+
+	Description{
+		The (x,y) normalized direction vector will be used to
+		send the message 'm'.
+		If a cell is reached, then set it's MESSAGE register to be 'm'.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The (x,y) normalized direction vector will be used to
+		send the message 'm'. If a cell is reached, then set it's
+		MESSAGE register to be 'm'. Returns non-zero on success.
+	_EOF_
+}
+
+Instruction{
+	Name{LISTEN}
+	Type{COMMS}
+	Usage{ (x y -- mood dist) }
+	Mode{ }
+	CSymbol{LISTEN}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={when listening along a line any cells that belong to my organism are ignored}
+				1={when listening along a line any cells that belong to my organism stop the listing process and report nothing}
+		}
+	}
+	Summary{ read MOOD register from a cell from another organism }
+	Inputs{ }
+
+	Returns{
+		Returns the mood and distance value, or 0 0 if nothing heard.
+	}
+
+	Description{
+		Listen along the normalized vector (x,y). If another cell was found
+		return its MOOD register and distance.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Listen along the normalized vector (x,y). If another cell was found
+		return its MOOD register and distance.
+	_EOF_
+}
+
+//{ ---------------------------------------------------------------------- }
+Instruction{
+	Name{READ}
+	Type{COMMS}
+	Usage{ (x y cb cbme -- rc) }
+	Mode{ }
+	CSymbol{READ}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={i cannot read from myself}
+				1={i can read from myself}
+		}
+		Bit1{	0={i can read from cells/spores that belong to my strain}
+				1={i cannot read from cells/spores that belong to my strain}
+		}
+		Bit2{	0={i cannot read from cells/spores that belong to OTHER strains}
+				1={i can read from cells/spores that belong to OTHER strains}
+		}
+		Bit3{	0={i can read from spores}
+				1={i cannot read from spores}
+		}
+		Bit4{	0={i can read from cells}
+				1={i cannot read from cells}
+		}
+		Bit5{	0={other strains can read from me}
+				1={other strains cannot read from me}
+		}
+		Bit6{	0={mutate the code block being read with my strain's mutation settings.}
+				1={do not mutate the code block being read}
+		}
+	}
+	Summary{ read an entire code block from another cell or spore }
+	Inputs{ }
+
+	Returns{
+		On success, the length of the code block read is returned.
+		On failure, a negative error code is returned.
+
+		BulletList{
+		Item{ B{-1:}			no such cb }
+		Item{ B{-2:}			no such cbme }
+		Item{ B{-3:}			invalid coordinates }
+		Item{ B{-4:}			bad protection for cb }
+		Item{ B{-5:}			bad protection for cbme }
+		Item{ B{-6:}			bad strains }
+		Item{ B{-7:}			spore not allowed }
+		Item{ B{-8:}			cell not allowed }
+		Item{ B{-9:}			self not allowed }
+		Item{ B{-10:}			target cell unreadable}
+		Item{ B{-11:}			bad instruction mapping }
+		Item{ B{-12:}			protected instructions }
+		}
+	}
+
+	Description{
+		Read code block 'cb' from the cell or spore located
+		at the normalized (x,y) coordinates. Place the result
+		into 'cbme'.
+		It is not possible to grow the number of code blocks of a program with
+		this instruction.
+		The destination code block 'cbme' must already exist.
+
+		P{
+		Unprotected code cannot READ if 'cb' or 'cbme' is protected.
+		Unprotected code cannot read a protected instruction.
+		}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Read code block 'cb' from the cell or spore located
+		at the normalized (x,y) coordinates. Place the result
+		into 'cbme'.
+		On success, the length of the code block read is returned.
+		On failure, a negative error code is returned.
+	_EOF_
+}
+
+Instruction{
+	Name{WRITE}
+	Type{COMMS}
+	Usage{ (x y cb cbme -- rc) }
+	Mode{ }
+	CSymbol{WRITE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={i cannot write to myself}
+				1={i can write to myself}
+		}
+		Bit1{	0={i can write to cells/spores that belong to my strain}
+				1={i cannot write to cells/spores that belong to my strain}
+		}
+		Bit2{	0={i cannot write to cells/spores that belong to OTHER strains}
+				1={i can write to cells/spores that belong to OTHER strains}
+		}
+		Bit3{	0={i can write to spores}
+				1={i cannot write to spores}
+		}
+		Bit4{	0={i can write to cells}
+				1={i cannot write to cells}
+		}
+		Bit5{	0={other strains can write to me}
+				1={other strains cannot write to at me}
+		}
+		Bit6{	0={mutate the code block being written with my strain's mutation settings.}
+				1={do not mutate the code block being written}
+		}
+		Bit7{	0={do not interrupt me, when somebody writes to me}
+				1={interrupt me and bit 0 of the trap number shall be 1}
+		}
+		Bit8{	0={do not interrupt me, when somebody writes to me}
+				1={interrupt me and bit 1 of the trap number shall be 1}
+		}
+		Bit9{	0={do not interrupt me, when somebody writes to me}
+				1={interrupt me and bit 2 of the trap number shall be 1}
+		}
+
+	}
+	Summary{ write an entire code block to another cell or spore }
+	Inputs{ }
+
+	Returns{
+		On success, the length of the code block written is returned.
+		On failure, a negative error code is returned.
+
+		BulletList{
+		Item{ B{-1:}			no such cb }
+		Item{ B{-2:}			no such cbme }
+		Item{ B{-3:}			invalid coordinates }
+		Item{ B{-4:}			bad protection for cb }
+		Item{ B{-5:}			bad protection for cbme }
+		Item{ B{-6:}			bad strains }
+		Item{ B{-7:}			spore not allowed }
+		Item{ B{-8:}			cell not allowed }
+		Item{ B{-9:}			self not allowed }
+		Item{ B{-10:}			target cell unwriteable}
+		Item{ B{-11:}			bad instruction mapping }
+		Item{ B{-12:}			protected instructions }
+		}
+	}
+
+	Description{
+		Write code block 'cbme' to another cell or spore. The cell
+		is located at the normalized (x, y) offset from this cell.
+		The destination code block number is given by 'cb'.
+		It is not possible to grow the number of code blocks of a program.
+		The destination code block 'cb' must already exist.
+
+		P{
+		Unprotected code cannot WRITE if 'cb' or 'cbme' is protected.
+		Unprotected code cannot write a protected instruction.
+		}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Write code block 'cbme' to another cell or spore. The cell
+		is located at the normalized (x, y) offset from this cell.
+		The destination code block number is given by 'cb'.
+		On success, the length of the code block written is returned.
+		On failure, a negative error code is returned.
+	_EOF_
+}
+
+Instruction{
+	Name{EXUDE}
+	Type{INTERACT}
+	Usage{ (value x y -- ) }
+	Mode{ }
+	CSymbol{EXUDE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={i can exude on any surrounding square}
+				1={i cannot exude on any surrounding square, if it's occupied by anything}
+		}
+		Bit1{	0={i can exude on any surrounding square}
+				1={i cannot exude on any surrounding square, if it's occupied by barrier}
+		}
+		Bit2{	0={i can exude on any surrounding square, if it's occupied by cells from another organism}
+				1={i cannot exude on any surrounding square, if it's occupied by cell from another organism}
+		}
+		Bit3{	0={i can exude on any surrounding square, if it's occupied by cell from another strain}
+				1={i cannot exude on any surrounding square, if it's occupied by cell from another strain}
+		}
+		Bit4{	0={i can exude on a spore}
+				1={i cannot exude on a spore}
+		}
+		Bit5{	0={i can exude on an organic block}
+				1={i cannot exude an an organic block}
+		}
+	}
+	Summary{ excrete a value onto the grid }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		excrete a value onto the grid
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		excrete a value onto the grid
+	_EOF_
+}
+
+Instruction{
+	Name{SMELL}
+	Type{INTERACT}
+	Usage{ (x y -- value) }
+	Mode{ }
+	CSymbol{SMELL}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ read a value from the grid }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		read a value from the grid that was previously B{EXUDE'd}.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		read a value from the grid that was previously EXUDE'd.
+	_EOF_
+}
+
+Instruction{
+	Name{G0}
+	Type{UNIVERSE}
+	Usage{ ( -- value) }
+	Mode{ }
+	CSymbol{G0}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ get universe-wide global variable }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Get universe-wide global variable. This is a common global that all CELL's can query
+		with this instruction.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Get universe-wide global variable.
+	_EOF_
+}
+
+Instruction{
+	Name{G0!}
+	Type{UNIVERSE}
+	Usage{ (value -- ) }
+	Mode{ }
+	CSymbol{SET_G0}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ set universe-wide global variable }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Set universe-wide global variable. This is a common global that all CELL's can write to
+		with this instruction.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Set universe-wide global variable.
+	_EOF_
+}
+
+Instruction{
+	Name{S0}
+	Type{UNIVERSE}
+	Usage{ ( -- value) }
+	Mode{ }
+	CSymbol{S0}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ get strain-wide global variable }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Get strain-wide global variable. Each strain has its own B{S0} global variable. This
+		instruction allows the strain specific variable to be queried.
+		P{
+		This variable can be used by a swarm of organisms, from the same strain, to coordinate their activies.
+		}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Get strain-wide global variable.
+	_EOF_
+}
+
+Instruction{
+	Name{S0!}
+	Type{UNIVERSE}
+	Usage{ (value -- ) }
+	Mode{ }
+	CSymbol{SET_S0}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ set strain-wide global variable }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Set strain-wide global variable. Each strain has its own B{S0} global variable. This
+		instruction allows the strain specific variable to be written to.
+
+		P{
+		This variable can be used by a swarm of organisms, from the same strain, to coordinate their activies.
+		}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Set strain-wide global variable.
+	_EOF_
+}
+
+Instruction{
+	Name{NEIGHBORS}
+	Type{QUERY}
+	Usage{ ( -- mask) }
+	Mode{ }
+	CSymbol{NEIGHBOR}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ }
+	Inputs{ }
+
+	Returns{
+		A bit mask representing the surrounding neighbors.
+		BulletList{
+		Item{ B{bit-0} - North neighbor. Offset (0, 1) }
+		Item{ B{bit-1} - North East neighbor. Offset (1, 1) }
+		Item{ B{bit-2} - East neighbor. Offset (1, 0) }
+		Item{ B{bit-3} - South East neighbor. Offset (1, -1) }
+		Item{ B{bit-4} - South neighbor. Offset (0, -1) }
+		Item{ B{bit-5} - South West neighbor. Offset (-1, -1) }
+		Item{ B{bit-6} - West neighbor. Offset (-1, 0) }
+		Item{ B{bit-7} - North West neighbor. Offset (-1, 1) }
+		}
+	}
+
+	Description{
+		Returns a bitmask with a '1' bit set for a neighor in that direction.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Returns a bitmask with a '1' bit set for a neighor in that direction.
+	_EOF_
+}
+
+Instruction{
+	Name{POPULATION}
+	Type{UNIVERSE}
+	Usage{ ( -- pop) }
+	Mode{ }
+	CSymbol{POPULATION}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ total population }
+	Inputs{ }
+
+	Returns{
+		The total population of the universe. This is the total number
+		or organisms.
+	}
+
+	Description{
+		Return the current population.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Return the current population.
+	_EOF_
+}
+
+Instruction{
+	Name{POPULATION.S}
+	Type{UNIVERSE}
+	Usage{ ( -- pop) }
+	Mode{ }
+	CSymbol{POPULATION_STRAIN}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ strain population }
+	Inputs{ }
+
+	Returns{
+		The population (number of organisms) for my strain.
+	}
+
+	Description{
+		Return the current population of my strain.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Return the current population of my strain.
+	_EOF_
+}
+
+Instruction{
+	Name{GPS}
+	Type{QUERY}
+	Usage{ ( -- x y) }
+	Mode{ }
+	CSymbol{GPS}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ get current position }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Returns the absolute grid coordinates for the cell executing this instruction.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Returns the absolute grid coordinates for the cell executing
+		this instruction.
+	_EOF_
+}
+
+Instruction{
+	Name{KEY-PRESS}
+	Type{UNIVERSE}
+	Usage{ ( -- key) }
+	Mode{ }
+	CSymbol{KEY_PRESS}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{
+		Bit0{	0={do not interrupt me, when KEY-PRESS changes}
+				1={interrupt me on KEY-PRESS change, and bit 0 of the trap number shall be 1}
+		}
+
+		Bit1{	0={do not interrupt me, when KEY-PRESS changes}
+				1={interrupt me on KEY-PRESS change, and bit 1 of the trap number shall be 1}
+		}
+
+		Bit2{	0={do not interrupt me, when KEY-PRESS changes}
+				1={interrupt me on KEY-PRESS change, and bit 2 of the trap number shall be 1}
+		}
+
+		Bit3{	0={do not interrupt me, when MOUSE-POS changes}
+				1={interrupt me on MOUSE-POS change, and bit 0 of the trap number shall be 1}
+		}
+
+		Bit4{	0={do not interrupt me, when MOUSE-POS changes}
+				1={interrupt me on MOUSE-POS change, and bit 1 of the trap number shall be 1}
+		}
+
+		Bit5{	0={do not interrupt me, when MOUSE-POS changes}
+				1={interrupt me on MOUSE-POS change, and bit 2 of the trap number shall be 1}
+		}
+	}
+	Summary{ read keyboard }
+	Inputs{ }
+
+	Returns{
+		Returns the ascii character code. Returns 0 if no key is pressed.
+	}
+
+	Description{
+		Get the keyboard character being pressed. Or 0 if nothing is being
+		pressed.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Get the keyboard character being pressed. Or 0 if nothing is being
+		pressed.
+	_EOF_
+}
+
+Instruction{
+	Name{MOUSE-POS}
+	Type{UNIVERSE}
+	Usage{ ( -- x y) }
+	Mode{ }
+	CSymbol{MOUSE_POS}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ get mouse position }
+	Inputs{ }
+
+	Returns{
+		Returns a coordinate in the universe which was set by the user clicking in the grid
+		when in MOUSE-POS mode. Returns (-1,-1) if no position set.
+	}
+
+	Description{
+		Query the mouse position. The mouse position is a coordinate in the universe coordinate space.
+		This position was set externally by the user right clicking on a grid location when in 'MOUSE-POS' mode.
+		See the KEY-PRESS instruction modes to configure interrupts for the mouse position.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Query the mouse position. Returns (0, 0) if no mouse position set.
+	_EOF_
+}
+
+Instruction{
+	Name{DIST}
+	Type{MISC}
+	Usage{ (x y -- dist) }
+	Mode{ }
+	CSymbol{DIST}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ compute vector distance }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Computes the maximum of ABS(x) and ABS(y).
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Computes the maximum of ABS(x) and ABS(y).
+	_EOF_
+}
+
+Instruction{
+	Name{CHOOSE}
+	Type{MISC}
+	Usage{ (min max -- rnd) }
+	Mode{ }
+	CSymbol{CHOOSE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ pick random value between two values }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		pick random value between two values
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		pick random value between two values
+	_EOF_
+}
+
+Instruction{
+	Name{RND}
+	Type{MISC}
+	Usage{ ( -- rnd) }
+	Mode{ }
+	CSymbol{RND}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ return random value between MIN_INT and MAX_INT }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		return random value between MIN_INT and MAX_INT.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		return random value between MIN_INT and MAX_INT.
+	_EOF_
+}
+
+//{
+// //////////////////////////////////////////////////////////////////////
+// FIND dialog instructions
+// //////////////////////////////////////////////////////////////////////
+//}
+
+
+Instruction{
+	Key{FIND_ID}
+	Name{ID}
+	Type{FIND}
+	Usage{ ( -- id) }
+	Mode{ }
+	CSymbol{Find_ID}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the organism ID (modulos 10,000). }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The organism ID. Because organism ID's are large integers, and KFORTH can only
+		handle 16-bit numbers, the organism ID is modulos 10,000.
+
+		P{
+		Example: an organism id of B{10,062,527} becomes B{2527} with this instruction.
+		}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The organism ID (modulos 10,000).
+	_EOF_
+}
+
+Instruction{
+	Key{FIND_PARENT1}
+	Name{PARENT1}
+	Type{FIND}
+	Usage{ ( -- parent1) }
+	Mode{ }
+	CSymbol{Find_PARENT1}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the parent1 ID (modulos 10,000) }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The parent1 ID. Because organism ID's are large integers, and KFORTH can only
+		handle 16-bit numbers, the organism ID is modulos 10,000.
+
+		P{
+		Example: a parent id 1 of B{10,062,527} becomes B{2527} with this instruction.
+		}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The parent1 ID (modulos 10,000).
+	_EOF_
+}
+
+Instruction{
+	Key{FIND_PARENT2}
+	Name{PARENT2}
+	Type{FIND}
+	Usage{ ( -- parent2) }
+	Mode{ }
+	CSymbol{Find_PARENT2}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the parent2 ID (modulos 10,000) }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The parent2 ID. Because organism ID's are large integers, and KFORTH can only
+		handle 16-bit numbers, the organism ID is modulous 10,000.
+
+		P{
+		Example: a parent id 2 of B{10,062,527} becomes B{2527} with this instruction.
+		}
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The parent2 ID (modulos 10,000).
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_STRAIN}
+	Name{STRAIN}
+	Type{FIND}
+	Usage{ ( -- strain) }
+	Mode{ }
+	CSymbol{Find_STRAIN}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the strain number }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The strain number. A number between 0 and 7.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The strain number.
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_ENERGY}
+	Name{ENERGY}
+	Type{FIND}
+	Usage{ ( -- e) }
+	Mode{ }
+	CSymbol{Find_ENERGY}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the energy of the organism }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The energy of the organism. If the energy is more than 32,767 then
+		this instruction returns 32,767.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The energy of the organism.
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_GENERATION}
+	Name{GENERATION}
+	Type{FIND}
+	Usage{ ( -- g) }
+	Mode{ }
+	CSymbol{Find_GENERATION}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the generation. }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The generation. If the generation is more than 32,767 then
+		this instruction returns 32,767.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The generation.
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_NUM-CELLS}
+	Name{NUM-CELLS}
+	Type{FIND}
+	Usage{ ( -- n) }
+	Mode{ }
+	CSymbol{Find_NUM_CELLS}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the number of cells that the organism consists of. }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The number of cells that the organism consists of.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The number of cells that the organism consists of.
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_AGE}
+	Name{AGE}
+	Type{FIND}
+	Usage{ ( -- n) }
+	Mode{ }
+	CSymbol{Find_AGE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the age of the organism (divided by 1,000). }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The age of the organism dividied by 1000. If this is more than 32,767 then
+		this instruction returns 32,767.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The age of the organism (divided by 1,000).
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_NCHILDREN}
+	Name{NCHILDREN}
+	Type{FIND}
+	Usage{ ( -- n) }
+	Mode{ }
+	CSymbol{Find_NCHILDREN}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the number of living children. }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The number of living children. We scan the simulation and count the number of organisms that
+		have this organism as its parent1 or parent2.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The number of living children descended from this organism.
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_EXECUTING}
+	Name{EXECUTING}
+	Type{FIND}
+	Usage{ (cb -- bool) }
+	Mode{ }
+	CSymbol{Find_EXECUTING}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Does organism have a cell currently executing inside code block 'cb'? }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Does organism have a cell currently executing inside code block 'cb'?
+		Returns 1 or 0.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Does organism have a cell currently executing inside code block 'cb'?
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_NUM-CB}
+	Name{NUM-CB}
+	Type{FIND}
+	Usage{ ( -- n) }
+	Mode{ }
+	CSymbol{Find_NUM_CB}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the total number of code blocks the organism has. }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The total number of code blocks the organism has.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The total number of code blocks the organism has.
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_NUM-DEAD}
+	Name{NUM-DEAD}
+	Type{FIND}
+	Usage{ ( -- n) }
+	Mode{ }
+	CSymbol{Find_NUM_DEAD}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ the number of cells that have just died (colored red). }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		The number of cells that have just died (colored red).
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		The number of cells that have just dies (colored red).
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_MAX-ENERGY}
+	Name{MAX-ENERGY}
+	Type{FIND}
+	Usage{ ( -- e) }
+	Mode{ }
+	CSymbol{Find_MAX_ENERGY}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Constant: for all organisms return the MAXIMUM energy amount}
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Constant: for all organisms return the MAXIMUM energy amount.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Constant: for all organisms return the MAXIMUM energy amount.
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_MIN-ENERGY}
+	Name{MIN-ENERGY}
+	Type{FIND}
+	Usage{ ( -- e) }
+	Mode{ }
+	CSymbol{Find_MIN_ENERGY}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Constant: for all organisms return the MINIMUM energy amount }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Constant: for all organisms return the MINIMUM energy amount.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Constant: for all organisms return the MINIMUM energy amount.
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_AVG-ENERGY}
+	Name{AVG-ENERGY}
+	Type{FIND}
+	Usage{ ( -- e) }
+	Mode{ }
+	CSymbol{Find_AVG_ENERGY}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Constant: for all organisms return the AVERAGE energy amount }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Constant: for all organisms return the AVERAGE energy amount
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Constant: for all organisms return the AVERAGE energy amount
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_MAX-AGE}
+	Name{MAX-AGE}
+	Type{FIND}
+	Usage{ ( -- n) }
+	Mode{ }
+	CSymbol{Find_MAX_AGE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Constant: for all organisms return the MAXIMUM age (divided by 1,000).  }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Constant: for all organisms return the MAXIMUM age (divided by 1,000).
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Constant: for all organisms return the MAXIMUM age (divided by 1,000).
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_MIN-AGE}
+	Name{MIN-AGE}
+	Type{FIND}
+	Usage{ ( -- n) }
+	Mode{ }
+	CSymbol{Find_MIN_AGE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Constant: for all organisms return the MINIMUM age (divided by 1,000). }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Constant: for all organisms return the MINIMUM age (divided by 1,000).
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Constant: for all organisms return the MINIMUM age (divided by 1,000).
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_AVG-AGE}
+	Name{AVG-AGE}
+	Type{FIND}
+	Usage{ ( -- n) }
+	Mode{ }
+	CSymbol{Find_AVG_AGE}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Constant: for all organisms return the AVERAGE age (divided by 1,000). }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Constant: for all organisms return the AVERAGE age (divided by 1,000).
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Constant: for all organisms return the AVERAGE age (divided by 1,000).
+	_EOF_
+}
+
+
+Instruction{
+	Key{FIND_MAX-NUM-CELLS}
+	Name{MAX-NUM-CELLS}
+	Type{FIND}
+	Usage{ ( -- n) }
+	Mode{ }
+	CSymbol{Find_MAX_NUM_CELLS}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ Constant: for all organisms return the MAXIMUM number of cells an organism has. }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+		Constant: for all organisms return the MAXIMUM number of cells an organism has.
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+		Constant: for all organisms return the MAXIMUM number of cells an organism has.
+	_EOF_
+}
+
+//{
+// This is the template you can use
+//
+// Name is the instruction Name
+// Use Key{} (optional tag) when Name conflicts with an existing instruction, then
+// Key{KEY} becomes the key.
+//
+// Summary	- Used in tabular output description of the instruction can be tagged with rich tags.
+// Help		- used in the C code help.cpp description of the instruction
+// Description - Used detailed description of the instruction
+//	
+//
+
+Instruction{
+	Key{KK}
+	Name{XX}
+	Type{TT}
+	Usage{ ( -- ) }
+	Mode{ }
+	CSymbol{KK}
+	ReleaseLabel{ }
+	Min{ }
+	Max{ }
+	Flags{ }
+	Summary{ }
+	Inputs{ }
+
+	Returns{
+	}
+
+	Description{
+	}
+
+	Energy{
+	}
+
+	Algorithm{
+	}
+
+	Help<<_EOF_
+	_EOF_
+}
+
+}

@@ -1,0 +1,33 @@
+include{common.tt}
+MySite.window_title{ Set MOUSE-POS }
+MySite.body{
+
+Section{Set MOUSE-POS}
+P{
+Click on Icon{tb_rctool.jpg}, and select the B{Set MOUSE-POS} tool. Now you can click
+on any grid location to set an B{"X"} marker.
+}
+
+P{
+The instruction TT{MOUSE-POS} returns the coordinates of this marker.
+See LINK{ URL{organisms.html#ref_MOUSE-POS} MOUSE-POS} instruction.
+}
+
+IMG{setmousepos.jpg}
+
+P{
+To clear the marker click on it again.
+When there is no "X" marker set, the TT{MOUSE-POS} instruction returns (-1, -1).
+}
+
+P{
+Another way to clear the MOUSE-POS marker is from the menu: B{Edit >> Clear MOUSE-POS}
+(Or press B{Command-M}).
+}
+
+P{
+This feature can be used to give mouse input to organisms. Either for interactive purposes, or
+to set a goal for the evolving creatures to seek out.
+}
+
+} //{ MySite.body }

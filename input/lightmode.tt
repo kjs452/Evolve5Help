@@ -1,0 +1,45 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Light Mode Screen Shots }
+MySite.body{
+
+Title{Light Mode}
+
+P{
+Some screen shot renderings using the normal Light Mode on MacOS:
+}
+
+IMGCB{lm_ss1.jpg}
+
+BREAK{}
+HRULE{}
+BREAK{}
+
+IMGCB{lm_ss2.jpg}
+
+BREAK{}
+HRULE{}
+BREAK{}
+
+IMGCB{lm_ss3.jpg}
+
+BREAK{}
+HRULE{}
+BREAK{}
+
+IMGCB{lm_ss4.jpg}
+
+BREAK{}
+HRULE{}
+BREAK{}
+
+IMGC{lm_ss5.jpg}
+
+BREAK{}
+HRULE{}
+BREAK{}
+
+IMGC{lm_ss6.jpg}
+
+BREAK{}
+
+} //{ MySite.body }

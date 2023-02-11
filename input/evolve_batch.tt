@@ -1,0 +1,128 @@
+include{common.tt}
+MySite.window_title{ Evolve Batch Utility }
+MySite.body{
+
+Section{Evolve Batch Utility}
+P{
+TT{evolve_batch} is a command line utility. It runs on both
+linux and windows. The primary purpose is to run a simulation from
+a shell or console window (without the GUI).
+}
+
+Section{Command line modes}
+BulletList{
+Item{ SH{ s } -- simulate }
+Item{ SH{ sf } -- simulate forever }
+Item{ SH{ t } -- generate terrain from image file }
+Item{ SH{ p } -- print information }
+Item{ SH{ k } -- execute kforth program and print top of data stack. }
+Item{ SH{ = } -- compare two .evolve files  }
+Item{ SH{ 1s } -- simulate until 1 strain left }
+Item{ SH{ rc } -- pick random creature and display its KFORTH. }
+}
+
+HRULE{}
+
+Section{s}
+Code<<_EOF_
+	C:\> evolve_batch s 24h input.evolve output.evole
+
+	C:\> evolve_batch s 60m input.evolve output.evole
+
+	C:\> evolve_batch s 3600s input.evolve output.evole
+
+	C:\> evolve_batch s 1000u input.evolve output.evole
+_EOF_
+
+Section{sf}
+P{
+Runs forever writing to the output file every interval.
+}
+
+P{
+All 4 of these commands will read TT{input.evolve} and when finished
+the output is written to TT{output.evolve}. The input will not be changed
+by these commands.
+}
+
+P{
+The first commmand runs the simulation for 24 hours. The second command runs
+the simulation for 60 minutes. The third command runs the simulation for 3600 seconds.
+}
+
+P{
+The last command runs the simulation for 1000 B{steps}. This last variation
+is not timer based. It simply runs the simulation for that many steps.
+}
+
+HRULE{}
+
+Section{t}
+P{
+Generate terrain from an image file:
+}
+
+Code<<_EOF_
+       evolve_batch t <infile.png> min max <outfile.txt>
+            (generate terrain file from image. min/max form the greyscale pixel inclusion range)
+
+		evolve_batch t foobar.jpg 128 140 foobar.txt
+
+		evolve_batch t group_face.png 120 140 terrain_file.txt
+
+_EOF_
+
+HRULE{}
+
+Section{p}
+P{
+B{Evolve_batch} will also dump statistics about a simulation file.
+}
+
+Code<<_EOF_
+	C:\> evolve_batch p some_file.evolve
+
+filename         some_file.evolve
+step             35627500
+nborn            713951387
+ndie             713949271
+width            500
+height           400
+seed             12410
+norganism        2117
+energy           150000
+num_cells        4063
+num_instructions 185693
+call_stack_nodes 4019
+data_stack_nodes 11671
+num_organic      1499
+num_spores       644
+num_sexual       0
+grid_memory      1600000
+cstack_memory    64304
+dstack_memory    186736
+program_memory   2226401
+organism_memory  801136
+spore_memory     15456
+check_sum        5711437
+_EOF_
+
+HRULE{}
+
+Section{k}
+
+HRULE{}
+
+Section{=}
+
+HRULE{}
+
+Section{1s}
+(not implemented)
+
+HRULE{}
+
+Section{rc}
+(not implemented)
+
+} //{ MySite.body }

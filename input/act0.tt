@@ -1,0 +1,56 @@
+include{common.tt}
+MySite.window_title{ Activity 0: Basic Simulation }
+MySite.body{
+
+Title{Activity 0: Basic Simulation}
+
+P{
+You can use the following parameters for a good simulation.
+}
+
+P{
+B{Energy:} Use smaller amounts of energy to reduce the overall population that will be reached.
+You will want to adjust the size of the simulation to the performance of your computer for best results.
+E.g., If 4,000 organisms is too slow, reduce energy until you only have 2,000 organisms.
+}
+
+IMGCB{start3.jpg}
+
+P{
+Make sure to protect the TT{MAKE-BARRIER} and TT{SPAWN} instructions, otherwise you will see
+lots of random barrier blocks created. (And SPAWN will could stop evolution since it does not mutate).
+}
+
+IMGCB{act0prot.jpg}
+
+P{
+As shipped the B{Default} strain profile needs to be tweaked.
+Start with the following mode settings. These are good mode settings to use.
+Highlighted are the main ones you might want to tweak:
+}
+
+P{
+B{Strain Visibility} is really the maximum number of cells that
+an organism can grow. B{0} turns off the limit.
+}
+
+P{
+B{MAKE-SPORE Mode} is the number of energy units required to make a spore.
+}
+
+P{
+B{GROW Mode} is the number of energy units required to make grow a new cell.
+}
+
+IMGCB{act0modes.jpg}
+
+P{
+These mutations settings are good.
+}
+
+IMGCB{act0mut.jpg}
+
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

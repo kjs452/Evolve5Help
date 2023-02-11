@@ -1,0 +1,1989 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - ASCII format }
+MySite.body{
+
+Section{ASCII File Format Example}
+P{
+When you save a simulation with a B{.txt} extension it will be written in an
+ascii format. This is an example of what the ASCII format looks like.
+}
+
+//{ **************************************** }
+CodeSample<<_EOF_
+# PHOTON ASCII
+
+struct ORGANIC[N] {
+	X
+	Y
+	ENERGY
+}
+
+struct BARRIER[N] {
+	X
+	Y
+}
+
+struct ER {
+	FIDX
+	RIDX
+	STATE[N] {
+		VALUE
+	}
+}
+
+struct SIMULATION_OPTIONS {
+	MODE
+}
+
+struct STRAIN_OPTIONS[N] {
+	ENABLED
+	NAME
+	DIAGONAL
+	LOOK_MODE
+	EAT_MODE
+	MAKE_SPORE_MODE
+	STRAIN_VISIBILITY
+	CMOVE_MODE
+	OMOVE_MODE
+	GROW_MODE
+	ROTATE_MODE
+	CSHIFT_MODE
+	MAKE_ORGANIC_MODE
+	BONES_MODE
+	MAKE_BARRIER_MODE
+	EXUDE_MODE
+	SHOUT_MODE
+	SPAWN_MODE
+	LISTEN_MODE
+}
+
+struct KFMO[N] {
+	MAX_APPLY
+	PROB_MUTATE_CODEBLOCK
+	PROB_DUPLICATE
+	PROB_DELETE
+	PROB_INSERT
+	PROB_TRANSPOSE
+	PROB_MODIFY
+	MERGE_MODE
+	XLEN
+	PROTECTED_CODEBLOCKS
+	MAX_CODE_BLOCKS
+}
+
+struct STRAIN_OPCODES[N] {
+	NPROTECTED
+	TABLE[M] {
+		NAME
+	}
+}
+
+struct SPORE {
+	X
+	Y
+	ENERGY
+	PARENT
+	STRAIN
+	SFLAGS
+	PROGRAM[N] {
+		TEXT_LINE
+	}
+}
+
+struct CELL {
+	ORGANISM_ID
+	ENERGY
+	X
+	Y
+	MOOD
+	MESSAGE
+
+	MACHINE {
+		TERMINATED
+		CB
+		PC
+		R[N] {
+			VALUE
+		}
+
+		CALL_STACK[N] {
+			CB
+			PC
+		}
+
+		DATA_STACK[N] {
+			VALUE
+		}
+	}
+}
+
+struct ORGANISM {
+	ORGANISM_ID
+	STRAIN
+	SIM_COUNT
+	OFLAGS
+	PARENT1
+	PARENT2
+	GENERATION
+	ENERGY
+	AGE
+	PROGRAM[N] {
+		TEXT_LINE
+	}
+}
+
+struct UNIVERSE {
+	SEED
+	STEP
+	AGE
+	CURRENT_CELL { X Y }    # -1 -1 means NULL
+	NEXT_ID
+	NBORN
+	NDIE
+	WIDTH
+	HEIGHT
+	G0
+	KEY
+	MOUSE_X
+	MOUSE_Y
+	S0[N] { V }}
+
+struct CELL_LIST[N] {
+	X Y 
+}
+
+struct ODOR_MAP[N] {
+	X Y LEN VALUE
+}
+
+UNIVERSE 714657076             # seed
+         144873930660           # step
+         5660652           # age
+         691 221          # current cell location (x,y)
+         1346453           # next id
+         1346351 1341623      # number births, deaths
+         700 400          # dimensions: width x height
+         0             # global register G0
+         0             # key
+         -1             # mouse_x
+         -1             # mouse_y
+       { 0 0 0 0 0 0 0 0 }  # S0's for each strain
+
+ER 22 21 63
+	2662401319	3637410510	2341351377	3276107000
+	657371424	2844131768	286495610	3314917018
+	1214289471	1841714455	271818157	2604608572
+	764618653	1414481676	1707921035	1666135025
+	2530998018	872030736	4089700717	3567058344
+	2370250024	2937161568	777709281	2613860438
+	267914424	3914163339	2136475526	2567467642
+	2343584345	300810853	3524456765	919219076
+	3294638840	3744154515	4046067439	2008943225
+	1686629236	977254200	2488042057	492760282
+	3678087519	2374140821	3503115978	942052050
+	2449075387	1811757583	1680762999	3102706529
+	1202316944	3570672781	926894183	1757114925
+	825602531	2925341992	2400697396	4121542443
+	2007786917	1955141616	313844462	146214237
+	678226866	4082931866	2853505738
+
+SIMULATION_OPTIONS 0   # mode
+
+
+STRAIN_OPTIONS {
+	# Strain 0
+	1        # enabled
+	"e_bullet"        # strain name these settings were based on
+	1        # diagonal connectivity rules apply
+	0        # LOOK mode
+	640        # EAT mode
+	100        # MAKE-SPORE mode
+	10        # strain visibility
+	0        # CMOVE mode
+	0        # OMOVE mode
+	100        # GROW mode
+	1        # ROTATE mode
+	0        # CSHIFT mode
+	0        # MAKE-ORGANIC mode
+	1        # Bones Mode
+	0        # MAKE-BARRIER mode
+	0        # EXUDE mode
+	0        # SHOUT mode
+	5        # SPAWN mode
+	0        # LISTEN mode
+
+	# Strain 1
+	0        # enabled
+	""        # strain name these settings were based on
+	0        # diagonal connectivity rules apply
+	0        # LOOK mode
+	0        # EAT mode
+	0        # MAKE-SPORE mode
+	0        # strain visibility
+	0        # CMOVE mode
+	0        # OMOVE mode
+	0        # GROW mode
+	0        # ROTATE mode
+	0        # CSHIFT mode
+	0        # MAKE-ORGANIC mode
+	0        # Bones Mode
+	0        # MAKE-BARRIER mode
+	0        # EXUDE mode
+	0        # SHOUT mode
+	0        # SPAWN mode
+	0        # LISTEN mode
+
+...
+	# Strain 7
+	0        # enabled
+	""        # strain name these settings were based on
+	0        # diagonal connectivity rules apply
+	0        # LOOK mode
+	0        # EAT mode
+	0        # MAKE-SPORE mode
+	0        # strain visibility
+	0        # CMOVE mode
+	0        # OMOVE mode
+	0        # GROW mode
+	0        # ROTATE mode
+	0        # CSHIFT mode
+	0        # MAKE-ORGANIC mode
+	0        # Bones Mode
+	0        # MAKE-BARRIER mode
+	0        # EXUDE mode
+	0        # SHOUT mode
+	0        # SPAWN mode
+	0        # LISTEN mode
+
+}
+
+
+KFMO {
+	# Strain 0
+	10		# max apply
+	2500		# prob. mutate codeblock
+	200		# prob_duplicate
+	450		# prob_delete
+	200		# prob_insert
+	200		# prob_transpose
+	200		# prob_modify
+	0		# merge_mode
+	10		# xlen 
+	13		# protected_codeblocks 
+	20		# max_code_blocks 
+
+...
+	# Strain 7
+	10		# max apply
+	2500		# prob. mutate codeblock
+	200		# prob_duplicate
+	600		# prob_delete
+	200		# prob_insert
+	200		# prob_transpose
+	200		# prob_modify
+	0		# merge_mode
+	10		# xlen 
+	0		# protected_codeblocks 
+	100		# max_code_blocks 
+
+}
+
+
+STRAIN_OPCODES {
+
+	11  # number of protected instructions at start of table
+	# instruction table for strain 0
+	{
+		"MAKE-BARRIER"      			# opcode 0
+		"POPULATION"        			# opcode 1
+		"POPULATION.S"      			# opcode 2
+		"GPS"               			# opcode 3
+		"KEY-PRESS"         			# opcode 4
+		"MOUSE-POS"         			# opcode 5
+		"SPAWN"             			# opcode 6
+		"S0"                			# opcode 7
+		"S0!"               			# opcode 8
+		"G0"                			# opcode 9
+		"G0!"               			# opcode 10
+		"call"              			# opcode 11
+		"if"                			# opcode 12
+		"ifelse"            			# opcode 13
+		"?loop"             			# opcode 14
+		"?exit"             			# opcode 15
+		"pop"               			# opcode 16
+		"dup"               			# opcode 17
+		"swap"              			# opcode 18
+		"over"              			# opcode 19
+		"rot"               			# opcode 20
+		"?dup"              			# opcode 21
+		"-rot"              			# opcode 22
+		"2swap"             			# opcode 23
+		"2over"             			# opcode 24
+		"2dup"              			# opcode 25
+		"2pop"              			# opcode 26
+		"nip"               			# opcode 27
+		"tuck"              			# opcode 28
+		"1+"                			# opcode 29
+		"1-"                			# opcode 30
+		"2+"                			# opcode 31
+		"2-"                			# opcode 32
+		"2/"                			# opcode 33
+		"2*"                			# opcode 34
+		"abs"               			# opcode 35
+		"sqrt"              			# opcode 36
+		"+"                 			# opcode 37
+		"-"                 			# opcode 38
+		"*"                 			# opcode 39
+		"/"                 			# opcode 40
+		"mod"               			# opcode 41
+		"/mod"              			# opcode 42
+		"negate"            			# opcode 43
+		"2negate"           			# opcode 44
+		"<<"                			# opcode 45
+		">>"                			# opcode 46
+		"="                 			# opcode 47
+		"<>"                			# opcode 48
+		"<"                 			# opcode 49
+		">"                 			# opcode 50
+		"<="                			# opcode 51
+		">="                			# opcode 52
+		"0="                			# opcode 53
+		"or"                			# opcode 54
+		"and"               			# opcode 55
+		"not"               			# opcode 56
+		"invert"            			# opcode 57
+		"xor"               			# opcode 58
+		"min"               			# opcode 59
+		"max"               			# opcode 60
+		"CB"                			# opcode 61
+		"CBLEN"             			# opcode 62
+		"CSLEN"             			# opcode 63
+		"DSLEN"             			# opcode 64
+		"R0"                			# opcode 65
+		"R1"                			# opcode 66
+		"R2"                			# opcode 67
+		"R3"                			# opcode 68
+		"R4"                			# opcode 69
+		"R5"                			# opcode 70
+		"R6"                			# opcode 71
+		"R7"                			# opcode 72
+		"R8"                			# opcode 73
+		"R9"                			# opcode 74
+		"R0!"               			# opcode 75
+		"R1!"               			# opcode 76
+		"R2!"               			# opcode 77
+		"R3!"               			# opcode 78
+		"R4!"               			# opcode 79
+		"R5!"               			# opcode 80
+		"R6!"               			# opcode 81
+		"R7!"               			# opcode 82
+		"R8!"               			# opcode 83
+		"R9!"               			# opcode 84
+		"R0++"              			# opcode 85
+		"R1++"              			# opcode 86
+		"R2++"              			# opcode 87
+		"R3++"              			# opcode 88
+		"R4++"              			# opcode 89
+		"R5++"              			# opcode 90
+		"R6++"              			# opcode 91
+		"R7++"              			# opcode 92
+		"R8++"              			# opcode 93
+		"R9++"              			# opcode 94
+		"--R0"              			# opcode 95
+		"--R1"              			# opcode 96
+		"--R2"              			# opcode 97
+		"--R3"              			# opcode 98
+		"--R4"              			# opcode 99
+		"--R5"              			# opcode 100
+		"--R6"              			# opcode 101
+		"--R7"              			# opcode 102
+		"--R8"              			# opcode 103
+		"--R9"              			# opcode 104
+		"PEEK"              			# opcode 105
+		"POKE"              			# opcode 106
+		"NUMBER"            			# opcode 107
+		"NUMBER!"           			# opcode 108
+		"?NUMBER!"          			# opcode 109
+		"OPCODE"            			# opcode 110
+		"OPCODE!"           			# opcode 111
+		"TRAP1"             			# opcode 112
+		"TRAP2"             			# opcode 113
+		"TRAP3"             			# opcode 114
+		"TRAP4"             			# opcode 115
+		"TRAP5"             			# opcode 116
+		"TRAP6"             			# opcode 117
+		"TRAP7"             			# opcode 118
+		"TRAP8"             			# opcode 119
+		"TRAP9"             			# opcode 120
+		"sign"              			# opcode 121
+		"pack2"             			# opcode 122
+		"unpack2"           			# opcode 123
+		"MAX_INT"           			# opcode 124
+		"MIN_INT"           			# opcode 125
+		"HALT"              			# opcode 126
+		"nop"               			# opcode 127
+		"CMOVE"             			# opcode 128
+		"OMOVE"             			# opcode 129
+		"ROTATE"            			# opcode 130
+		"EAT"               			# opcode 131
+		"MAKE-SPORE"        			# opcode 132
+		"MAKE-ORGANIC"      			# opcode 133
+		"GROW"              			# opcode 134
+		"GROW.CB"           			# opcode 135
+		"CSHIFT"            			# opcode 136
+		"EXUDE"             			# opcode 137
+		"LOOK"              			# opcode 138
+		"NEAREST"           			# opcode 139
+		"FARTHEST"          			# opcode 140
+		"SIZE"              			# opcode 141
+		"BIGGEST"           			# opcode 142
+		"SMALLEST"          			# opcode 143
+		"TEMPERATURE"       			# opcode 144
+		"HOTTEST"           			# opcode 145
+		"COLDEST"           			# opcode 146
+		"SMELL"             			# opcode 147
+		"MOOD"              			# opcode 148
+		"MOOD!"             			# opcode 149
+		"BROADCAST"         			# opcode 150
+		"SEND"              			# opcode 151
+		"RECV"              			# opcode 152
+		"ENERGY"            			# opcode 153
+		"ENERGY.O"          			# opcode 154
+		"AGE"               			# opcode 155
+		"NUM-CELLS"         			# opcode 156
+		"HAS-NEIGHBOR"      			# opcode 157
+		"DIST"              			# opcode 158
+		"CHOOSE"            			# opcode 159
+		"RND"               			# opcode 160
+		"SPREAD-ENERGY"     			# opcode 161
+		"SEND-ENERGY"       			# opcode 162
+		"NEIGHBORS"         			# opcode 163
+		"SHOUT"             			# opcode 164
+		"LISTEN"            			# opcode 165
+	}
+...
+}
+
+# BARRIER_BEGIN
+BARRIER {
+	0	10
+	0	11
+	0	12
+	0	13
+	0	14
+	...
+	699	384
+	699	385
+	699	386
+	699	387
+	699	388
+}
+# BARRIER_END
+
+# ODOR_BEGIN
+ODOR_MAP {
+	   0 0        5  0
+	   5 0        1  -2
+	   6 0       10  0
+	  16 0        1  76
+	  17 0        3  -71
+	  20 0       13  0
+	  33 0        2  76
+	  35 0        1  -71
+	  36 0        1  76
+...
+	 657 399      2  0
+	 659 399      1  76
+	 660 399      1  14
+	 661 399      3  76
+	 664 399     36  0
+}
+# ODOR_END
+
+ORGANIC {
+	121	120	150
+	124	375	2
+	155	256	47
+	173	156	559
+	173	168	98
+	174	164	259
+	174	165	1
+...
+	672	105	114
+	690	386	1
+}
+
+SPORE 54 206 124 351907882 0 0
+  {  # program
+	"main:"
+	"{"
+	"      13  call "
+	"}"
+	""
+	"row1:"
+	"{"
+	"      DSLEN  50  >=  ?exit  DSLEN  2  <  ?exit  R0  R1  2swap  R1!  R0!  R0  R1  1"
+	"      5  10  SPAWN  pop  R1!  R0! "
+	"}"
+	""
+	"row2:"
+	"{"
+	"     "
+	"}"
+	""
+	"row3:"
+	"{"
+	"     "
+	"}"
+	""
+	"row4:"
+	"{"
+	"     "
+	"}"
+	""
+	"row5:"
+	"{"
+	"     "
+	"}"
+	""
+	"row6:"
+	"{"
+	"      DSLEN  60  >=  ?exit  R1!  R0!  R0  R1  1  5  10  SPAWN  pop "
+	"}"
+	""
+	"row7:"
+	"{"
+	"     "
+	"}"
+	""
+	"row8:"
+	"{"
+	"     "
+	"}"
+	""
+	"row9:"
+	"{"
+	"     "
+	"}"
+	""
+	"row10:"
+	"{"
+	"      R0  R1  2dup  11  call  12  call  HALT "
+	"}"
+	""
+	"row11:"
+	"{"
+	"      2dup  OMOVE  ?loop "
+	"}"
+	""
+	"row12:"
+	"{"
+	"      2dup  EAT  pop  2dup  OMOVE  pop  255  NEAREST  EAT  ?loop "
+	"}"
+	""
+	"row13:"
+	"{"
+	"      2  OMOVE  22  call  2dup  14  call  22  call  15  call  22  call  16  call"
+	"      22  call  17  22  call  22  0  30  18  call  call  44  R6  22  call  20  2dup"
+	"      pop  OMOVE  and  R2!  2dup  EAT  GROW  OMOVE  13  -41  R4++  OMOVE  2  ?loop"
+	"      R8!  30  R6++ "
+	"}"
+	""
+	"row14:"
+	"{"
+	"      2dup  EAT  0  GROW  4  GROW  OMOVE  -85  GROW  EAT  pop  -85  HOTTEST  2dup"
+	"      EAT  ?loop  OMOVE  1+  -38  R0  OMOVE  ?loop  -87  -50 "
+	"}"
+	""
+	"row15:"
+	"{"
+	"      HOTTEST  OMOVE  <  55  R4  -27  OMOVE  -26  GROW  54  GROW  GROW  ENERGY.O"
+	"      13  -4  -51  nop  R8++  51  -16  -74 "
+	"}"
+	""
+	"row16:"
+	"{"
+	"      -48  0  NUM-CELLS  --R6  73  GROW  OMOVE  invert  GROW  2dup  9  GROW  OMOVE"
+	"      pop  /  ?loop  pack2  94  --R4  -1  2dup  EAT  pop  OMOVE "
+	"}"
+	""
+	"row17:"
+	"{"
+	"      2+  56  -7  >=  SIZE  82  -89  POKE  ENERGY  74  +  -12  37  2+  63  R5!  61"
+	"      -1  R4!  -41  53  SPREAD-ENERGY  58  SMALLEST  -22  DSLEN  COLDEST "
+	"}"
+	""
+	"row18:"
+	"{"
+	"      ENERGY  3  /  R0!  -2  -3  R0  MAKE-SPORE  -5  -51  R0  MAKE-SPORE  -85  LOOK"
+	"      -6  CB  15  52  OMOVE "
+	"}"
+	""
+	"row19:"
+	"{"
+	"      >=  R5!  NUMBER  63  +  or "
+	"}"
+	""
+	"row20:"
+	"{"
+	"      R2++  POKE "
+	"}"
+	""
+	"row21:"
+	"{"
+	"     "
+	"}"
+	""
+	"row22:"
+	"{"
+	"      2dup  EAT  ?loop  ?loop  62  -48  -51 "
+	"}"
+	""
+	"row23:"
+	"{"
+	"     "
+	"}"
+	""
+	"row24:"
+	"{"
+	"      -48  not  -38  2dup  EAT  GROW  -1  CB  pop  SEND  -4 "
+	"}"
+	""
+	"row25:"
+	"{"
+	"      >= "
+	"}"
+	""
+	"row26:"
+	"{"
+	"      R0  -66  EAT  R3++  -46  37  1+  75  R0  -10  -36  -2  CB  -44  30  18  GROW"
+	"      GROW  R3!  -98  -58  or  R4++  NUM-CELLS  62  --R1  1  R5  -58  14  --R5  89 "
+	"}"
+	""
+	"row27:"
+	"{"
+	"     "
+	"}"
+	""
+	"row28:"
+	"{"
+	"      -48  GROW  54  -52  82  ENERGY  76  -71  TRAP3  -28  -20  TRAP3  -50  MAKE-SPORE"
+	"      29  GROW  GROW  dup  63  GROW  GROW  dup  CSLEN  --R5  -26  EAT  0  NUM-CELLS "
+	"}"
+	""
+	"row29:"
+	"{"
+	"      --R4  87  -26  unpack2  0  R8++  55  54  if  53  -93  > "
+	"}"
+	""
+	"row30:"
+	"{"
+	"      ENERGY  3  /  R0!  call  -51  R0  MAKE-SPORE  -85  LOOK  -6  CB  15  52  OMOVE "
+	"}"
+	""
+	"row31:"
+	"{"
+	"      16  -5  2  OMOVE  22  call  2dup  14  >  OMOVE  -75  call  15  call  22  call"
+	"      16  call  22  call  17  22  0  call  /mod  -59  R9!  85  call  44  R6  -11"
+	"      41  -11  --R9  91  GROW  GROW  -4  pop  OMOVE  and  -3  R3  LOOK  R6++  OMOVE"
+	"      1+  29  BIGGEST  -95  13  -38  call  20  2dup  OMOVE  2  ?loop  R8!  30  R6++ "
+	"}"
+  }
+
+
+ORGANISM 348005278  0 10 0   346936300 346936300  4052 85 5844681
+  {  # program
+	"main:"
+	"{"
+	"      13  call "
+	"}"
+	""
+	"row1:"
+	"{"
+	"      DSLEN  50  >=  ?exit  DSLEN  2  <  ?exit  R0  R1  2swap  R1!  R0!  R0  R1  1"
+	"      5  10  SPAWN  pop  R1!  R0! "
+	"}"
+	""
+	"row2:"
+	"{"
+	"     "
+	"}"
+	""
+	"row3:"
+	"{"
+	"     "
+	"}"
+	""
+	"row4:"
+	"{"
+	"     "
+	"}"
+	""
+	"row5:"
+	"{"
+	"     "
+	"}"
+	""
+	"row6:"
+	"{"
+	"      DSLEN  60  >=  ?exit  R1!  R0!  R0  R1  1  5  10  SPAWN  pop "
+	"}"
+	""
+	"row7:"
+	"{"
+	"     "
+	"}"
+	""
+	"row8:"
+	"{"
+	"     "
+	"}"
+	""
+	"row9:"
+	"{"
+	"     "
+	"}"
+	""
+	"row10:"
+	"{"
+	"      R0  R1  2dup  11  call  12  call  HALT "
+	"}"
+	""
+	"row11:"
+	"{"
+	"      2dup  OMOVE  ?loop "
+	"}"
+	""
+	"row12:"
+	"{"
+	"      2dup  EAT  pop  2dup  OMOVE  pop  255  NEAREST  EAT  ?loop "
+	"}"
+	""
+	"row13:"
+	"{"
+	"      2  OMOVE  22  call  2dup  14  call  22  call  15  call  22  call  16  call"
+	"      22  call  17  22  call  22  0  30  18  call  call  44  R6  22  call  20  2dup"
+	"      pop  OMOVE  and  R2!  2dup  EAT  GROW  OMOVE  1+  29  BIGGEST  -95  13  -41"
+	"      R4++  -1  pop  OMOVE  2  ?loop  R8!  30  R6++ "
+	"}"
+	""
+	"row14:"
+	"{"
+	"      2dup  EAT  0  GROW  4  GROW  OMOVE  -85  GROW  EAT  pop  -85  HOTTEST  2dup"
+	"      EAT  ?loop  OMOVE  1+  -38  R0  OMOVE  ?loop  -87  -50 "
+	"}"
+	""
+	"row15:"
+	"{"
+	"      HOTTEST  OMOVE  GROW  -26  OMOVE  -26  GROW  54  GROW  GROW  -5  -53  nop  R8++"
+	"      51  -16  -74 "
+	"}"
+	""
+	"row16:"
+	"{"
+	"      -46  -1  NUM-CELLS  --R6  71  GROW  OMOVE  invert  GROW  2dup  5  GROW  OMOVE"
+	"      pop  /  ?loop  97  --R4  2  2dup  EAT  pop  OMOVE "
+	"}"
+	""
+	"row17:"
+	"{"
+	"      2+  55  -45  GROW  -7  SIZE  86  <=  74  +  -12  >=  R2  or  or  37  2+  63"
+	"      R5!  61  -1  R4!  -41  53  SPREAD-ENERGY  58 "
+	"}"
+	""
+	"row18:"
+	"{"
+	"      ENERGY  3  /  R0!  -2  -3  R0  MAKE-SPORE  -5  -51  R0  MAKE-SPORE  -85  LOOK"
+	"      -6  CB  15  52  OMOVE "
+	"}"
+	""
+	"row19:"
+	"{"
+	"      -49  GROW  57  -55  32  1-  -41  R0  77  71  AGE  80  -70  28  -25  R5++  -53"
+	"      MAKE-SPORE  31  GROW  GROW  R4++  GROW  dup  CSLEN  GROW  57  -55  --R5  -28"
+	"      EAT  0  NUM-CELLS "
+	"}"
+	""
+	"row20:"
+	"{"
+	"      >=  R2  or  or "
+	"}"
+	""
+	"row21:"
+	"{"
+	"      OMOVE  ENERGY  ?loop  94  --R4 "
+	"}"
+	""
+	"row22:"
+	"{"
+	"      2dup  EAT  ?loop  ?loop  62  -48  -51 "
+	"}"
+	""
+	"row23:"
+	"{"
+	"     "
+	"}"
+	""
+	"row24:"
+	"{"
+	"      HOTTEST  OMOVE  OMOVE  72  EAT  91  GROW  GROW  -4  -51  nop  HALT  28  -16 "
+	"}"
+	""
+	"row25:"
+	"{"
+	"      -8  2over  47  -58 "
+	"}"
+	""
+	"row26:"
+	"{"
+	"      MAKE-ORGANIC  not  78 "
+	"}"
+	""
+	"row27:"
+	"{"
+	"      R5  78  R4  2over  or "
+	"}"
+	""
+	"row28:"
+	"{"
+	"     "
+	"}"
+	""
+	"row29:"
+	"{"
+	"      >=  1+  60  or  or "
+	"}"
+	""
+	"row30:"
+	"{"
+	"      87  -26  unpack2  0  R8++  2dup  -48  -51  51  57  --R4  MAKE-SPORE  -5  -51"
+	"      > "
+	"}"
+	""
+	"row31:"
+	"{"
+	"      16  call  2  OMOVE  22  call  2dup  14  call  15  call  22  call  16  call"
+	"      22  call  17  22  call  22  0  call  /mod  -59  R9!  85  call  44  R6  -11"
+	"      41  22  call  20  2dup  pop  OMOVE  and  -3  R3  LOOK  R6++  OMOVE  1+  29"
+	"      BIGGEST  -38  R4++  -1  pop  R8!  30  20  72  R6++ "
+	"}"
+  }
+
+CELL 348005278  0   126 398
+	0 0
+	0 22 1
+	{ 151 0 0 0 50
+	  63 -15682 0 15929 0 }
+	{
+		0 1
+		13 3
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		2
+		1
+		2
+	}
+
+CELL 348005278  0   125 396
+	0 0
+	0 22 2
+	{ 101 0 0 0 54
+	  63 -3577 0 3602 0 }
+	{
+		0 1
+		13 19
+	}
+	{
+		62
+		-48
+		-51
+		22
+		1
+		-2
+		62
+		-48
+		-51
+		-46
+		97
+		62
+		-48
+		-51
+		17
+		6
+	}
+
+CELL 348005278  0   127 395
+	0 0
+	0 22 0
+	{ 15 0 0 0 -1
+	  0 -82 0 82 0 }
+	{
+		0 1
+		13 19
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		-46
+		97
+		62
+		-48
+		-51
+	}
+
+CELL 348005278  0   127 396
+	0 0
+	0 22 1
+	{ 246 0 0 0 60
+	  63 -546 0 561 0 }
+	{
+		0 1
+		13 29
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		1
+		2
+		-6
+		18
+		44
+		18
+		44
+	}
+
+CELL 348005278  0   126 396
+	0 0
+	0 22 2
+	{ 26 0 0 0 55
+	  63 -3719 0 3745 0 }
+	{
+		0 1
+		13 12
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		-5
+		-53
+		3744
+		51
+		-16
+		-74
+		4
+	}
+
+CELL 348005278  0   127 398
+	0 0
+	0 22 2
+	{ 139 0 0 0 59
+	  63 -973 0 989 0 }
+	{
+		0 1
+		13 12
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		-5
+		-53
+		988
+		51
+		-16
+		3
+	}
+
+CELL 348005278  0   127 397
+	0 0
+	0 22 0
+	{ 132 0 0 0 59
+	  63 -793 0 807 0 }
+	{
+		0 1
+		13 3
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-3
+		-3
+		-95
+		13
+		0
+	}
+
+CELL 348005278  0   125 397
+	0 0
+	0 22 1
+	{ 332 0 0 0 58
+	  63 -968 0 977 0 }
+	{
+		0 1
+		13 29
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		1
+		1
+		-6
+		18
+		-6
+		18
+	}
+
+CELL 348005278  0   126 397
+	0 0
+	0 18 10
+	{ 26 0 0 0 47
+	  63 -16763 0 17011 0 }
+	{
+		0 1
+		13 24
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		0
+		-5
+		-51
+	}
+
+CELL 348005278  0   125 398
+	0 0
+	0 22 2
+	{ 47 0 0 0 58
+	  63 -1542 0 1553 0 }
+	{
+		0 1
+		13 19
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		-46
+		6
+	}
+
+ORGANISM 347707072  0 11 0   345987465 345987465  4074 58 6297121
+  {  # program
+	"main:"
+	"{"
+	"      13  call "
+	"}"
+	""
+	"row1:"
+	"{"
+	"      DSLEN  50  >=  ?exit  DSLEN  2  <  ?exit  R0  R1  2swap  R1!  R0!  R0  R1  1"
+	"      5  10  SPAWN  pop  R1!  R0! "
+	"}"
+	""
+	"row2:"
+	"{"
+	"     "
+	"}"
+	""
+	"row3:"
+	"{"
+	"     "
+	"}"
+	""
+	"row4:"
+	"{"
+	"     "
+	"}"
+	""
+	"row5:"
+	"{"
+	"     "
+	"}"
+	""
+	"row6:"
+	"{"
+	"      DSLEN  60  >=  ?exit  R1!  R0!  R0  R1  1  5  10  SPAWN  pop "
+	"}"
+	""
+	"row7:"
+	"{"
+	"     "
+	"}"
+	""
+	"row8:"
+	"{"
+	"     "
+	"}"
+	""
+	"row9:"
+	"{"
+	"     "
+	"}"
+	""
+	"row10:"
+	"{"
+	"      R0  R1  2dup  11  call  12  call  HALT "
+	"}"
+	""
+	"row11:"
+	"{"
+	"      2dup  OMOVE  ?loop "
+	"}"
+	""
+	"row12:"
+	"{"
+	"      2dup  EAT  pop  2dup  OMOVE  pop  255  NEAREST  EAT  ?loop "
+	"}"
+	""
+	"row13:"
+	"{"
+	"      16  call  2  OMOVE  22  call  2dup  14  call  22  call  15  call  22  call"
+	"      16  call  22  call  17  22  call  22  0  30  18  call  call  44  R6  22  call"
+	"      20  2dup  pop  OMOVE  and  R2!  2dup  EAT  GROW  OMOVE  1+  29  BIGGEST  -95"
+	"      13  -38  6  R7!  52  OMOVE  2  ?loop  R8!  30  R6++ "
+	"}"
+	""
+	"row14:"
+	"{"
+	"      2dup  EAT  0  GROW  4  GROW  OMOVE  -85  GROW  EAT  pop  -85  HOTTEST  2dup"
+	"      EAT  ?loop  OMOVE  1+  -38  R0  OMOVE  ?loop  -50 "
+	"}"
+	""
+	"row15:"
+	"{"
+	"      HOTTEST  OMOVE  GROW  58  GROW  -29  OMOVE  48  GROW  55  GROW  GROW  -2  -49"
+	"      nop  R8++  54  -13  -72 "
+	"}"
+	""
+	"row16:"
+	"{"
+	"      -26  0  NUM-CELLS  --R6  73  GROW  OMOVE  invert  GROW  2dup  9  GROW  OMOVE"
+	"      pop  /  ?loop  94  --R4  -1  2dup  EAT  pop  OMOVE "
+	"}"
+	""
+	"row17:"
+	"{"
+	"      2+  58  -48  GROW  -9  -84  MAKE-SPORE  not  87  -22  -11  41  2+  62  R5!"
+	"      63  -3  R4!  -44  R6!  MAKE-SPORE  -70 "
+	"}"
+	""
+	"row18:"
+	"{"
+	"      ENERGY  3  /  R0!  -2  -3  R0  MAKE-SPORE  -5  -51  R0  MAKE-SPORE  -85  LOOK"
+	"      -6  CB  15  52  OMOVE "
+	"}"
+	""
+	"row19:"
+	"{"
+	"      -53  mod  R3++  0 "
+	"}"
+	""
+	"row20:"
+	"{"
+	"      R9++ "
+	"}"
+	""
+	"row21:"
+	"{"
+	"      ?loop  ?loop  62  -48  -59  31 "
+	"}"
+	""
+	"row22:"
+	"{"
+	"      2dup  EAT  ?loop  ?loop  62  -48  -51 "
+	"}"
+	""
+	"row23:"
+	"{"
+	"      -26  CSHIFT  MOOD  R7++  R0!  R2!  ENERGY  65  -3  1  EXUDE  -3  44  R3  LOOK"
+	"      R6++  -1  CB  pop  OMOVE  -5 "
+	"}"
+	""
+	"row24:"
+	"{"
+	"      invert  -18  -63  -34  +  51  54  OMOVE  invert "
+	"}"
+	""
+	"row25:"
+	"{"
+	"     "
+	"}"
+	""
+	"row26:"
+	"{"
+	"      HOTTEST  78  R2++  -36  -22  OMOVE  GROW  50  GROW  -25  OMOVE  71  EAT  92"
+	"      GROW  R3  LOOK  R6++  -1  GROW  -3  HALT  29  -72 "
+	"}"
+	""
+	"row27:"
+	"{"
+	"      -22 "
+	"}"
+	""
+	"row28:"
+	"{"
+	"      37  ?loop  ?loop  62  POKE "
+	"}"
+	""
+	"row29:"
+	"{"
+	"      48  GROW  57  52  59  -46  -48  AGE  78  -67  -30  -23  R5++  -49  MAKE-SPORE"
+	"      25  R2  37  R9!  -31  2negate  48  or  dup  CSLEN  >>  R3!  --R5  NUM-CELLS "
+	"}"
+	""
+	"row30:"
+	"{"
+	"      GROW  GROW  R3!  54  54  1  --R4  > "
+	"}"
+	""
+	"row31:"
+	"{"
+	"      16  call  2  OMOVE  22  call  2dup  14  call  15  call  22  call  R6++  call"
+	"      22  call  17  22  call  22  0  call  /mod  -59  R9!  85  call  44  78  R2++"
+	"      -rot  21  2dup  pop  -16  R0  R5  -95  15  MOOD  <=  1+  33  R2!  2dup  EAT"
+	"      -38  R4++  -1  pop  OMOVE  2  ?loop  R8!  30  16 "
+	"}"
+	""
+	"row32:"
+	"{"
+	"      <>  over  32  32 "
+	"}"
+  }
+
+CELL 347707072  0   159 405
+	0 0
+	0 22 1
+	{ 48 0 0 0 35
+	  -20 -70 6 689 0 }
+	{
+		0 1
+		13 21
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		30
+		12
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		12
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		12
+		62
+		-48
+		62
+		-48
+	}
+
+CELL 347707072  0   158 406
+	0 0
+	0 22 2
+	{ 15 0 0 0 32
+	  -20 -74 6 698 0 }
+	{
+		0 1
+		13 14
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-3
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		0
+		-2
+		-49
+		697
+		54
+		2
+	}
+
+CELL 347707072  0   158 405
+	0 0
+	0 22 0
+	{ 72 0 0 0 62
+	  -20 -44 -38 2921 0 }
+	{
+		0 1
+		13 10
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-3
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-3
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-3
+		0
+		-95
+		13
+		62
+		-48
+		-51
+		1
+		62
+	}
+
+CELL 347707072  0   157 406
+	0 0
+	0 22 2
+	{ 0 0 0 0 13
+	  -20 -82 -38 2764 0 }
+	{
+		0 1
+		13 21
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-3
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		2
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		-26
+		94
+		2
+	}
+
+CELL 347707072  0   157 404
+	0 0
+	0 22 2
+	{ 87 0 0 0 38
+	  -20 -64 6 2975 0 }
+	{
+		0 1
+		13 14
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-2
+		62
+		-48
+		-51
+		22
+		1
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		2
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		-2
+		-49
+		2974
+		54
+		-13
+		-72
+		2
+	}
+
+CELL 347707072  0   158 403
+	0 0
+	0 22 2
+	{ 52 0 0 0 40
+	  -20 -60 6 312 0 }
+	{
+		0 1
+		13 10
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		2
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		1
+		-1
+		-95
+		13
+		0
+		-26
+		1
+		-50
+		1
+	}
+
+CELL 347707072  0   156 405
+	0 0
+	0 22 1
+	{ 19 0 0 0 12
+	  -20 -88 6 488 0 }
+	{
+		0 1
+		13 10
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		5
+		0
+		-95
+		13
+		0
+		-26
+		94
+		62
+		-48
+		-51
+		1
+		-51
+		1
+	}
+
+CELL 347707072  0   157 405
+	0 0
+	0 13 0
+	{ 19 0 0 0 48
+	  -20 -55 6 8916 0 }
+	{
+		0 1
+	}
+	{
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-2
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-2
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		-2
+		-2
+		-95
+		13
+		0
+	}
+
+CELL 347707072  0   156 404
+	0 0
+	0 22 2
+	{ 24 0 0 0 -9
+	  -20 -113 6 527 0 }
+	{
+		0 1
+		13 31
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		0
+		1
+		2
+		-6
+		18
+		2
+	}
+
+CELL 347707072  0   158 404
+	0 0
+	0 13 47
+	{ 20 0 0 0 53
+	  -20 -53 6 2423 0 }
+	{
+		0 1
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		2
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		2
+		-2
+		-95
+		13
+	}
+
+CELL 347707072  0   157 403
+	0 0
+	0 22 2
+	{ 81 0 0 0 50
+	  -20 -56 6 458 0 }
+	{
+		0 1
+		13 10
+	}
+	{
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		3
+		62
+		-48
+		-51
+		22
+		0
+		30
+		1
+		0
+		-1
+		-95
+		13
+		0
+		-26
+		94
+		62
+		-48
+		-51
+		1
+		-50
+		1
+	}
+
+...
+
+
+CELL_LIST {
+	691 221
+	692 208
+	293 16
+	689 216
+	691 210
+	3 219
+	9 137
+	292 16
+...
+	688 396
+	689 397
+	688 397
+	687 397
+	299 399
+	298 398
+	298 399
+	296 396
+	297 397
+	297 398
+	297 399
+}
+_EOF_
+//{ **************************************** }
+
+} //{ MySite.body }

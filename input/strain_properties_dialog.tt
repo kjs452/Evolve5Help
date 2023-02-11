@@ -1,0 +1,51 @@
+include{common.tt}
+MySite.window_title{ Strain Properties Dialog }
+MySite.body{
+
+Section{Strain Properties Dialog}
+
+REF{mutations}
+SubSection{Mutations Tab}
+P{
+This dialog lets you modify the strains in the current simulation file.
+This dialog is very similar to the LINK{ URL{strain_profiles_dialog.html} Strain Profiles Dialog},
+but this screen is for modifying your simulation. It does not modify any strain profiles.
+}
+
+P{
+On this tab  you customize the mutation rates for this strain.
+}
+
+IMG{StrainPropertiesDialogMut.jpg}
+
+P{Detailed information about these mutations available LINK{ URL{simulation_options_dialog.html} here.}}
+
+HRULE{}
+
+REF{protections}
+SubSection{Protections Tab}
+P{
+On this tab you customize the protected instructions and protected code blocks.
+}
+IMG{StrainPropertiesDialogProt.jpg}
+
+P{Protections are explained LINK{ URL{architecture.html} here.}}
+
+HRULE{}
+REF{modes}
+SubSection{Modes Tab}
+P{
+On this tab you customize the behavior of many important instructions.
+}
+IMG{StrainPropertiesDialogModes.jpg}
+
+P{Detailed information about these modes available LINK{ URL{modes.html} here.}}
+
+HRULE{}
+P{
+This is how the individual strains in your simulation are selected from:
+}
+IMG{StrainPropertiesDialogSelection.jpg}
+
+
+} //{ MySite.body }

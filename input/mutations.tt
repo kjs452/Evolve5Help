@@ -1,0 +1,602 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Mutations and Replication }
+MySite.body{
+
+REF{replication}
+Section{Replication}
+P{
+The following two figures show the steps involved during asexual and sexual reproduction. They
+show when MERGE and MUTATE operations occur during the creating of a new organism.
+}
+
+P{
+Asexual reproduction involves only one parent. The new organism inherits all
+of its parent genetic material. The only way that the new organism could
+differ from its parent is because of the B{MUTATE} process.
+}
+
+IMGC{asexual.gif}
+Caption{Asexual Replication}
+
+P{
+Sexual reproduction involves two parents. Each donates their genetic material to
+the creation (and fertilization) of a spore. The two genetic programs are first merged,
+and then the B{MUTATE} procedure is applied to the result.
+}
+
+IMGC{sexual.gif}
+Caption{Sexual Replication}
+
+P{
+See the section on LINK{ URL{spores.html#merge} SPORES} to learn about how the B{MERGE} operation works.
+}
+
+HRULE{}
+
+REF{mutations}
+Section{Mutations}
+P{
+This section describes in detail how a genetic program is mutated prior to the creation of a new
+organism. The user can control the probabilities that these mutations occur using this dialog:
+}
+
+IMGC{SimulationOptions.jpg}
+
+P{
+There are 5 types of mutations that are applied:
+}
+
+NumberedList{
+Item{ S{Duplication:}
+Duplicate an instruction or code block. }
+
+Item{ S{Deletion:}
+Delete an instruction or code block. }
+
+Item{ S{Insertion:}
+Insert a new instruction or code block. }
+
+Item{ S{Transposition:}
+Swap two instructions or code blocks. }
+
+Item{ S{Modification:}
+Modify an instruction or code block. }
+}
+
+P{
+The parameter, B{Max. Code Blocks}, limits mutations so that the program never exceeds this number
+of code blocks. This number refers to the number of B{unprotected code blocks}. The number of protected
+code blocks can be whatever you want to use for your program.
+}
+
+P{
+The setting B{Max. Apply} controls the number of times the mutation algorithm is applied
+before a new organism is born. The default is B{10}. This means that a random number from
+1 to 10 is chosen before mutating a KFORTH program. The mutation algorithm is then applied
+this many times. It is possible to disable mutations, by setting this parameters to 0.
+}
+
+P{
+The parameter B{Mutate Code Block}, controls the distribution between instruction-level mutations
+and code block-level mutations. The default, shown here, is B{25%} which means 1 out every 4
+mutations will be applied to a whole code block.
+}
+
+P{
+B{Instruction-level mutations:} operate on a small stretch of instructions and numbers.
+This will be refered to as a 'strand'. The length varies randomly from 1 to I{strand length}.
+}
+
+P{
+B{Merge Mode:} Select between different ways of merging programs when MAKE-SPORE
+fertilizes a spore from different parents.
+}
+
+BulletList{ 
+Item{S{0} - interlace code blocks between parents randomly. }
+Item{S{1} - alternate code blocks between parents, starting with parent 1. }
+Item{S{2} - alternate code blocks between parents, starting with parent 2. }
+}
+
+P{
+B{Strand Length:} Defines the average strand length used during mutations.
+When a short sequence of instructions are to be mutated, this parameter is
+used to define the size. A random value between B{1} ... B{Strand Length} is chosen.
+The default is B{4}, but can be B{1} to B{20}.
+}
+
+P{
+B{Code block-level mutations:} operate on an entire code block.
+}
+
+P{
+Therefore each of these five mutation types can have two variants.
+This table summarized the ten mutation operations:
+}
+
+TableLT{
+	TH{ B{Mutation Type} }
+	TH{ B{Instruction-level} }
+	TH{ B{Code Block-level} }
+
+	TD{B{Duplication}}
+	TD{Pick a random strand of instructions/numbers and repeat it at a random spot}
+	TD{Pick a random code block and add a copy to end of program}
+
+	TD{B{Deletion}}
+	TD{Pick a random strand of instructions/numbers and remove it}
+	TD{Pick a random code block and remove it.}
+
+	TD{B{Insertion}}
+	TD{Generate a random strand of instructions/numbers and insert it at a random spot.}
+	TD{Insert a new code block and fill with random instructions.}
+
+	TD{B{Transposition}}
+	TD{Pick 2 random strands and swap them}
+	TD{Swap 2 random code blocks}
+
+	TD{B{Modification}}
+	TD{Pick a random strand and modify every instruction/number in it.}
+	TD{Pick a random code block and modify every single instruction or number}
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Mutation Process in Detail}
+P{
+Right before a new organism is born, its genetic program is mutated using the following process:
+}
+
+P{
+The first step is to decide if we will apply the five mutation types at the instruction-level
+or the code block-level. Having made this determination we try to peform each of the
+mutations in this following order:
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Mutation Order}
+P{
+Each of the five mutations are attempted in this order:
+}
+
+NumberedList{
+Item{ Duplication. }
+Item{ Deletion. }
+Item{ Insertion. }
+Item{ Transpostion. }
+Item{ Modification. }
+}
+
+P{
+Not all five mutations will occur, nor is it the case that we just pick one of them to occur. Each
+mutation type has its own probability it will occur.
+If by chance several of these mutations need to be applied, then this is the order it will happen.
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Duplicate Code Block}
+NumberedList{
+Item{ If program has no code blocks (very unlikely), exit without changing anything. }
+Item{ If program already has B{Max. Code Blocks}, then exit without performing this
+mutation. }
+Item{ Pick a random code block }
+Item{ Pick a random spot to insert a copy of the code block selected in previous step. }
+Item{ Create "gap" by shifting all code blocks down and insert copy. }
+}
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	[E]row2: { -4 -1 OMOVE EAT GROW ?loop and }[E]
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	[E]row1: { -4 -1 OMOVE EAT GROW ?loop and }[E]
+	row2: { call /mod 69 LOOK2 79 ENERGY R4 }
+	[E]row3: { -4 -1 OMOVE EAT GROW ?loop and }[E]
+	row4: { 9 call 9 LOOK-SPORE call 8 8 }
+	row5: { EAT <> negate call }
+_EOF_
+}
+}
+
+P{
+Code block 2 (row2) was duplicated and inserted after 'main'.
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Duplicate Instruction}
+NumberedList{
+Item{ Pick a random code block }
+Item{ If code block is empty, then exit without changing anything. }
+Item{ Pick a random strand within th code block. (of length 1 to I{strand length}). }
+Item{ Insert this random strand at a random spot. }
+}
+
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 [E]OMOVE EAT GROW[E] ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE EAT GROW ?loop [E]OMOVE EAT GROW[E] and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+}
+
+P{
+The random strand, "OMOVE EAT GROW" (from row2) got duplicated and inserted into
+a random spot within the same code block.
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Delete Code Block}
+NumberedList{
+Item{ Chose between deleting the code block. }
+Item{ If this program only has one code block, then exit without changing anything. }
+Item{ Pick a random code block }
+Item{ Delete it. }
+Item{ Shift all higher numbered code blocks to fill the gap. }
+}
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE EAT GROW ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	[E]row1: { -4 -1 OMOVE EAT GROW ?loop and } [E]
+	row2: { 9 call 9 LOOK-SPORE call 8 8 }
+	row3: { EAT <> negate call }
+_EOF_
+}
+}
+
+P{
+The code block B{row1} was deleted and all successive code blocks were shifted
+up by 1. Here's an example of emptying the code block:
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Delete Instruction}
+NumberedList{
+Item{ Pick a random code block. }
+Item{ If code block is empty, then exit without changing anything. }
+Item{ Pick a random strand (of length 1 to I{strand length}) within this code block. }
+Item{ Delete it, and shift all successive instructions down by 1. }
+}
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 [E]OMOVE EAT GROW[E] ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+}
+
+P{
+The strand B{OMOVE EAT GROW} was deleted from row2.
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Insert Code Block}
+NumberedList{
+Item{ If program already has B{Max. Code Blocks}, then exit without performing this
+	mutation. }
+Item{ Pick a random code block number for the insert to happen. }
+Item{ Shift all code blocks at this number, to create an empty slot for the new code block. }
+Item{ Pick a random length for the new code block (a value between 0 and I{strand length}). }
+Item{ Fill new code block with that many random instructions/numbers. }
+}
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE EAT GROW ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	[E]row2: { -9 negate + 80 }[E]
+	row3: { -4 -1 OMOVE EAT GROW ?loop and }
+	row4: { 9 call 9 LOOK-SPORE call 8 8 }
+	row5: { EAT <> negate call }
+_EOF_
+}
+}
+
+P{
+At row2 we inserted a brand new chunk of random code. The length shown here is 4. The exising 
+code blocks were shifted down 1 to accomodate the new code block.
+}
+
+NumberedList{
+Item{ B{NOTE:} numbers and instructions have an equal probability of being generated. }
+Item{ New numbers will be selected randomly from the range -99 to 99. }
+Item{ Instructions all have the same probability of being chosen. }
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Insert Instruction}
+NumberedList{
+Item{ Pick a random code block. }
+Item{ Pick a random spot to insert a new strand (of length between 1 and I{strand length}). }
+Item{ Shift all successive instructions to make room for the new strand. }
+Item{ Create a new random instruction sequence (of length 1 to I{strand length}) at that spot. }
+}
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE EAT GROW ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 [E]MAKE-SPORE -9 dup[E] ENERGY R4 }
+	row2: { -4 -1 OMOVE EAT GROW ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+}
+
+P{
+In row1, the instructions B{MAKE-SPORE -9 dup} were added at a random spot.
+}
+
+P{
+B{NOTE:} As with Insert Code Block, the process for generating a new instructions is:
+}
+
+NumberedList{
+Item{ numbers and instructions have equal probability of being generated. }
+Item{ New numbers will be selected randomly from the range -99 to 99. }
+Item{ Instructions all have the same probability of being chosen. }
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Transpose Code Block}
+NumberedList{
+Item{ Pick 2 random code block. }
+Item{ If they are same, exit without changing anything. }
+Item{ Swap the code blocks }
+}
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE EAT GROW ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	[E]row2: { EAT <> negate call }[E]
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	[E]row4: { -4 -1 OMOVE EAT GROW ?loop and }[E]
+_EOF_
+}
+}
+
+P{
+Rows 2 and 4 were swapped.
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Transpose Instruction}
+NumberedList{
+Item{ Choose 2 random code blocks }
+Item{ If either one of them is empty, then exit without changing anything. }
+Item{ choose 2 random strands of equal length (between 1 and I{strand length} instructions long) from each code block. }
+Item{ swap them. }
+}
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+
+TD{ MutCode<<_EOF_
+	main: { 8 [E]call 9 call[E] 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE B{EAT GROW ?loop} and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 [E]EAT GROW ?loop[E] 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE [E]call 9 call[E] and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+}
+
+P{
+The B{EAT GROW ?loop} strand from main was swapped with the B{call 9 call} from row2.
+}
+
+P{
+NOTE: This operation could transpose overlapping strands.
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Modify Code Block}
+NumberedList{
+Item{ If program has no code blocks (unlikely), exit without changing anything. }
+Item{ Choose a random code block. }
+Item{ Modify all numbers, but leave instructions alone }
+}
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE EAT GROW ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod 69 LOOK2 79 ENERGY R4 }
+	[E]row2: { -5 1 OMOVE EAT GROW ?loop and }[E]
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+}
+
+
+P{
+row2 was modified. All instructions are preserved, but numbers are tweaked slighlty.
+Numbers will be incremented or decremented by 1 to 4 (or the sign is swapped).
+Thefefore, there are 9 possible tweaks to a number. Each action has the same probablility:
+}
+
+TableSlim{
+	TH{ B{Action} }		TH{ B{Probability} }
+	TD{ +4}				TD{ 1/9 }
+	TD{ +3}				TD{ 1/9 }
+	TD{ +2}				TD{ 1/9 }
+	TD{ +1}				TD{ 1/9 }
+	TD{swap sign}		TD{ 1/9 }
+	TD{ -1}				TD{ 1/9 }
+	TD{ -2}				TD{ 1/9 }
+	TD{ -3}				TD{ 1/9 }
+	TD{ -4}				TD{ 1/9 }
+}
+
+HRULE{}
+//{- ====================================================================== }
+
+SubSection{Modify Instruction}
+NumberedList{
+Item{ Pick a random code block. }
+Item{ If code block is empty, then exit without changing anything. }
+Item{ Pick a random stand (of length 1 to I{strand length}) within this code block. }
+Item{ For each instruction/number in the strand: }
+}
+
+NumberedList{
+Item{ If it is a number, increment/decrement the value by 1 to 4 or swap sign. See table above. }
+Item{ If it is an instruction, pick a new instruction (but do not change it to a number). }
+}
+
+MutationTable{
+TH{ B{BEFORE} }		TH{ B{AFTER} }
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod [E]69 LOOK2[E] 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE EAT GROW ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+
+TD{ MutCode<<_EOF_
+	main: { 8 call 9 call 1 call 9 call over }
+	row1: { call /mod [E]-69 EAT[E] 79 ENERGY R4 }
+	row2: { -4 -1 OMOVE EAT GROW ?loop and }
+	row3: { 9 call 9 LOOK-SPORE call 8 8 }
+	row4: { EAT <> negate call }
+_EOF_
+}
+}
+
+P{
+In row1 B{69 LOOK2} was changed to B{-69 eat}.
+}
+
+P{
+NOTE: The new instruction is randomly chosen from the set of all instructions. All instructions
+have equal probability of being chosen.
+}
+
+} //{ MySite.body }

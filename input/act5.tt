@@ -1,0 +1,45 @@
+include{common.tt}
+MySite.window_title{ Activity 5: Nibbler }
+MySite.body{
+
+Title{Activity 5: Nibbler}
+
+P{
+Add this organism to a simulation. It will roam around randomly. It
+will nibble on creatures that do not belong to its strain. Then it will
+deposit an organic block somewhere else.
+}
+
+P{
+This is file B{nibbler2.kf} in the application resource folder ev5stuff.
+}
+
+P{
+The B{LOOK Mode} must be configured to include the strain number in the returned results.
+A Look mode of B{5} should work.
+}
+
+P{
+The B{EAT Mode} for this strain must be configured to be 'uneatable'.
+}
+
+P{
+Add this to the new universe strain slot B{7} (the last one). This is defined in the code.
+}
+
+P{
+The population is fixed at whatever you specify on the new universe dialog.
+}
+
+BREAK{}
+
+//{ **************************************** }
+
+HEREDOC{ CodeSample{nibbler2.kf} }
+
+//{ **************************************** }
+
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

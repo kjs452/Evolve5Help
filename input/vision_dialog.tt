@@ -1,0 +1,129 @@
+include{common.tt}
+MySite.window_title{ Vision Data Tab }
+MySite.body{
+
+SubSection{Vision Data Tab}
+P{
+This tab looks at the 8 direction surrounding a cell and displays what
+the vision related KFORTH instructions will return.
+}
+
+P{
+IMG{VisionDialog.jpg}
+}
+
+P{
+The cell is shown in the middle of the dialog. Surrounding the cell are the results
+from looking along each of the 8 directions. Shown is the distance (the WHERE value) and
+the type of thing seen (WHAT value).
+}
+
+P{
+The instructions B{LOOK}, B{WHAT}, B{WHERE}, B{NEAREST},
+B{NEAREST2}, B{FARTHEST}, and B{FARTHEST2}.
+will be using the same information as is displayed in this dialog. This dialog
+will help in debugging organisms.
+}
+
+P{
+SubSection{LOOK Examples}
+Here's some KFORTH instructions and what they will return, assuming the data shown above.
+}
+
+CodeSample<<_EOF_
+
+      1 NEAREST		; returns (-1, 1)
+
+_EOF_
+
+P{
+The mask is '1' meaning find the nearest CELL. Which would be direction (-1, 1). There
+are three cells visible to this cell, and the one at (-1, 1) has the smallest distance; 29.
+}
+
+CodeSample<<_EOF_
+
+      3 NEAREST		; returns (-1, -1)
+
+_EOF_
+
+P{
+The mask is '3' meaning find the nearest CELL or SPORE. Which would be direction (-1, -1) as the
+distance 11 is the smallest containing a SPORE.
+}
+
+CodeSample<<_EOF_
+
+      8 FARTHEST	; returns (1, 1)
+
+_EOF_
+
+P{
+The mask is '8' meaning find the farthest BARRIER. Which would be direction (1, 1) as the
+distance 43 is the largest distance. This is a "tie" condition; FARTHEST/NEAREST look
+at each direction in clock-wise order beginning with a RANDOM direction. So the result
+may differ.
+}
+
+CodeSample<<_EOF_
+
+      1 -1 WHERE	; returns 46.
+
+_EOF_
+
+P{
+The WHERE instruction returns the distance value for the what is seen along direction (1, -1). The result
+would be 46.
+}
+
+CodeSample<<_EOF_
+
+      0 1 WHAT		; returns 8.
+
+_EOF_
+
+P{
+The WHAT instruction returns the type of thing seen (a 'what' value). In this case it returns
+8, because the along direction (0, 1) we see a barrier. And a BARRIER's 'what' value is 8.
+}
+
+CodeSample<<_EOF_
+
+      15 NEAREST		; returns (-1, -1)
+
+_EOF_
+
+P{
+The NEAREST and FARTHEST instructions take a mask, so OR'ing 1, 2, 4, and 8 is "everything". The OR'ing
+of all what-values is 15. This instruction therefore will return the direction to nearest CELL, SPORE,
+ORGANIC, or BARRIER. The result is direction (-1, -1) because 11 is the smallest distance.
+}
+
+CodeSample<<_EOF_
+
+      15 FARTHEST		; returns (1, 0)
+
+_EOF_
+
+P{
+Here we get (1, 0). Looing along direction (1, 0) we see something at a distance of 87. This is the largest
+distance.
+}
+
+HRULE{}
+
+P{
+SubSection{SIZE, BIGGEST and SMALLEST Examples}
+The SIZE of the organism is the number of cells it consists of.
+}
+
+HRULE{}
+
+P{
+SubSection{HOTTEST, COLDEST and TEMPERATURE Examples}
+The TEMPERATURE of the organism is how much energy it has. The HOTTEST thing is the thing
+with the most energy. The COLDEST thing is the thing with the least energy.
+}
+
+
+} //{ MySite.body }

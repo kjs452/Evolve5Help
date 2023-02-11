@@ -1,0 +1,66 @@
+/*
+ * cell_noops.cpp
+ *
+ * This file automatically generated from cell_noops.tmpl and cell_noops.tt
+ * (processed by render_code.py)
+ *
+ * This file contains dummy cell functions for use by the Kforth Interpreter.
+ *
+ */
+#include "evolve_simulator.h"
+#include "evolve_simulator_private.h"
+
+{%- for i in instr %}
+{%- if instr[i].type != 'CORE' and instr[i].type != 'FIND' %}
+
+//
+// '{{instr[i].name}}', type: {{instr[i].type}}, usage: {{instr[i].usage}}
+//
+static void dummy_{{instr[i].csymbol}}(KFORTH_OPERATIONS *kfops, KFORTH_PROGRAM *kfp, KFORTH_MACHINE *kfm, void *client_data)
+{
+{%- for j in range(instr[i].ins) %}
+	Kforth_Data_Stack_Pop(kfm);
+{%- endfor  %}
+
+{%- for j in range(instr[i].outs) %}
+	Kforth_Data_Stack_Push(kfm, 0);
+{%- endfor  %}
+}
+
+{%- endif %}
+
+{%- endfor %}
+
+//
+// Returns a list of CORE instructions (which are real and operate on the kforth machine)
+// And the complete set of CELL instructions, except they are NO-OP's. They will
+// handle args, but will do nothing
+//
+KFORTH_OPERATIONS *DummyEvolveOperations(void)
+{
+	static int first_time = 1;
+	static KFORTH_OPERATIONS kfops;
+
+	int i;
+
+	if( first_time ) {
+		first_time = 0;
+		kforth_ops_init(&kfops);
+
+{%- for i in instr %}
+{%- if instr[i].type != 'CORE' and instr[i].type != 'FIND' %}
+		kforth_ops_add(&kfops,	"{{instr[i].name}}", {{instr[i].ins}}, {{instr[i].outs}}, dummy_{{instr[i].csymbol}});
+{%- endif %}
+{%- endfor %}
+
+		// give each instruction entry a unique 'key' number which 
+		// is important for remap_instructions() to work.
+		// - these numbers must be same in all instruction tables.
+		// - these numbers must always be increasing in all instruction tables.
+		for(i=0; i < kfops.count; i++) {
+			kfops.table[i].key = 1000 + i;
+		}
+	}
+
+	return &kfops;
+}

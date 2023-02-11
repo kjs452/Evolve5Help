@@ -1,0 +1,28 @@
+include{common.tt}
+MySite.window_title{ Activity 1: Tower of Hanoi }
+MySite.body{
+
+Title{Activity 1: Tower of Hanoi}
+
+P{
+This organism plays towers of hanoi on a blank universe.
+}
+
+P{
+B{Note:} To make this example work, make sure to set the B{MAKE-SPORE Mode} to be B{1}.
+}
+
+IMGCB{hanoi1.jpg}
+
+BREAK{}
+
+//{ **************************************** }
+
+HEREDOC{ CodeSample{code_hanoi.kf} }
+
+//{ **************************************** }
+
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

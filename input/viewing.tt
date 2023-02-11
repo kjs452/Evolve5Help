@@ -1,0 +1,41 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Zooming and Panning }
+MySite.body{
+
+Section{Zooming and Panning}
+P{
+Zooming is easy to do. Just rotate your mouse wheel in and out to zoom the universe in
+and out (kind of like google earth).
+}
+
+SubSection{To Zoom In:}
+P{
+Clicking on the Icon{tb_zoomin.jpg}
+button will zoom into the universe. You can also use the mouse wheel to zoom in
+and out.
+}
+
+P{
+There is also a menu item "Zoom In" if that's your thing.
+}
+
+SubSection{To Zoom Out:}
+P{
+Rotate the mouse wheel down to zoom out. Or press the Icon{tb_zoomout.jpg} button.
+There is also a menu command: "View > Zoom Out". 
+}
+
+SubSection{To see everything:}
+P{
+To view the entire universe press on the tool bar button
+Icon{tb_viewall.jpg} (or select B{View All} from the menu).
+}
+
+SubSection{To Pan:}
+P{
+Click and hold the left mouse button to pan. As you drag the mouse the universe moves
+accordingly. You can also use the arrow keys to pan. This also works when
+you are simulating the universe.
+}
+
+} //{ MySite.body }

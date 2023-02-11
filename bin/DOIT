@@ -1,0 +1,87 @@
+#!/bin/sh
+#
+# Rebuild docs
+#
+ROOT=/Users/kjs/DEVELOPMENT/Evolve5/Evolve5Help
+LIB=${ROOT}/lib
+BIN=${ROOT}/bin
+INPUT=${ROOT}/input
+OUTPUT=${ROOT}/output
+OUTPUT2=/Volumes/D/www/evolve5
+THIRD_PARTY=/Users/kjs/DEVELOPMENT/Evolve5/Evolve5Help/TURD
+
+export PYTHONPATH=${PYTHONPATH}:${LIB}:${BIN}:${THIRD_PARTY}
+
+COPY_TO_MEAT=0
+COPY_IMAGES_TO_MEAT=0
+
+if [ ! -d $OUTPUT ]; then
+	echo no such output directory: $OUTPUT
+	exit
+fi
+
+if [ ! -d $OUTPUT2 ]; then
+	echo no such output directory: $OUTPUT2
+	exit
+fi
+
+if [ $# -ge 1 ]; then
+	if [ $1 = C ]; then
+		COPY_TO_MEAT=1
+		shift
+	elif [ $1 = CI ]; then
+		COPY_IMAGES_TO_MEAT=1
+		shift
+	elif [ $1 = F ]; then
+		shift
+	else
+		echo usage: DOIT '[ C | CI | F f1.tt f2.tt f3.tt ... ]'
+		echo '  C - copy .html and .css to meat'
+		echo '  CI - copy images to meat'
+		echo '  F - next args shall be files to process'
+		echo '  when no args given, process all .tt files in input'
+		exit
+	fi
+fi
+
+#
+# Render 'tt' files to output
+#
+cd $INPUT
+if [ $# -eq 0 ]; then
+	$BIN/render $INPUT/mysite.tmpl $OUTPUT INSTRUCTIONS/INSTRUCTIONS.tt *.tt
+else
+	$BIN/render $INPUT/mysite.tmpl $OUTPUT INSTRUCTIONS/INSTRUCTIONS.tt $*
+fi
+
+#
+# Copy files from 'input' to output
+#
+for F in	$INPUT/msfunk_02.css			\
+			;
+do
+	echo cp $F $OUTPUT
+	cp $F $OUTPUT
+done
+
+#
+# Copy files to D drive on meat so it can be uploaded to etcutmp.com
+#
+if [ $COPY_TO_MEAT = 1 ]; then
+	echo cp $OUTPUT/*.html $OUTPUT2
+	cp $OUTPUT/*.html $OUTPUT2
+
+	echo cp $OUTPUT/*.css $OUTPUT2
+	cp $OUTPUT/*.css $OUTPUT2
+fi
+
+#
+# Copy files from 'images' to output
+#
+if [ $COPY_IMAGES_TO_MEAT = 1 ]; then
+	echo cp $INPUT/IMAGES/* $OUTPUT
+	cp $INPUT/IMAGES/* $OUTPUT
+
+	echo cp $INPUT/IMAGES/* $OUTPUT2
+	cp $INPUT/IMAGES/* $OUTPUT2
+fi

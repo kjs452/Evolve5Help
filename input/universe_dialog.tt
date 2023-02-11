@@ -1,0 +1,70 @@
+include{common.tt}
+MySite.window_title{ Universe Properties Dialog }
+MySite.body{
+
+SubSection{Universe Properties Dialog}
+P{
+This dialog displays general properties about the current simulation.
+}
+
+IMG{ViewUniverse.jpg}
+
+SubSection{Universe Information}
+
+BulletList{
+Item{ S{Filename:} This is simulation filename }
+
+Item{ S{Seed:} The seed value that was specified when this simulation was
+	first created.
+}
+
+Item{ S{Energy:} The total amount of energy in this universe. This value never changes,
+	however it is recomputed by traversing the entire simulation data structures and adding up
+	all the energy. This is debug feature. This value could also change from
+	its starting condition if the cut/paste/delete features were used to add or remove organisms
+	from the universe.
+}
+
+Item{ S{Width:} Width of the universe }
+
+Item{ S{Height:} Height of the universe }
+
+Item{ S{Steps:} Total number of simulation steps that have elapsed. }
+
+Item{ S{Organisms:} Total number of organisms }
+
+Item{ S{# sexual:} number of organism that were created sexually, that is with two parents
+	instead of one parent.
+}
+
+Item{ S{Cells:} Total the number of cells (yellow squares) }
+
+Item{ S{Births:} Total number of organisms that have been born since the beginning of this simulation. }
+
+Item{ S{Deaths:} Total number of organisms that have died since the beginning of this simulation. }
+
+Item{ S{Instructions:} Sum of all program sizes for all organisms. }
+
+Item{ S{Call Stack:} Sum of elements in all call stacks for all cells. }
+
+Item{ S{Data Stack:} Sum of elements in all data stacks for all cells. }
+
+Item{ S{Total:} Total stack elements (Call stack + Data stack) }
+
+Item{ S{Organic:} Total number of organic material that laying around (food) (white squares). }
+
+Item{ S{Organic Energy:} Total amount of energy that is contained in organic material (white squares). }
+
+Item{ S{Spores:} Total number of spores in the universe (blue squares). }
+
+Item{ S{Spore Energy:} Total amount of energy that is contained in spores material (blue squares). }
+}
+
+SubSection{Memory Usage}
+P{
+This section just adds up all the memory that this simulation is using. All
+values are in bytes.
+}
+
+
+} //{ MySite.body }

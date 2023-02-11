@@ -1,0 +1,22 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Contact Me }
+MySite.body{
+
+HRULE{}
+
+SubSection{Contact Me}
+P{
+B{Home Page:} LINK{ URL{http://www.etcutmp.com}  Ken Stauffer's Home Page }
+}
+
+P{
+B{LinkedIn:} LINK{ URL{https://www.linkedin.com/in/kenneth-stauffer-897a755/}  https://www.linkedin.com/in/kenneth-stauffer-897a755/ }
+}
+
+P{
+B{GitHub:} LINK{ URL{ GitHubRepo{} } GitHubRepo{} }
+}
+
+HRULE{}
+
+} //{ MySite.body }

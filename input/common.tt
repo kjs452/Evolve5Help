@@ -1,0 +1,74 @@
+//{
+//
+// These definitions are common to all web pages.
+// To use this file do this: include{common.tt}
+//
+//}
+
+DEFINE{ Ver{5.0} }
+
+DEFINE{ Version{5.0} }
+DEFINE{ PRODUCT-NAME{Evolve Version{}} }
+DEFINE{ HOME-PAGE{http://www.etcutmp.com/evolve5} }
+DEFINE{ BLOG-URL{http://www.etcutmp.com/blog} }
+DEFINE{ FORUM-URL{http://evolve4.invisionzone.com} }
+DEFINE{ PHONE{+1 (999) 999-9999} }
+DEFINE{ CRYEARS{2006-2023} }
+DEFINE{ EvolveTitle{Evolve Ver{}} }
+DEFINE{ EvolveName{Evolve Ver{}} }
+DEFINE{ ReleasedOn{February 15, 2023} }			//{ date that this version was released }
+DEFINE{ EvolvePrice{$20 USD} }					//{ Application Prive }
+DEFINE{ PLATFORM{Mac} }
+
+DEFINE{ AuthorName{Kenneth Stauffer} }
+DEFINE{ AuthorEmail{evolve5ken@gmail.com} }
+DEFINE{ AuthorMailTo{mailto:evolve5ken@gmail.com} }
+DEFINE{ BirthYear{1968} }
+DEFINE{ GitHubRepo{https://github.com/kjs452} }		//{ where the source code for Evolve can be obtained }
+
+MySite.name{ AuthorName{} }
+MySite.logo{ Evolve 5.0 }
+MySite.email{ AuthorEmail{} }			//{ my email }
+MySite.year{ CRYEARS{} }				//{ my copyright year thing }
+MySite.homepage{ HOME-PAGE{} }
+MySite.title{ Evolve Ver{} }
+MySite.evolve_version{ Ver{} }
+
+MySite.lastmodified{ NowDT{} }			//{ gets set to the current date/time whenever static site built }
+MySite.LastUpdated{ GitDate{} }
+
+MySite.top_url{}						//{ not used, for the evolve website }
+
+//{
+//
+//	This defines the top links and their names
+//	Use MySite.top_url\{....\} to make one of these
+//	the "active" onve
+//
+//}
+MySite.top{
+	Item{Get Application	URL{executable.html} }
+	Item{Get Source Code	URL{sourcecode.html} }
+	Item{User Manual		URL{contents.html} }
+}
+
+
+MySite.side{
+	Heading{
+		THIS TEXT SHOULD NOT BE RENDERED
+		Link{Home					URL{index.html} }
+		Link{Screen Shots			URL{screen_shots.html} }
+		Link{Overview				URL{overview.html} }
+		Link{Getting Started		URL{getting_started.html} }
+		Link{Organisms and Cells	URL{organisms.html} }
+		Link{Spores					URL{spores.html} }
+		Link{Genetics				URL{genetics.html} }
+		Link{KFORTH Language		URL{kforth.html} }
+		Link{Mutations/Replication	URL{mutations.html} }
+		Link{Simulation				URL{simulation.html} }
+		Link{CPU Architecture		URL{architecture.html} }
+		Link{Activities				URL{activities.html} }
+		Link{FAQ					URL{faq.html} }
+		Link{Links					URL{links.html} }
+	}
+}

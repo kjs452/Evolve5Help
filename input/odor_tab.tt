@@ -1,0 +1,38 @@
+include{common.tt}
+MySite.window_title{ Odor Data Tab }
+MySite.body{
+
+SubSection{Odor Data Tab}
+P{
+The simulation grid can be used to store and retrieve a single 16-bit value on each (x,y) location.
+This is what "odor" is. This tab displays the odor map for the grid locations surrounding the cell.
+It displays what the odor related KFORTH instructions will return.
+}
+
+P{
+IMG{odortab.jpg}
+}
+
+P{
+The center cell in red is the current cell. The surrounding cells are shown.
+}
+
+P{
+The instructions B{SMELL}, B{EXUDE} will be using the same information as is displayed in this tab.
+This tab will help in debugging organisms.
+}
+
+P{
+SubSection{Examples}
+Here's some KFORTH instructions and what they will return, assuming the data shown above.
+}
+
+CodeSample<<_EOF_
+      1 1 SMELL     ; returns -8
+      0 0 SMELL     ; returns 62
+
+     62 -1 1 EXUDE   ; write '62' to grid at the offset (-1, 1)
+_EOF_
+
+
+} //{ MySite.body }

@@ -1,0 +1,1161 @@
+include{common.tt}
+
+//{
+//
+// INSTRUCTIONS: Just keep adding to TOP OF FILE. Use this template:
+//
+
+Blog{
+Title{title}
+Date{ yyyy-mm-dd }
+Time{hh:mm}
+P{
+first paragraph
+}
+}
+
+//}
+
+//{
+Blog{
+Title{Meme Machine}
+Date{ yyyy-mm-dd }
+Time{hh:mm}
+P{
+One of the new things since 2007 was reading meme machine.
+}
+}
+//}
+
+Blog{
+Title{Energy Concentrations}
+Date{ 2023-02-15 }
+Time{2:00}
+P{
+I think I noticed a reason for a boring part of my simulations.
+At the beginning of most simulations
+you will see cool organisms exploring the grid everywhere. With lots of
+interesting things to watch. But then after a while,
+all the cells cluster into tight bunches of one or two groups.
+}
+
+P{
+It makes sense to me. What I think I understand now is this: Only where the highest concentrations
+of energy are, are the most populations. It is a selection process, you don't surive without going where
+the energy is. Anyway, I don't know how to fix. I have ideas. Energy needs to be distributed away from
+main cluster. Energy needs to be conserved too. Until recently energy could only be transferred
+gdirectly. I enhance the TT{SEND-ENERGY} instruction to allow energy to be sent remotely.
+}
+
+P{
+I quickly tested an idea. I hid OMOVE behind a trap. I used the TRAP instruction to replace OMOVE.
+The new implementation would send energy in the opposite direction as well as doing the normal OMOVE.
+It didn't work, the organisms all froze and refused to move.
+}
+
+CodeSample<<_EOF_
+; Strain 2: emit-omove
+; Protected Code Blocks: 13
+; Protected Instructions: OMOVE MAKE-BARRIER SPAWN 
+; Instruction Modes: EAM=1664 MSE=100 GE=100 GS=20 ROM=1 
+;    SHM=112 SAM=160 SEM=1024 WRM=784 SNDM=4 
+; MaxApply=5 MaxCB=50 StrandLen=4 
+main:
+{
+	evolve call
+}
+
+_trap1: { }
+
+;
+; OMOVE replacement
+;
+_trap2: {
+	DSLEN 55 > ?exit
+	CSLEN 60 > ?exit
+	DSLEN 2 < ?exit
+	do_omove call
+}
+
+_trap3: { }
+_trap4: { }
+_trap5: { }
+_trap6: { }
+_trap7: { }
+_trap8: { }
+_trap9: { }
+
+do_omove: {
+	2dup OMOVE
+	dup
+	{ -rot 2negate 1 -rot SEND-ENERGY pop }
+	{ -rot 2pop }
+	ifelse
+}
+
+evolve:
+{
+... standard seed program ...
+... replace 'OMOVE' with 'TRAP2' ....
+}
+_EOF_
+
+}
+
+Blog{
+Title{Relaxed MacOS Requirements (10.15)}
+Date{ 2023-02-15 }
+Time{1:00}
+P{
+Good news!
+The free B{Evolve4} application has had its MacOS version requirement relaxed.
+You can download the application if you have a MacOS version 10.15 or above.
+}
+
+P{
+I also fixed some crashing bugs, and refreshed the built-in help pages.
+}
+
+P{Now is a good time to mention that the entire EvolveName{} website is also the help
+documentation for the application. And these files are included with the application
+in a folder called 'help'. This program is B{100%} offline, even for documentation.
+}
+
+}
+
+Blog{
+Title{Still working 2}
+Date{ 2023-02-08 }
+Time{01:00}
+P{
+I am making great progress on the GUI features. All are done except for Edit Organism.
+The B{Feb 15} date is looking more certain now. I updated the website with the latest
+documentaiton and screen shots. For example, here is the documentation for the
+LINK{ URL{../set_mouse_pos.html} MOUSE-POS feature}, which was just completed.
+}
+
+SubSection{Interactivity with KEY-PRESS and MOUSE-POS}
+P{
+B{EvolveName{}} has two instructions for interactivity. TT{KEY-PRESS} and TT{MOUSE-POS}.
+These instructions will return the current keyboard character or current mouse position
+entered by the user.
+These values are not defined by the EvolveName{} simulator. They are really just variables
+that can be set externally from the simulation module. The external client
+of the simulator will define how keyboard and mouse input is handled.
+}
+
+P{
+It is pretty obvious what KEY-PRESS should do. It returns whatever character
+the user had pressed. The MOUSE-POS is less obvious. The GUI has a right click mode
+which allows the user to select (x,y) positions with their right mouse button.
+}
+
+P{
+These instructions can be configured to trigger an LINK{ URL{../organism_reference.html#ref_KEY-PRESS} interrupt} when they B{change}.
+This allows for more responsive robots.
+}
+
+P{
+These instructions are how the LINK{ URL{../act4.html} tank activity} works.
+}
+
+}
+
+Blog{
+Title{Still working}
+Date{ 2023-02-01 }
+Time{01:00}
+P{
+I am still working on finishing the next version. I am targeting B{Feb 15}.
+I have made lots of progress. All of the simulator changes are done and fully tested.
+Now I am going to working on the B{GUI} changes.
+}
+}
+
+Blog{
+Title{MacOS Version Confusion & Status}
+Date{ 2023-01-19 }
+Time{1:00}
+P{
+The published version of the application on the App store requires B{MacOS 12.3 or later}. My code
+doesn't require this, I just built the application incorrectly. I am now targeting version B{MacOS 10.15}
+for the final release. Sorry, this is kind of a show stopper for most users. I would B{NOT} upgrade
+my computer just to run this. I may see how easy it is to issue an update. If it's trivial, I will make
+that change to the app store.
+}
+
+P{
+B{Status Update:} I got sucked into Jury Duty but its over. I improved all the documentation to reflect
+the interrupt logic i am planning.
+I am fixing file reading speed. Removed 'CBEM', and 'Diagonal mode'. Added the new instruction modes.
+Added TT{OPCODE'}.
+}
+
+P{
+B{TODO:} Roughly: Move Organism; Set MOUSE-POS; Tweak Energy; Edit Organism;
+		Interrupts; READ/WRITE instructions.
+}
+}
+
+
+Blog{
+Title{Protect the SPAWN instruction}
+Date{ 2023-01-14 }
+Time{1:00}
+P{
+I updated the release notes, because I discovered the TT{SPAWN} instruction ought to be protected
+in most sims.
+This is because it does not mutate the program before creating a new organism. If evolution comes
+up with TT{SPAWN} it can cause evolution to stop. (It just happened in one of my simulations).
+}
+
+P{
+When I release EvolveName{} at the end of this month, I will also release the source code for
+the the command line utility and the GUI. Plus all the stuff for generating the documentation,
+unit tests and this blog.
+}
+
+}
+
+Blog{
+Title{Back to Work}
+Date{ 2023-01-09 }
+Time{01:00}
+P{
+I'm back to work. I was relaxing after getting the EvolveName{} product published to the App Store.
+I am working on making sure the people who download the simulator have stuff to do.
+Right now I am working on the LINK{ URL{../activities.html} B{activities}} pages to they are accurate.
+}
+
+}
+
+Blog{
+Title{Preliminary Release of Evolve}
+Date{ 2022-12-31 }
+Time{5:08}
+P{
+There is preliminary version of EvolveName{} available on the Apple App Store. Search for B{Evolve4}.
+Happy New Year.
+}
+
+P{
+The final version will arrive in about one months time. A few cool GUI features and
+some simulator enhancments are what remain. Plus I want better documentation, and content (kooool kforth
+program that do stuff) and find bugs. Here are the LINK{ URL{../releasenotesev4.html} release notes} for
+this version.
+}
+
+SubSection{Todo:}
+P{
+Here is the main list of what remains. Nothing too hard. Some fun features like 'Edit Organism' which
+I am excited about implementing. It will aid greatly in debugging organisms.
+}
+
+BulletList{
+Item{ H{Interrupts} - ability to configure interrupts  modes bits }
+Item{ H{MOUSE-POSE} - ability to use the right click tool 'mouse-pos' to set a mouse position}
+Item{ H{MOVE ORGANISM} - the right click tool 'move organism'}
+Item{ H{Tweak Energy} - the right click tool 'tweak energy'}
+Item{ H{Edit Organism} - kool new feature where can edit the organism from the View Organism Dialog}
+Item{ H{Find Dialog} - remember list of 10 last searches, improve instructions, documentation}
+Item{ H{Strand Length} - mutation setting. change hard coded value to allow user changeable}
+Item{ H{SAY instruction} - need to implement the SAY instruction}
+Item{ H{READ/WRITE instructions} - need to implement these instructions}
+}
+
+}
+
+
+//{Blog{
+Title{USER Requirements to use EvolveName{}}
+Date{ 2022-12-31 }
+Time{1:00}
+P{
+This program uses tons of advanced programming concepts all in one programming environment.
+Operating Syetem concepts such as I{Traps}. Low-level control concepts such as I{Interrupts}.
+}
+
+P{
+The user is expected to know much of this low-level programming/operating system knowledge.
+But the user manual helps to gently explain the concepts as they arise.
+}
+
+P{
+When developing programs for EvolveName{} it is very much like writting any complex program.
+Debugging sessions ensue. Frustrating bugs will happen. So I think the users of EvolveName{}
+need to be ready to program. However there are ways to enjoy this program which don't involve programming.
+If you utilize the programs written by others you can also enjoy the program.
+}
+
+P{
+I expect the user of EvolveName{} to be pretty smart, and motivated some strange intellectual
+curiosity involving evolving agents.
+}
+}
+}
+
+
+Blog{
+Title{Energy Transfer Rules and the Simulation}
+Date{ 2022-12-28 }
+Time{1:00}
+P{
+In the rewrite of Evolve I learned that tweaking the rules behind the TT{EAT}
+instruction makes a big difference to the kind of simulation to emerge.
+}
+
+P{
+For years my EAT was aggressive. It took 1/N'th the energy of the cell (N= number of cells).
+It even killed the cell! In this world, creatures lived around 1,000 steps before dying.
+Evolution happened, but the creatures were obsessed with reproducing before dying.
+Tiny two or three cell line segments were all the shapes that would emerge.
+}
+
+P{
+I added LINK{ URL{../modes.html} modes} to instructions so I could experiment with more stuff without breaking things.
+I have added lots of modes to the TT{EAT} instruction, and I added a new instruction TT{SEND-ENERGY},
+to exchange precise amounts of energy. LINK{ URL{../modes.html#TOC2} EAT MODES}
+}
+
+P{
+The most dramatic result has been using a very non-aggressive TT{EAT}. This is mode B{640}. The eater only takes
+half of this energy AND DOES NOT terminate the cell. This made a huge difference to the simulations. The programs now
+live for millions of steps, and run much larger sections of the code. It looks like they have more complex behaviors now.
+}
+
+}
+
+
+//{
+Blog{
+Title{Procedurally generated procedures}
+Date{ 2022-12-26 }
+Time{9:00}
+P{
+Just noting the humor and accuracy in this phrase when applied to alife sims.
+Evolve is like turtle graphics, the logo language is very simular to kforth, but in Evole the turtle can fuck.
+}
+}
+}
+
+
+Blog{
+Title{Simulator Performance}
+Date{ 2022-12-26 }
+Time{9:00}
+P{
+The performance I am seeing on the Apple M1 Mac Mini is about 10.5 MHz. What I mean by this
+number is the simulator will execute 10.5 million kforth instructions per second. That means, if you had 10 cells
+then each would be running at 1 Mhz (1 million instructions per second).
+A simulation consisting of B{20,000} cells, each cell 
+is executing at 5.25 Khz (525 instructions per second). Not too bad considering you have 20,000 of them!
+}
+}
+
+
+
+//{
+Blog{
+Title{EvolveName{}: Toy or Tool?}
+Date{ 2022-12-26 }
+Time{1:00}
+P{
+When I was a kid
+whenever I would get a new toy. For this blog post i will use the example of red plastic PlaySchool binoculars.
+Somewhere was the PlaySchool logo plastered on it. The first thing I would do is customize my toy
+to make it look like the adult versions. First thing I would do is scratch off the logo (anybody else do that?).
+I would replace the strap with a real leather on or something. Whatever I could do to match my Dad's binoculars.
+}
+
+P{
+What I wanted my toy to be was the I{real} or I{serious} version. Philosophically what is a toy?
+My Dad's binoculars were as much a toy for him as were my toys.
+}
+
+P{
+Toy's are generally not meant to last or be used to solve real problems. I intend Evolve to
+be usable as a tool not a toy, I guess. I indend EvolveName{} to actually support thousands of
+complext evolving programs to run without crashing. I want the simulator to be of the highest quality, not
+toy quality.
+}
+
+P{
+Other aspects help define this program as a tool is the file interfaces and 
+the EvolveBatch command line utility. These details help make evolve usable as a tool
+rather than a stand alone game. The user interface is also geared toward being a tool rather than a game.
+It uses standard GUI controls, rather than a custom gui.
+}
+}
+}
+
+
+Blog{
+Title{Eroded Away by Evolution}
+Date{ 2022-12-26 }
+Time{2:00}
+P{
+If you start a simulation with a seed program, evolution will erode away any
+complicated structures you initially put in place. So how to nudge evolution to
+use your suggestions?
+}
+
+P{
+A I{seed program} is a KFORTH program you specify when creating a new simulation. It is
+the genetic code of the first creature(s) to inhabit your simulation. The minimal seed program
+reproduces and moves and eats. My standard seed program, which I have been
+using for years, just moves randomly and eats and reproduces. With the right parameters
+you almost always get a simulation that takes off and sustains itself long enough
+for lasting mutations and evolution to occur.
+}
+
+P{
+By this time most of the seed program is replaced with mutated code. But what if you wanted
+to boost evolution? What if you wanted to experiment with a new kind of parent/child communications for example?
+}
+
+P{
+One way to experiment is to create an elaborate seed program which contains all your new logic
+for communications between parent and child. And then have the intial creature use this feature, but in
+a dumb way.
+}
+
+P{
+Such a seed program would quickly get "eroded" by evolution. What I mean is the elaborate code
+you wrote for the seed program won't be called due to mutations. When the simulation starts
+it will be a race to the bottom to find really efficient code and that will almost certainly
+by pass all your fancy code.
+}
+
+P{
+This is why B{protected code blocks} and B{protected instructions} were invented.
+Now you can create complicated behaviors which won't be eroded away by evolution.
+}
+}
+
+Blog{
+Title{ALIFE and Operating Systems}
+Date{ 2022-12-24 }
+Time{01:00}
+P{
+EvolveName{} uses the model of an operating system. What is an operating system? It is a way
+to host lots of untrusted code safely so that the various components won't corrupt each other.
+}
+
+P{
+An operating system is just an ALIFE simulator where the replicating DNA comes from the users
+running their programs. But the job of the operating system is to keep all of this chaos controlled
+so the machine continues to function no matter what strange things the users do.
+}
+
+P{
+So I think it is a reasonable idea to marry operating system with an alife simulation.
+All these concepts from operating systems: I{Protections}, I{Traps}, I{Spawn Process} are
+just what you would want in a platform consisting of evolving genetic code.
+}
+
+}
+
+Blog{
+Title{The Cargo Cult in my Recombination Scheme}
+Date{ 2022-12-18 }
+Time{01:00}
+P{
+Genetic reombination is where you take TWO programs and merge them. At least in real world biology.
+The exact rules vary and are quite messy. In my artificial life simulator I was so stoked on Kforth that
+i jumped on the idea of merging the rows to recombine them.
+}
+
+P{
+But nothing evolved to use this merging feature. Is that because I did it wrong? Or sex requires evolving
+something first but once that happens the merging feature will be used? I didn't know.
+}
+
+P{
+I've become skeptical about all these recombination methods. There are so many rules you must hard code to define
+a merge mechanism. What are the odds you found the "right" way to do it? Or if there is even a right way?
+}
+
+P{
+I'm now of the opinion that a better approach is to provide fine grained ways to spread genetic information.
+For example the READ and WRITE instructions, allow code and data to be spread around on a code block level.
+And NUMBER! and OPCODE! instructions allows for genetic information to be created.
+}
+
+P{
+I haven't done it, but with the building blocks now in EvolveName{}, it should be possible to use MAKE-SPORE to create
+the spore, and WRITE to populate it with whatever code you want. So now it possible to invent interesting
+patterns of information exchange.
+}
+
+}
+
+//{ DO NOT PUBLISH
+Blog{
+Title{Code Rot}
+Date{ 2022-12-18 }
+Time{01:00}
+P{
+I was thinking about code rot and why Evolve 4.0 wasn't usable anymore. The code rot wasn't MY stuff, it
+was all the surrounding stuff. This isn't suprising, as my stuff didn't change. It's a funny concept "rot". Usually
+the thing that rots is the thing, not the surroding environment. What happened was the surrounding environment changed,
+and my software was in cold storage for years. It's like brining back a dinosaur, it won't be able to "run" in the new environment.
+The dinosaur hasn't rotted, in fact it is in atomically perfect condition.
+}
+
+P{
+Code Rot maybe isn't right word. The code got old. That doesn't work either. It got old relative to the environment. Yes, the
+rate of change to some code is different than the rate of change of others. Had Evolve 4.0 been under continious development, it
+would always be up to date.
+}
+}
+}
+
+
+Blog{
+Title{Physics & Genetics}
+Date{ 2022-12-14 }
+Time{12:23am}
+P{
+Artificial life simulations are characterized by their physics and genetics. Swimming, Terrain, Gravity, Flight requires some kind of
+space in which the rules of the environment are instantiated. Some kind of physics engine is required to simulate these behviors.
+What about using the physics provided by the computer itself? That is what Evolve tries to do.
+}
+
+SubSection{Physics}
+P{
+Computers have lots of state these days. 8-16 GB is a huge chunk of memory. CPU's are fast! Why not use the already built in physics of the computer
+and avoid simulating real-world physics? This is kind of my intention with the EvolveName{} universe. More processing power can be spent on
+utilizing more state and simulating more organisms. Some concession must be made to real-world physics to create a visually appealing simulation.
+(Here I think using a 2-Dimensional grid was an improvement over the 1-Dimensional memory grid provided by the computer naturally)
+Anyway, your average computer is an astronomically large ball of state combined with a speed-of-light fast cpu to manipulate it all.
+}
+
+P{
+I keep trying to think of physics for my simulation. For example, I had to think up the idea of a "bullet" object. This was just a gimmick, and
+it takes up simulation cycles. But what physics is appropriate to a computer based universe? It seems to me the struggle in such a world
+would be over cpu cycles, memory space and the struggle to encode myself into smaller and smaller bits. In this world, the physics
+would be things like fighting over memory locations. Maybe exploting race conditions. Or cross-core cache side-channel attacks, etc.....
+}
+
+P{
+By the way, I{Core Wars}, one of favorite artificial life sims, demonstrated all these things. Another kind of struggle
+is inventing ways to hijack another creatures machinery for copying. I added the TT{READ} and TT{WRITE} instructions in order
+to support this.
+}
+
+
+SubSection{Genetics}
+P{
+Some artificial life software encodes the behavior in terms of parameters or weights in a neural net. Others use a programming
+language, like EvolveName{}. I like to think the trade off made in EvolveName{} is to focus on I{computer based physics}
+and I{computer based genetics}.
+}
+
+}
+
+
+Blog{
+Title{Evolve Code 2}
+Date{ 2022-12-14 }
+Time{10:10am}
+P{
+This is the the latest evolve program from the same simulation that has been running for 15 days.
+Here's a quick explaination of the protected code:
+}
+
+BulletList{
+Item{ LH{main:}
+	This is where execution starts. We simply call the first unprotected code block, row13.
+}
+
+Item{ LH{row1:}
+	This is TT{TRAP1} handler. If the evolving program calls TRAP1 then this is called.
+	What does this code do? It spawn's a bullet and send's it off in the direction indicated by
+	the 2 arguments passed to TRAP1.
+}
+
+Item{ LH{row6:}
+	This is the TT{TRAP6} handler. If the evolving program calls TRAP6 then this is called.
+	This does the same as TRAP1, except uses a different interface (doesn't use registers R0/R1).
+	It spawn's a bullet and send's it off in the direction indicated by
+	the 2 arguments passed to TRAP6.
+}
+
+Item{ LH{row10 - row12:}
+	These rows implment the bullet's behavior. SPAWN will indicate which code block the new organism starts at.
+	We use row10 for the bullet. Row 11 and 12 is helper code too. All together they implement a un-eatable
+	single cell object that eats in one direction. Then stops when no more moving/eating can happen, then dies
+	(which deposits an organic block at this spot).
+}
+
+}
+
+CodeSample<<_EOF_
+main:
+{
+      13  call 
+}
+
+row1:
+{
+      DSLEN  50  >=  ?exit  DSLEN  2  <  ?exit
+      R0  R1  2swap  R1!  R0!  R0  R1  1  5  10
+      SPAWN  pop  R1!  R0! 
+}
+
+row2:
+{
+     
+}
+
+row3:
+{
+     
+}
+
+row4:
+{
+     
+}
+
+row5:
+{
+     
+}
+
+row6:
+{
+      DSLEN  60  >=  ?exit  R1!  R0!  R0  R1  1
+      5  10  SPAWN  pop 
+}
+
+row7:
+{
+     
+}
+
+row8:
+{
+     
+}
+
+row9:
+{
+     
+}
+
+row10:
+{
+      R0  R1  2dup  11  call  12  call  HALT 
+}
+
+row11:
+{
+      2dup  OMOVE  ?loop 
+}
+
+row12:
+{
+      2dup  EAT  pop  2dup  OMOVE  pop  255  NEAREST
+      EAT  ?loop 
+}
+
+; ----- protected / unprotected -----
+
+row13:
+{
+      2  OMOVE  22  call  2dup  14  call  22  call
+      15  call  22  call  16  call  22  call  17
+      22  call  22  0  30  18  call  call  44
+      R6  22  call  20  2dup  pop  OMOVE  and
+      R2!  2dup  EAT  GROW  OMOVE  1+  29  BIGGEST
+      -95  13  -41  R4++  -1  pop  OMOVE  2  ?loop
+      R8!  30  R6++ 
+}
+
+row14:
+{
+      2dup  EAT  0  GROW  4  GROW  OMOVE  -85
+      GROW  EAT  pop  -85  HOTTEST  2dup  EAT
+      ?loop  OMOVE  1+  -38  R0  OMOVE  ?loop
+      -87  -50 
+}
+
+row15:
+{
+      HOTTEST  OMOVE  GROW  54  GROW  -26  OMOVE
+      -26  GROW  54  GROW  GROW  -4  -51  nop
+      R8++  51  -16  -74 
+}
+
+row16:
+{
+      -48  0  NUM-CELLS  --R6  73  GROW  OMOVE
+      invert  GROW  2dup  9  GROW  OMOVE  pop
+      /  ?loop  pack2  94  --R4  -1  2dup  EAT
+      pop  OMOVE 
+}
+
+row17:
+{
+      2+  55  -7  SIZE  86  16  call  2  OMOVE
+      -12  37  2+  63  R5!  61  -1  R4!  -41  53
+      SPREAD-ENERGY  58 
+}
+
+row18:
+{
+      ENERGY  3  /  R0!  -2  -3  R0  MAKE-SPORE
+      -5  -51  R0  MAKE-SPORE  -85  LOOK  -6  CB
+      15  52  OMOVE 
+}
+
+row19:
+{
+      -48  GROW  54  99  COLDEST  31  1-  -44
+      R0  79  -71  AGE  79  -71  -28  -24  R5++
+      -50  MAKE-SPORE  29  PEEK  --R8  -22  max
+      0  NUM-CELLS 
+}
+
+row20:
+{
+      GROW 
+}
+
+row21:
+{
+      /mod 
+}
+
+row22:
+{
+      2dup  EAT  ?loop  ?loop  62  -48  -51 
+}
+
+row23:
+{
+      R5!  63  +  or 
+}
+
+row24:
+{
+      MAKE-ORGANIC  not  78  R2++  -22 
+}
+
+row25:
+{
+      -93 
+}
+
+row26:
+{
+      MAKE-SPORE  -26  *  -22  not  -38  R2++
+      POKE  rot  -52 
+}
+
+row27:
+{
+      87  -26  unpack2  TRAP5  ?exit  0  R8++
+      51  R8++  51  54  --R4  > 
+}
+
+row28:
+{
+      -87  MAKE-SPORE  <=  74  22  call  2dup
+      14  call  15  call  22  call  16  call  22
+      call  17  22  call  22  0  call  /mod  -59
+      R9!  85  call  44  R6  -11  41  22  call
+      20  2dup  pop  OMOVE  and  -3  R3  LOOK
+      R6++  OMOVE  1+  29  BIGGEST  -95  13  2+
+      63  R5!  -38  R4++  -1  pop  OMOVE  2  ?loop
+      R8!  30  R6++ 
+}
+_EOF_
+
+}
+
+Blog{
+Title{Introduction}
+Date{ 2022-12-14 }
+Time{10:46am}
+
+BulletList{
+
+Item{ H{B{Who am I?}}
+	P{
+	Hi, I am Ken Stauffer, the author of EvolveName{} . I am a 54 year old software developer. I live
+	in New York city. I have lived in many other cities: Austin, Sunnyvale, Calgary, Pittsburgh, Jacksonville, Montreal, and Waukesha.
+	I am creating this project to share the program with others and share things to do with the platform.
+	I am looking forward to engaging with others and see what they can create with the program.
+	}
+}
+
+Item{ H{B{What is new since 2007?}}
+	P{
+	I previously worked on Evolve in 2007. Development got stalled because I over engineered the thing and was attempting
+	too much. I had this elaborate re-write of the simulator to enable super amazing customizations. But the complexity of what I was
+	writting was overwhelming me and I lost interest.
+	}
+
+	P{
+	Nuf said, then I got a girl friend and moved to New York city and started a new job. This was a carreer changer for me,
+	and I invested most of my energies on the new job. It's been 12 years now since I moved to New York.
+	}
+
+	P{
+	I tried to pick up evolve 4.0 and port it to linux and add 3D over the years.
+	These projects never got too far, and I was left with a bunch of crazy C++ code that I didn't like or care about.
+	}
+}
+
+Item{  H{B{Why am I back?}}
+	P{
+	I recently rediscovered Evolve, which I totally had forgetten about. I missed playing with Alife. I saw my old website and
+	really missed playing the simulator. It seemed like a perfect time to re-release Evolve 4.0. It was also highly motivating
+	to be reminded that others cared about this program too.
+	}
+}
+
+Item{ H{B{What is back?}}
+	P{
+	The artificial life software I wrote in 2007. Why did it ever leave you ask?
+	It's back because, I let the code rot. I stopped using Windows and Evolve 4.0 ran on windows.
+	Now I use Linux/Mac. This meant I couldn't run the Evolve 4.0 program, nor could I even compile or build a
+	new executable.
+	}
+
+	P{
+	So, its back because I have restored the code to running condition.
+	}
+}
+
+Item{ H{B{How is Evolve back?}}
+	P{
+	It has been restored and made runnable on the MacOS platform. The core simulator was modified in many great ways.
+	The user interface was rewritten in Swift using Xcode. The alife simulator is still written in C but I have greatly improved
+	the performance and the ability to customize things.
+	}
+}
+
+Item{ H{B{What are the old blog posts from 2006/2007?}}
+	P{
+	For context about this project I restored the old blog entries from the ealier years.
+	It's pretty boring material, but this was what I talked about back then. It's probably
+	what I'll be talking about now. I think there will be more reasons to blog content with substance.
+	I think I will be finding more hacks and things to do with this version of the simulator which I can share.
+	}
+}
+
+}}
+
+Blog{
+Title{unprotected code vs protected code}
+Date{ 2022-12-13 }
+Time{9:29am}
+P{
+A kforth program is split into two regions, a protected region (the first N code blocks) and the rest of the code which
+is UNPROTECTED code. Most CPU's have a "protected mode" bit or supervisor mode bit. EvolveName{} doesn't have such a bit.
+It uses the current program counter location to decided what mode the cpu is in. If you are running code that is in
+the protected region, then you have super user rights etc.... If you are running in an unprotected region you
+are running in user land.
+}
+
+P{
+More information on this LINK{ URL{../architecture.html} here}.
+}
+
+P{
+I'll be randomly blogging like this from now on. These notes are to jot down little tidbit of knowledge
+about the simulator and how it works.
+}
+
+}
+
+
+Blog{
+Title{About Evolve 5.0}
+Date{ 2022-12-11 }
+Time{3:59}
+P{
+The simulator implements a clever platform for evolving programs. I think of the simulation
+not as I{artificial life}, but as I{evolving programs}.
+}
+
+P{
+B{EvolveName{}} allows the user to customize the simulations via B{strain profiles}.
+A strain profile defines a set of properties for an I{evolving program}.
+The most important properties that a strain can have are I{protected code blocks} and
+I{protected instructions}.
+}
+
+P{
+These protections allow the user to create an evolving program which is a mixture of code
+B{you} write and code that B{evolution} writes. You can create a sandboxed program which
+can spawn copies of itself and move around the grid. This sandboxing allow you to invent new
+instructions/behaviors/morphologies that will not be eroded away by evolution.
+}
+
+P{
+With I{protections}, you can modify the rules of how various instructions behave. For example, one
+could change how energy transfer happens during the TT{EAT} instruction.
+}
+
+P{
+The simulator allows multiple strain profiles to co-exist within the same simulation.
+This can be used to create different types of I{evolving programs}. For example one set
+of programs could be robots that cannot evolve but move around barriers and organic matierial in some way.
+Another strain could implmenet a "bullet" object which the main creatures can fire. So some strains
+can become environmental objects. And some strains can be a mixture of evolving code and protected code.
+}
+
+P{
+It's hard to explain without concrete examples. I created a "bullet" object which just moves in a line
+and EAT's and then collects all the energy it consumes into a single ORGANIC block. My other strain, would
+call an instruction i invented TT{TRAP1}, which spawns a bullet object to the bullet behavior. Then
+I waited to see if any creature would evolve to use this. My results have been very fun to see creatures
+shooting other creatures.
+}
+
+P{
+Another example is a "nibbler" creature I invented. This creature responds to TT{KEY-PRESS} and TT{MOUSE-POS} instructions.
+It moves around and will eat/kill other organisms, via the user controlling it with the keyboard. This creature can spawn
+different number of copies of itself so that the user can control a swarm of these "nibblers". I call it the B{nibbler} because
+it nibbles on other organisms and takes their energy. I designed it to unstuck simulations that have too many blobs and not
+enough fun creatures.
+}
+
+P{
+The hardest part I am working on now, which is to document all this stuff. The program itself is
+99% done and does exactly what the old B{Evolve 4.0} did with a much better simulator for customization.
+}
+
+}
+
+Blog{
+Title{Evolved Code}
+Date{ 2022-12-1 }
+
+P{
+Below is the evolved KFORTH program after three days.
+The comment "protected/unprotected" was added by me. This seperates the
+code which does not mutate from the code which I{does} mutate. This is a new feature of EvolveName{}.
+}
+
+P{
+This organism has protected code which implements a bullet. When the creature stumbles
+upon the instruction B{TT{TRAP6}}, it will shoot a bullet. Another new features of EvolveName{}
+allows the bullet to B{un-eatable} because it belongs to an uneatable strain. Lots of experimentation
+available with the new simulator.
+}
+
+
+Code<<_EOF_
+main:
+{
+      13  call 
+}
+
+row1:
+{
+      DSLEN  50  >=  ?exit  DSLEN  2  <  ?exit
+      R0  R1  2swap  R1!  R0!  R0  R1  1  5  10
+      SPAWN  pop  R1!  R0! 
+}
+
+row2:
+{
+     
+}
+
+row3:
+{
+     
+}
+
+row4:
+{
+     
+}
+
+row5:
+{
+     
+}
+
+row6:
+{
+      DSLEN  60  >=  ?exit  R1!  R0!  R0  R1  1
+      5  10  SPAWN  pop 
+}
+
+row7:
+{
+     
+}
+
+row8:
+{
+     
+}
+
+row9:
+{
+     
+}
+
+row10:
+{
+      R0  R1  2dup  11  call  12  call  HALT 
+}
+
+row11:
+{
+      2dup  OMOVE  ?loop 
+}
+
+row12:
+{
+      2dup  EAT  pop  2dup  OMOVE  pop  255  NEAREST
+      EAT  ?loop 
+}
+
+; ========= protected / unprotected ==========
+
+row13:
+{
+      16  call  2  OMOVE  22  call  2dup  14  call
+      22  call  15  call  22  call  16  call  22
+      call  17  R0  -10  22  call  22  0  30  18
+      call  call  22  39  OPCODE  call  20  2dup
+      pop  OMOVE  and  R2!  2dup  EAT  GROW  OMOVE
+      CHOOSE  R4++  TRAP7  -1  2  1  ?loop  R8! 
+}
+
+row14:
+{
+      0  GROW  4  GROW  -85  HOTTEST  OMOVE  1+
+      -38  R0  2dup  2dup  EAT  GROW  OMOVE  NEAREST
+      -49 
+}
+
+row15:
+{
+     
+}
+
+row16:
+{
+      ENERGY.O  --R5  -26  0  NUM-CELLS  --R6
+      73  GROW  OMOVE  invert  GROW  2dup  9  GROW
+      OMOVE  pop  R3!  96  --R4  -1  2dup  EAT
+      pop  OMOVE 
+}
+
+row17:
+{
+      OMOVE  GROW  R3! 
+}
+
+row18:
+{
+      ENERGY  6  /  R0!  -1  -4  R0  MAKE-SPORE
+      /  -7  -2  R0  MAKE-SPORE  -83  LOOK  -40
+      18  56  -5  pop  FARTHEST  pop 
+}
+
+row19:
+{
+     
+}
+
+row20:
+{
+      -38  pop  96  OPCODE! 
+}
+
+row21:
+{
+     
+}
+
+row22:
+{
+      2dup  EAT  ?loop  ?loop  57  -7  -54 
+}
+
+row23:
+{
+      3 
+}
+
+row24:
+{
+      GROW  R6  -85  HOTTEST  OMOVE  GROW  R3! 
+}
+
+row25:
+{
+     
+}
+
+row26:
+{
+      14  OPCODE!  23  DSLEN  TRAP8  24  26  17
+      2dup  -59  R7!  ?exit  R7!  PEEK  -71  -62
+      3  EXUDE  --R9  2over  43  TRAP3  call  ?loop
+      nop  -5  -3  -80  GROW  R3! 
+}
+
+row27:
+{
+      R3 
+}
+
+row28:
+{
+      dup  call  -3  SPREAD-ENERGY 
+}
+_EOF_
+
+}
+
+Blog{
+Title{Announcing Evolve 5.0}
+Date{ 2022-11-29 }
+Time{2:00}
+
+P{Hello ALIFE Weirdos!}
+P{I'm Back. My last blog post about my alife software was in 2007!}
+
+P{Why am I back? What is back? Who the hell am I? Why am I still alive? These are all good questions, which
+I'll get to in a bit.}
+
+P{
+I am announcing the next version of Evolve 4.0, which is to be called B{ EvolveName{} }.
+I am almost done with the port to its new platform (MacOS).
+}
+
+P{
+I rewrote the simulator for the Mac. It is a MacOS native applications written using C, Swift and Xcode.
+It is being written as an NSDocument application. Using SwiftUI but not the newer Storyboard stuff.
+}
+
+P{
+Bye for now. Estimated Release Date is Dec. 31st, 2022.
+}
+
+}
+
+Blog{
+Title{One Year Of Alife: Day Calculate{5562 + 54}}
+Date{ 2022-11-29 }
+Time{1:00}
+
+P{
+Well it has been Calculate{5562} days since my last ALIFE update. Heh heh heh. I decided
+that one year of alife wasn't enough. So, I decided to try Calculate{ (5562.0 + 54.0) / 365.0 } years of alife.
+Nothing evolved, except me, the planet and technology.
+}
+
+}

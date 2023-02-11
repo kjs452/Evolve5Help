@@ -1,0 +1,61 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} Application }
+MySite.body{
+
+Section{EvolveName{} Application}
+P{
+Search for B{"Evolve4"} on the MacOS app store.
+Here are the LINK{ URL{releasenotesev4.html} release notes } for this version.
+}
+
+HRULE{}
+
+Section{Updates}
+SubSection{Feb. 2, 2023}
+P{
+The feature complete version of EvolveName{} is not ready yet. However, you can obtain
+what I have now for free. Search for B{"Evolve4"} on the MacOS app store.
+Estimated release date is: B{Feb. 15}.
+}
+
+HRULE{}
+
+SubSection{Feature Complete Version}
+P{
+The Evolve application will be available for purchased from the Apple B{App Store}.
+Search for "Evolve 5.0".
+
+P{ Estimated Release Date: B{ReleasedOn{}}. }
+P{ Estimated Price: B{ EvolvePrice{} }. }
+}
+
+BREAK{}
+BREAK{}
+HRULE{}
+
+Section{Privacy Policy}
+P{
+B{ EvolveName{} } privacy policies:
+}
+
+SubSection{Data Collection}
+BulletList{
+Item{This software does not collect any information on usage or other user actions.}
+Item{This software does not connect to the internet or "phone home"}
+Item{This software does not use any thirdparty packages which do any of these things}
+}
+
+SubSection{Additional Disclosures}
+BulletList{
+Item{This software only reads and writes files specified by the user}
+Item{This software only reads and writes plain text files}
+}
+
+BREAK{}
+BREAK{}
+BREAK{}
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }
+

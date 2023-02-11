@@ -1,0 +1,52 @@
+include{common.tt}
+MySite.window_title{ Sound Data Tab }
+MySite.body{
+
+SubSection{Sound Data Tab}
+P{
+I{Hearing} or I{Sound} occurs between cells that send messages. A sound is simply a 16-bit value
+which has been sent or recieved from another cell.
+This tab displays what the current cell is "hearing".
+Looking in all 8 direction surrounding the cell it displays what
+the sound related KFORTH instructions will return.
+}
+
+P{
+IMG{soundtab.jpg}
+}
+
+P{
+The cell is shown in the middle of the tab. Surrounding the cell are the results
+from listening along each of the 8 directions. Shown is the distance and
+the TT{MOOD} or TT{MESSAGE} register of the other cell.
+}
+
+P{
+SubSection{Examples}
+Here's some KFORTH instructions and what they will return, assuming the data shown above.
+}
+
+CodeSample<<_EOF_
+    34 1 0 SAY      ; send '34' along vector (1,0)
+_EOF_
+
+BREAK{}
+
+P{
+The B{MOOD} and B{MESSAGE} registers of all the surrounding cells are shown on this tab.
+The combo box can be used to select between these two registers.
+}
+
+P{
+The B{Mood} register is something that this cell sets and other cells can read.
+}
+P{
+The B{Message} register is something other cells set and this cell will read.
+}
+
+IMG{cell_com.gif}
+
+BREAK{}
+
+
+} //{ MySite.body }

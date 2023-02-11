@@ -1,0 +1,170 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Getting Started }
+MySite.body{
+
+SubSection{Step 1}
+P{
+Ready? Okay, launch the application and this is what you'll see:
+}
+
+IMG{start1.jpg}
+
+HRULE{}
+
+SubSection{Step 2}
+P{
+There's a thing called a menu, and one of them is called 'File' and if you
+click on it, you'll see what is called a sub-menu which contains several choices.
+Click on 'New' to create your very first simulation.
+}
+
+IMG{start2.jpg}
+
+HRULE{}
+
+SubSection{Step 3}
+P{
+A Seed value (based on the system timer) has already been filled in. You can specify a value
+if you are trying to reproduce a simulation.
+}
+
+P{
+You can select any width x height
+you wish (up to a maximum of 3000 units). For this example, we will keep the
+default 700 x 600. The Oval Barrier option will create a pleasant
+enclosure for your universe (instead of a basic rectangle).
+}
+
+P{
+Choose a strain profile. This gives you good parameters for the energy and population.
+A good seed program is also selected.
+}
+
+P{
+Unless you know how to write KFORTH programs, it will be best to select the default seed
+program. The seed program is a kforth file which is a text file.
+You can look at using the "KFORTH Interpreter".
+}
+
+P{
+Energy is an important value for controlling the population of your universe.
+Values between 100,000 to 800,000 will give you a population of about 3,000 - 8,000 organisms.
+Here we have entered 100,000.
+}
+
+P{
+For this introduction we will just specify one strain, but up to eight can be used.
+}
+
+P{
+Oh, please note that commas are allowed inside of these edit controls. (Cool eh?)
+}
+
+IMG{start3.jpg}
+
+HRULE{}
+
+SubSection{Step 4}
+P{
+Here is the universe that you created. The circle is the "oval barrier" that was created. The
+tiny squares in the middle are your first population of B{10} organisms.
+}
+
+IMG{start4.jpg}
+
+HRULE{}
+
+SubSection{Step 5}
+P{
+Let's start the simulator. How? Click on the Icon{tb_continue.jpg} button or
+use the menu "Start Simulation" (Or press B{F1}).
+}
+
+IMG{start5.jpg}
+
+HRULE{}
+
+SubSection{Step 6}
+P{
+Well, after a few minutes you should see something similar to this. Cool eh?
+Press Icon{tb_stop.jpg} to stop the simulation (or press B{F4}).
+Let's zoom in to get a better look at our universe.
+}
+
+IMG{start6.jpg}
+
+HRULE{}
+
+SubSection{Step 7}
+P{
+To zoom, use your mouse wheel. Or click on the toolbar button Icon{tb_zoomin.jpg}.
+Keep zooming in until it looks like this:
+}
+
+IMG{start7.jpg}
+
+HRULE{}
+
+SubSection{Step 8}
+P{
+Much nicer. You can actually see individual organisms. You can use your mouse to pan around, by
+clicking on the left mouse button and dragging the universe around. (The arrow keys also work for
+panning). Let's zoom in a little more,
+}
+
+IMG{start8.jpg}
+
+HRULE{}
+
+SubSection{Step 9}
+P{
+Use your mouse and click on a yellow (or red) square. These are organisms and
+the most common task in this simulator is to examine the inner genetics of an organism.
+}
+
+P{
+Clicking on an organism "selects" it. If it was a really cool organism, you could cut/copy it
+and paste it into another simulation window. But we are going to examine it.
+}
+
+IMG{start9.jpg}
+
+HRULE{}
+
+SubSection{Step 10}
+P{
+Using the menu select "VIEW > ORGANISM". Alternatively you could have pressed the
+Icon{tb_examine.jpg} tool bar button. (or pressed B{F8}). You can also just double-click
+on any organism to view it.
+}
+
+IMG{start10.jpg}
+
+HRULE{}
+
+SubSection{Step 11}
+P{
+This dialog shows everything about the organism. You view its genetic program and various
+other details about it. Well, I hope you enjoyed this introduction. Congratulations,
+you have just experienced 70% of the application.
+}
+
+IMG{start11.jpg}
+
+BREAK{}
+
+P{
+Clicking on the B{[Vision]} tab will display the cells current vision data. Other
+senses like Sound and Odor can be viewed here too.
+}
+
+IMG{start12.jpg}
+
+P{
+This dialog shows the distance and type of thing that is visible in 8 directions surrounding
+the cell. This is used for debugging organisms that do a lot of LOOK'ing.
+}
+
+HRULE{}
+
+} //{ MySite.body }

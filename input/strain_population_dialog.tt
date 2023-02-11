@@ -1,0 +1,27 @@
+include{common.tt}
+MySite.window_title{ Strain Population Dialog }
+MySite.body{
+
+SubSection{Strain Population Dialog}
+P{
+This dialog shows the population of each strain.
+}
+
+P{
+IMG{StrainPopulation.jpg}
+}
+
+P{
+This dialog shows the current population
+of that strain. If a strain was not used, then blank will be shown on this dialog. In this example,
+only four strains 0, 1, 3, and 5 were specified.
+}
+
+P{
+If some of the organisms have radioactive tracers, then the green numbers will be the count of
+radioactive organisms (by strain). See:
+}
+
+IMGC{population_dialog_tracer.jpg}
+
+} //{ MySite.body }

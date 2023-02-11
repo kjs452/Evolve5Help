@@ -1,0 +1,148 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Simulation }
+MySite.body{
+
+Section{Simulation}
+P{
+This page describes how the simulator works.
+}
+
+SubSection{Table of Contents:}
+
+BulletList{
+Item{ LINK{ URL{#universe} Universe } }
+Item{ LINK{ URL{#strains} Strains } }
+Item{ LINK{ URL{#organism} Organism } }
+Item{ LINK{ URL{#cell} Cells } }
+Item{ LINK{ URL{#grid} Grid } }
+Item{ LINK{ URL{#simstep} UNIVERSE_Simulate() } }
+Item{ LINK{ URL{#customize} Create Your Own Simulation } }
+}
+
+HRULE{}
+
+P{
+This diagram shows the data structures used to implement the simulation.
+I consider the EvolveName{} I{Universe} to be analogous to an operating system. Where 
+I{Cells} are processes and the process table is a two dimensional grid.
+}
+
+IMG{sim1.jpg}
+
+REF{universe}
+SubSection{Universe}
+P{
+The overall container for the simulation is the TT{UNIVERSE} struct. This contains all the information for
+the simulation. The main data structure is a linked list of I{cells}. This is the task list in an operating system.
+There is also a linked list of I{Organisms}. Each organism has a linked list of its constituent cells.
+}
+
+P{
+The simulation is basically a time-sliced operating system in which each CELL is given B{1} exection cycle.
+}
+
+HRULE{}
+
+REF{strains}
+SubSection{Strains}
+P{
+Each simulation allows for B{8} independent strains to be configured. A strain
+is a set of simulation properties. You can combine several radically different
+strains to create interesting simulations. One strain could be "plants". One strain
+could be "bullets", etc... These helper strains can allow you to invent new "physics" for
+evolution to occur in.
+}
+
+BulletList{
+Item{Mutation Rates: Configure the mutation rates. For example, disable mutations altogether
+		when playing combat modes, or for robot ants which don't evolve. }
+
+Item{Protected Code Blocks: Designate the first N code blocks protected. This code won't mutate, and
+		other cool properties }
+
+Item{Protected Instructions: Mark any of the 160+ instructions as protected. A protected instruction
+	won't be inserted into mutated code, and other cool properties. }
+
+Item{Modes: Most of the important instructions come with mode bits. Each strain can independently configure
+	the behavior of the instructions, such as SPAWN, MAKE-SPORE, EAT. }
+
+Item{Seed Program: The most powerful way to customize the behavior of a strain is to write a
+		mini operating system  for your organism. By writing an elaborate I{protected code}
+		and I{traps} you can craft a creature with fixed behaviors you control, and
+		other behaviors you allow evolution to figure out.
+	P{
+	Each strain can have its own little sandboxed operating system. Using the TT{SPAWN}
+	instruction, an organism from one strain can create a new organism from a different strain.
+	}
+	}
+}
+
+HRULE{}
+
+REF{organism}
+SubSection{Organism}
+P{
+All cells must belong to an organism. An organism can consists of one or more cells.
+The organism belongs to a strain (Strains are limited to 0...7).
+The ORGANISM struct contains the kforth program which all the cells run.
+}
+
+HRULE{}
+
+REF{cell}
+SubSection{Cell}
+P{
+The cell is a running program that exists somewhere on the grid. It may or
+may not have other cells which belong to the same organism. If it does, then they
+share the same program, but not the same execution context. Cells can communicate
+in various ways.
+}
+
+HRULE{}
+
+REF{grid}
+SubSection{Grid}
+P{
+The grid is a pre-allocated data structure for the entire WIDTH x HEIGHT dimension of the universe.
+The (x,y) location will contain a pointer to the CELL that occupies it. Simple values
+like I{odor map values} are also stored with each grid location.
+}
+
+HRULE{}
+
+REF{simstep}
+SubSection{UNIVERSE_Simulate()}
+P{
+This is the C API routine which simulates the universe for 1 step. This means a single cell in the cell
+list is allowed to execute a single instruction. Each time TT{UNIVERSE_Simulate()} is called the B{step} variable
+is incremented.
+}
+
+P{
+After all cells in the linked list are simulated, the B{age} variable is incremeneted. And the simulator
+starts over at the beginning of the list.
+}
+
+HRULE{}
+
+REF{customize}
+SubSection{Create Your Own Simulation}
+P{
+EvolveName{} allows the simulator to be customized. Several features work together to allow
+this to happen. Such as I{Protected Code Blocks}, I{Protected Instructions}, I{Strain Profiles},
+I{Instruction Mode Flags}.
+}
+
+P{
+In addition to allowing you, the USER, to create your own simulation, these features also
+protect simulations from future releases of the EvolveName{} software. Any changes to the simulator
+can be done using Mode Bits, or the creation of new instructions. Existing simulation files will
+not be affected by such changes.
+}
+
+BREAK{}
+BREAK{}
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

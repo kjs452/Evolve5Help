@@ -1,0 +1,12056 @@
+//{
+//
+// Unit Tests
+//
+// This file contains all the unit tests for the simulator.
+//
+// This file is processed by 'tt_unittest.py' and rendercode.
+// It is combined with 'unittest.tmpl' to produce 'UNIT_TESTS.cpp'.
+//
+// UnitTest_KFORTH		- Test snippets of kforth code
+// UnitTest_CELL		- Test a mini simulation with active CELL's
+// UnitTest_MUTATION	- Test the mutations
+// UnitTest_MERGE		- Test kforth_merge 
+//
+//}
+
+RenderCode{}
+
+IFEQUAL{ foo foo THEN{
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 2 2 + }
+	_EOF_
+
+	Expected{4}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 2 2 - }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 3 4 swap - }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 3 4 - }
+	row1: { 1 2 3 4 }
+	_EOF_
+
+	Expected{-1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 9 3 call }
+	row1: { 300 + }
+	row2: { 1 call 100 + }
+	row3: { 2 call 200 + }
+	_EOF_
+
+	Expected{609}
+}
+
+//{ call behavior when call stack full }
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 3 call 123 R0 }
+	row1: { }
+	row2: { }
+	row3: { R0++ pop row3 call }
+	_EOF_
+
+	Expected{123 64}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 0 1 2 ifelse  }
+	row1: { 500  }
+	row2: { 400  }
+	_EOF_
+
+	Expected{400}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 1 1 2 ifelse  }
+	row1: { 555  }
+	row2: { 400  }
+	_EOF_
+
+	Expected{555}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { MAX_INT  }
+	_EOF_
+
+	Expected{32767}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { min_int  }
+	_EOF_
+
+	Expected{-32768}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 1 2 pop  }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 2 pop 3 }
+	_EOF_
+
+	Expected{3}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 2 1 if }
+	row1: { 100 }
+	_EOF_
+
+	Expected{100}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 200 0 1 if }
+	row1: { 100 }
+	_EOF_
+
+	Expected{200}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 5 1 call R0 }
+	row1: { R0 1+ R0! 1- ?dup ?loop }
+	_EOF_
+
+	Expected{5}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 100 0 ?exit pop 2 }
+	_EOF_
+
+	Expected{2}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 100 1 ?exit 2 }
+	_EOF_
+
+	Expected{100}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 2 dup + }
+	_EOF_
+
+	Expected{4}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { dup 22 }
+	_EOF_
+
+	Expected{22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 4 5 swap - }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 4 swap 5 - }
+	_EOF_
+
+	Expected{-1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 1 2 over }
+	_EOF_
+
+	Expected{1 2 1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 1 2 over 
+	_EOF_
+
+	ExpectedError{missing close braces}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 1 over }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 1 2 3 rot }
+	_EOF_
+
+	Expected{2 3 1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 2 3 rot }
+	_EOF_
+
+	Expected{2 3}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 1 2 3 -rot }
+	_EOF_
+
+	Expected{3 1 2}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 33 -3 PEEK }
+	_EOF_
+
+	Expected{11 22 33 11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 ?dup }
+	_EOF_
+
+	Expected{11 22 22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 0 ?dup }
+	_EOF_
+
+	Expected{11 0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 33 44 2swap }
+	_EOF_
+
+	Expected{33 44 11 22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -11 -22 33 44 2over }
+	_EOF_
+
+	Expected{-11 -22 33 44 -11 -22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 2dup }
+	_EOF_
+
+	Expected{11 22 11 22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 2pop }
+	_EOF_
+
+	Expected{}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 911 11 22 2pop }
+	_EOF_
+
+	Expected{911}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 911 22 nip }
+	_EOF_
+
+	Expected{22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 tuck }
+	_EOF_
+
+	Expected{22 11 22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 100 1+ }
+	_EOF_
+
+	Expected{101}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 100 1- }
+	_EOF_
+
+	Expected{99}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 100 2+ }
+	_EOF_
+
+	Expected{102}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 100 2- }
+	_EOF_
+
+	Expected{98}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 100 2/ }
+	_EOF_
+
+	Expected{50}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 860 2* }
+	_EOF_
+
+	Expected{1720}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -2 abs }
+	_EOF_
+
+	Expected{2}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 0 abs }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 2 abs }
+	_EOF_
+
+	Expected{2}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 150 sqrt }
+	_EOF_
+
+	Expected{12}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 192 sqrt }
+	_EOF_
+
+	Expected{13}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 2 sqrt }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -2 sqrt }
+	_EOF_
+
+	Expected{-2}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 0 sqrt }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 + }
+	_EOF_
+
+	Expected{33}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { max_int 1 + }
+	_EOF_
+
+	Expected{-32768}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 1 1 - }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 10 8 - }
+	_EOF_
+
+	Expected{2}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 10 -8 - }
+	_EOF_
+
+	Expected{18}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 10 -8 * }
+	_EOF_
+
+	Expected{-80}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 10 0 * }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 10 0 / }
+	_EOF_
+
+	Expected{10 0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 10 2 / }
+	_EOF_
+
+	Expected{5}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 2 / }
+	_EOF_
+
+	Expected{5}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 0 mod }
+	_EOF_
+
+	Expected{11 0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 5 mod }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 5 /mod }
+	_EOF_
+
+	Expected{1 2}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 0 /mod }
+	_EOF_
+
+	Expected{11 0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 negate }
+	_EOF_
+
+	Expected{-11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 0 2negate }
+	_EOF_
+
+	Expected{-11 0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -11 -22 2negate }
+	_EOF_
+
+	Expected{11 22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -11 -22 = }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -11 -11 = }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -11 -11 <> }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -11 -22 <> }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 < }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 22 11 < }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 22 11 > }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 > }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 < }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 22 11 < }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 22 11 <= }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 <= }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 11 <= }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 11 >= }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 >= }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 22 11 >= }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 22 0= }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 0 0= }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 0 0 or }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 128 256 or }
+	_EOF_
+
+	Expected{384}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 128 256 and }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 255 128 and }
+	_EOF_
+
+	Expected{128}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 255 invert }
+	_EOF_
+
+	Expected{-256}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 0 invert }
+	_EOF_
+
+	Expected{-1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 0 0 xor }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 0 1 xor }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 1 1 xor }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 min }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 22 11 min }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 22 11 max }
+	_EOF_
+
+	Expected{22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 22 max }
+	_EOF_
+
+	Expected{22}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 3 call }
+	row1: { }
+	row2: { }
+	row3: { CB }		; testing CB
+	_EOF_
+
+	Expected{3}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R0! R0 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R1! R1 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R2! R2 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R3! R3 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R4! R4 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R5! R5 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R6! R6 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R7! R7 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R8! R8 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 R9! R9 }
+	_EOF_
+
+	Expected{11}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 11 sign }
+	_EOF_
+
+	Expected{1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -11 sign }
+	_EOF_
+
+	Expected{-1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 0 sign }
+	_EOF_
+
+	Expected{0}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 15 17  pack2 }
+	_EOF_
+
+	Expected{3857}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 3857 unpack2 }
+	_EOF_
+
+	Expected{15 17}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 100 200 pack2 unpack2 }
+	_EOF_
+
+	Expected{100 200}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -1 128 pack2 unpack2 }
+	_EOF_
+
+	Expected{-1 128}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -128 127 pack2 unpack2 }
+	_EOF_
+
+	Expected{-128 127}
+}
+
+//{
+// KFORTH COMPILATION ERRORS
+//}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -128 127 pack2 unpack2 } }
+	_EOF_
+
+	ExpectedError{too many close braces}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { \b }
+	_EOF_
+
+	ExpectedError{invalid char}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { bob call POP call * }
+	bob: { 1 2 + }
+	POP: { 2 3 * }
+	_EOF_
+
+	ExpectedError{clashes with instruction}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { bob call POP call * }
+	bob: { 1 2 + }
+	123: { 2 3 * }
+	_EOF_
+
+	ExpectedError{numbers cannot be a label}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { bob call POP call * }
+	bob: { 1 2 + }
+	L123: { 2 3 * }
+	L123: { 2 3 * }
+	_EOF_
+
+	ExpectedError{multiply defined}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { bob call POP call * }
+	bob: { 1 2 + }
+	 2 3 *
+	_EOF_
+
+	ExpectedError{appears outside of a code block}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { bob call }
+	bob: { 1 2 +
+	_EOF_
+
+	ExpectedError{missing close braces}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { bobbie call }
+	bob: { 1 2 + }
+	_EOF_
+
+	ExpectedError{undefined label}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 16384 }
+	_EOF_
+
+	ExpectedError{too big}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 50000 }
+	_EOF_
+
+	ExpectedError{too big}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -50000 }
+	_EOF_
+
+	ExpectedError{too small}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -16385 }
+	_EOF_
+
+	ExpectedError{too small}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { 16383 }
+	_EOF_
+
+	Expected{16383}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: { -16384 }
+	_EOF_
+
+	Expected{-16384}
+}
+
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		10
+		11
+		12
+		0
+
+		2 PEEK 1 PEEK + 0 PEEK + 3 POKE
+
+		-9 2 POKE
+	}
+	_EOF_
+
+	Expected{10 11 -9 33}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		666 100 POKE
+		100 PEEK
+	}
+	_EOF_
+
+	Expected{-1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		0
+		inc call
+		inc call
+		inc call
+		inc call
+		inc call
+		0 PEEK
+		-666 0 POKE
+	}
+
+	inc: { 0 PEEK 1+ 0 POKE }
+	_EOF_
+
+	Expected{-666 5}
+}
+
+
+//{
+// //////////////////////////////////////////////////////////////////////
+//	R0++	--R0
+//}
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		10 R0!
+		R0++
+		R0++
+		R0++
+		R0++
+		R0++
+		R0
+	}
+	_EOF_
+
+	Expected{10 11 12 13 14 15}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		8 R0!
+		--R0
+		--R0
+		--R0
+		--R0
+		--R0
+		--R0
+		--R0
+		--R0
+		--R0
+		R0
+	}
+	_EOF_
+
+	Expected{7 6 5 4 3 2 1 0 -1 -1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		0 --Rn + call
+		1 --Rn + call
+		2 --Rn + call
+		3 --Rn + call
+		4 --Rn + call
+		5 --Rn + call
+		6 --Rn + call
+		7 --Rn + call
+		8 --Rn + call
+		9 --Rn + call
+	}
+
+	--Rn:	{ --R0 }
+			{ --R1 }
+			{ --R2 }
+			{ --R3 }
+			{ --R4 }
+			{ --R5 }
+			{ --R6 }
+			{ --R7 }
+			{ --R8 }
+			{ --R9 }
+
+	Rn++:	{ R0++ }
+			{ R1++ }
+			{ R2++ }
+			{ R3++ }
+			{ R4++ }
+			{ R5++ }
+			{ R6++ }
+			{ R7++ }
+			{ R8++ }
+			{ R9++ }
+
+	_EOF_
+
+	Expected{-1 -1 -1 -1 -1 -1 -1 -1 -1 -1}
+}
+
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		0 Rn++ + call
+		1 Rn++ + call
+		2 Rn++ + call
+		3 Rn++ + call
+		4 Rn++ + call
+		5 Rn++ + call
+		6 Rn++ + call
+		7 Rn++ + call
+		8 Rn++ + call
+		9 Rn++ + call
+
+		R0 R1 R2 R3 R4 R5 R6 R7 R8 R9
+	}
+
+	--Rn:	{ --R0 }
+			{ --R1 }
+			{ --R2 }
+			{ --R3 }
+			{ --R4 }
+			{ --R5 }
+			{ --R6 }
+			{ --R7 }
+			{ --R8 }
+			{ --R9 }
+
+	Rn++:	{ R0++ }
+			{ R1++ }
+			{ R2++ }
+			{ R3++ }
+			{ R4++ }
+			{ R5++ }
+			{ R6++ }
+			{ R7++ }
+			{ R8++ }
+			{ R9++ }
+
+	_EOF_
+
+	Expected{0 0 0 0 0 0 0 0 0 0   1 1 1 1 1 1 1 1 1 1}
+}
+
+//{ PEEK / POKE - good cases }
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		100 200 300
+
+		-1 PEEK
+		1+
+		-1 POKE
+
+		0 PEEK
+		1-
+		0 POKE
+
+	}
+	_EOF_
+
+	Expected{99 200 301}
+}
+
+//{ POKE / PEEK bad references -1 logic }
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		100 200 300
+
+		-100 PEEK R0!
+		R0 1+
+		-100 POKE
+
+		100 PEEK R1!
+		R1 1-
+		100 POKE
+
+		R0 R1
+
+	}
+	_EOF_
+
+	Expected{100 200 300 -1 -1}
+}
+
+//{ CBLEN }
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		0 CBLEN R0!
+		1 CBLEN R1!
+		2 CBLEN R2!
+		3 CBLEN R3!
+		-3 CBLEN R4!
+		300 CBLEN R5!
+		CB CBLEN R6!
+
+		R0 R1 R2 R3 R4 R5 R6
+
+	}
+	row1:{ 1 2 3 4 }
+	row2:{ }
+	row3:{ call }
+	_EOF_
+
+	Expected{28 4 0 1 -1 -1 28}
+}
+
+//{ CBLEN - test protected code blocks }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{2}
+	Code<<_EOF_
+	main: {
+		protected CBLEN R0!
+		unprotected CBLEN R1!
+		row2 call
+		R0 R1 R2 R3
+	}
+	protected: { 1 2 3 4 5 6 7 }
+	row2: {
+		protected CBLEN R2!
+		unprotected CBLEN R3!
+	}
+	unprotected: { 1 2 3 }
+	_EOF_
+
+	Expected{7 3   -1 3}
+}
+
+//{ DSLEN }
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		DSLEN R0!
+		1 DSLEN R1!			pop pop pop
+		1 2 DSLEN R2!		pop pop pop
+		1 2 3 DSLEN R3!		pop pop pop
+
+		DSLEN R4!
+
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 1 1 1
+
+		DSLEN R5!
+
+		pop pop pop
+
+		DSLEN R6!
+
+		{ pop DSLEN ?loop } call
+
+		DSLEN R7!
+
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 
+		1 1 1 1 1 1 1 1 1 1 1 1 1 -77 1 1 1 1 1 1 1 1 1 1 1
+
+		DSLEN R8!
+
+		{ pop DSLEN ?loop } call
+
+		R0 R1 R2 R3 R4 R5 R6 R7 R8
+	}
+	_EOF_
+
+	Expected{0 1 2 3 0 63 60 0 -77}
+}
+
+//{ CSLEN }
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		CSLEN R0!
+		row1 call
+
+		R0 R1 R2 R3
+	}
+	row1:{ CSLEN R1! row2 call }
+	row2:{ CSLEN R2! row3 call }
+	row3:{ CSLEN R3! }
+	_EOF_
+
+	Expected{0 1 2 3}
+}
+
+//{
+//
+// TEST KFORTH PROTECTION MECHANISM
+//
+// NUMBER, NUMBER!, ?NUMBER!
+//		Make sure reading/writing opcodes respect protected codeblokcs
+//		Make sure reading/writing opcodes respect protected instructionscodeblokcs
+//
+// OPCODE, OPCODE!
+//		Make sure reading/writing opcodes respect protected codeblokcs
+//		Make sure reading/writing opcodes respect protected instructionscodeblokcs
+//
+//	call, if, ifelse
+//		Make sure these instructions respect protected codeblokcs
+//
+//	trap1, ... trap9, FLAG, FLAG!
+//		set clear trap bits
+//		make sure these instructions set the trap bits, respect trap bits
+//
+//}
+
+//{ NUMBER basic test }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		row10 0 NUMBER
+		foo 0 NUMBER
+		start call
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 20 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		row10 0 NUMBER
+		foo 1 NUMBER
+	}
+
+	foo: {30 45}
+	_EOF_
+
+	Expected{20 30 -1 45}
+}
+
+//{ NUMBER! basic test }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		123 row10 0 NUMBER!
+		456 foo 0 NUMBER!
+		start call
+
+		row10 0 NUMBER
+		foo 0 NUMBER
+		foo 1 NUMBER
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 20 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		789 row10 0 NUMBER!
+		666 foo 1 NUMBER!
+	}
+
+	foo: {30 45}
+	_EOF_
+
+	Expected{123 456 666}
+}
+
+//{ NUMBER advanced test - trying to read opcode as number}
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		row10 0 NUMBER
+		foo 0 NUMBER
+		row10 2 NUMBER
+		start call
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 20 if ifelse 3 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		row10 0 NUMBER
+		foo 1 NUMBER
+		foo 2 NUMBER
+	}
+
+	foo: {30 45 SIGN }
+	_EOF_
+
+	Expected{20 30 -3 -1 45 -3}
+}
+
+//{ NUMBER! advanced test - writing number to where an opcode was}
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		123 row10 0 NUMBER!
+		456 foo 0 NUMBER!
+		-11 row10 1 NUMBER!
+		-22 row10 2 NUMBER!
+
+		start call
+
+		row10 0 NUMBER
+		row10 1 NUMBER
+		row10 2 NUMBER
+		foo 0 NUMBER
+		foo 1 NUMBER
+		foo 2 NUMBER
+		foo 3 NUMBER
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 20 SIGN dup }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		789 row10 0 NUMBER!
+		666 foo 1 NUMBER!
+		-33 foo 2 NUMBER!
+		-44 foo 3 NUMBER!
+	}
+
+	foo: {30 45 SIGN dup }
+	_EOF_
+
+	Expected{123 -11 -22 456 666 -33 -44}
+}
+
+
+//{ NUMBER advanced test II - invalid pc, invalid cb}
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		-1 0 NUMBER
+		1000 0 NUMBER
+		row10 2000 NUMBER
+		row10 -2000 NUMBER
+		start call
+
+		foo 3 NUMBER
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 20 if ifelse 3 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		-1 0 NUMBER
+		1000 0 NUMBER
+		row10 2000 NUMBER
+		row10 -2000 NUMBER
+		foo -2000 NUMBER
+		foo 2000 NUMBER
+	}
+	foo: {30 45 SIGN 420 }
+	_EOF_
+
+	Expected{-1 -1 -2 -2   -1 -1 -1 -1 -2 -2  420}
+}
+
+//{ NUMBER advanced test III - read back max/min 15-bit value}
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		; 2^14 = 16384
+		; 2^14-1 = 16383
+
+		-16384 16383 pop pop
+
+		main 0 NUMBER
+		main 1 NUMBER
+	}
+	_EOF_
+
+	Expected{-16384 16383}
+}
+
+//{ NUMBER! advanced test II - writting a large value, strips top bit }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		; 2^14 = 16384
+		; 2^14-1 = 16383
+
+		-16384 R0!
+		16383 R1!
+		-16384 1- R2!
+		16383 1+ R3!
+
+		R0 row10 0 NUMBER!
+		R1 row10 1 NUMBER!
+		R2 foo   0 NUMBER!
+		R3 foo   1 NUMBER!
+
+		start call
+
+		R0
+		R1
+		R2
+		R3
+
+		row10 0 NUMBER
+		row10 1 NUMBER
+		row10 2 NUMBER
+		row10 3 NUMBER
+
+		foo   0 NUMBER
+		foo   1 NUMBER
+		foo   2 NUMBER
+		foo   3 NUMBER
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 20 30 40 50 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		R0 row10 2 NUMBER!
+		R1 row10 3 NUMBER!
+		R2 foo   2 NUMBER!
+		R3 foo   3 NUMBER!
+	}
+
+	foo: { 60 70 80 90  }
+	_EOF_
+
+	Expected{
+			-16384 16383 -16385 16384
+			-16384 16383 40 50
+			16383 -16384 16383 -16384
+	}
+}
+
+//{ ?NUMBER! basic test }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		666 row10 0 ?NUMBER! R0!
+		222 row10 0 ?NUMBER! R1!
+		661 foo   0 ?NUMBER! R2!
+		221 foo   0 ?NUMBER! R3!
+		0   foo   0 NUMBER!
+		0   row10 0 NUMBER!
+		start call
+		R0 R1 R2 R3 R4 R5 R6 R7
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 0 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		777  row10 0 ?NUMBER! R4!
+		333  row10 0 ?NUMBER! R5!
+		-777 foo   0 ?NUMBER! R6!
+		-333 foo   0 ?NUMBER! R7!
+	}
+
+	foo: { 0 }
+	_EOF_
+
+	Expected{666 0 661 0  0 0 -777 0 }
+}
+
+//{ ?NUMBER! limit test }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		666 row10 0 ?NUMBER! R0!
+		max_int row10 1 ?NUMBER! R1!
+		661 foo   0 ?NUMBER! R2!
+		min_int foo   1 ?NUMBER! R3!
+		0   foo   0 NUMBER!
+		0   row10 0 NUMBER!
+		0   foo   1 NUMBER!
+		0   row10 1 NUMBER!
+		start call
+		R0 R1 R2 R3 R4 R5 R6 R7
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 0 0 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		777      row10 0 ?NUMBER! R4!
+		max_int  row10 1 ?NUMBER! R5!
+		-777     foo   0 ?NUMBER! R6!
+		min_int  foo   1 ?NUMBER! R7!
+	}
+
+	foo: { 0 0 }
+	_EOF_
+
+	Expected{666 -1 661 0   0 0 -777 0 }
+}
+
+//{ TRAP5 / TRAP4 / TRAP8 / TRAP9  basic tests }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN trap3 }
+
+	Code<<_EOF_
+	main: {
+		start call
+		R0 R1 R2
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { R0! }
+	_trap5: { R1! }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { 0 R2! }
+	_trap9: { R2! }
+
+	row10: { 0 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		100 trap4
+		200 trap5
+		300 trap9
+	}
+
+	foo: { 0 }
+	_EOF_
+
+	Expected{ 100 200 300 }
+}
+
+//{ NOP basic test }
+UnitTest_KFORTH{
+	Code<<_EOF_
+	main: {
+		22 123		f call R0!
+		22 123		g call R1!
+		22 123		h call R2!
+		22 123		i call R3!
+
+		-12 1203	f call R4!
+		-12 1203	g call R5!
+		-12 1203	h call R6!
+		-12 1203	i call R7!
+
+		R0 R1 R2 R3 R4 R5 R6 R7
+	}
+	
+	; all these functions are the same, ezxcept NOP's injected.
+	;	; f(x,y) = x^3 - y + xy
+	;	; f: { 2dup * -rot swap dup dup * * swap - + }
+
+	f: { 2dup * -rot swap dup dup * * swap - + }
+	g: { nop 2dup nop * -rot nop nop nop swap dup dup nop nop nop * * swap - + }
+	h: { nop 2dup * -rot swap dup nop dup * * swap - + }
+	i: { 2dup * -rot swap dup dup * * swap - + nop }
+
+	_EOF_
+
+	Expected{13231 13231 13231 13231  -17367 -17367 -17367 -17367}
+}
+
+//{ //////////////////////////////////////////////////////////////////// }
+
+//{ OPCODE / OPCODE! basic test - synthesize a function and call it to confirm it assembled right }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{16}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		row10 genfunc call
+		foo genfunc call
+		22 123 row10 call R0!
+		start call
+
+		R0 R1 R2 R3 R4
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { row10 call }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 0 0 0 0 0 0 0 0 0 0 0 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	; (cb -- )   spew a function into cb
+	;	the function to be generated is:
+	;		; f(x,y) = x^3 - y + xy
+	;		; f: { 2dup * -rot swap dup dup * * swap - + }
+	genfunc: {
+		R0 R1
+		rot R1!
+		0 R0!
+
+		InstrDb 4 OPCODE	; 2dup
+		R1 R0++ OPCODE!
+
+		InstrDb 3 OPCODE	; *
+		R1 R0++ OPCODE!
+
+		InstrDb 5 OPCODE	; -rot
+		R1 R0++ OPCODE!
+
+		InstrDb 6 OPCODE	; swap
+		R1 R0++ OPCODE!
+
+		InstrDb 7 OPCODE	; dup
+		R1 R0++ OPCODE!
+
+		InstrDb 7 OPCODE	; dup
+		R1 R0++ OPCODE!
+
+		InstrDb 3 OPCODE	; *
+		R1 R0++ OPCODE!
+
+		InstrDb 3 OPCODE	; *
+		R1 R0++ OPCODE!
+
+		InstrDb 6 OPCODE	; swap
+		R1 R0++ OPCODE!
+
+		InstrDb 1 OPCODE	; -
+		R1 R0++ OPCODE!
+
+		InstrDb 0 OPCODE	; +
+		R1 R0++ OPCODE!
+
+		R1! R0!
+	}
+
+	start: {
+		22 123 trap4 R1!
+		-12 1203 trap4 R2!
+
+		22 123 foo call R3!
+		-12 1203 foo call R4!
+	}
+
+	InstrDb: { + - / * 2dup -rot swap dup }
+
+	foo: { 0 0 0 0 0 0 0 0 0 0 0 }
+
+	_EOF_
+
+	Expected{13231 13231 -17367 13231 -17367}
+}
+
+//{ OPCODE adv test - reading protected instructions }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		row10 0 OPCODE R0!	; sqrt
+		row10 1 OPCODE R1!	; if
+		row10 2 OPCODE R2!	; -3
+		foo   0 OPCODE R3!	; sqrt
+		foo   1 OPCODE R4!	; if
+
+		start call
+
+		R0 R3 =
+		R1 R8 =
+		R4 R8 =
+		R5 R6 R7 R9
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { sqrt if 123 }
+	row11: {}
+	row12: {}
+	row13: {}
+	row14: {}
+
+	start: {
+		row10 0 OPCODE R5!	; -1
+		row10 1 OPCODE R6!	; -1
+		foo   0 OPCODE R7!	; -4
+		foo   1 OPCODE R8!	; if
+		foo   2 OPCODE R9!	; -3
+	}
+
+	foo: { sqrt if 666 }
+	_EOF_
+
+	Expected{1 1 1  -1 -1 -4 -3 }
+}
+
+//{ OPCODE! adv test - writing protected instructions }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		row10 0 OPCODE R0!		; sqrt
+		row10 1 OPCODE R1!		; if
+		row10 2 OPCODE R2!		; nop
+
+		R0 row11 0 OPCODE!		; sqrt written
+		R1 row11 1 OPCODE!		; if written
+		2490 row11 2 OPCODE!	; fail, invalid opcode
+		-90 row11 2 OPCODE!		; fail, invalid opcode
+
+		R0 row12 0 OPCODE!		; sqrt written
+		R1 row12 1 OPCODE!		; if written
+		2490 row12 2 OPCODE!	; fail, invalid opcode
+		-90 row12 2 OPCODE!		; fail, invalid opcode
+
+		start call
+
+		row10 0 OPCODE		row11 0 OPCODE	=
+		row10 1 OPCODE		row11 1 OPCODE	=
+		row10 2 OPCODE		row11 2 OPCODE	=
+
+		row10 0 OPCODE		row12 0 OPCODE	=
+		row10 1 OPCODE		row12 1 OPCODE	=
+		row10 2 OPCODE		row12 2 OPCODE	=
+
+		row10 0 OPCODE		foo 0 OPCODE	=
+		row10 1 OPCODE		foo 1 OPCODE	=
+		row13 0 OPCODE		foo 2 OPCODE	=
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { sqrt if nop }
+	row11: { nop nop nop }
+	row12: { 0 0 0 }
+	row13: { SIGN }
+	row14: {}
+
+	start: {
+		R0 foo 0 OPCODE!		; sqrt is invalid, fail
+		R1 foo 1 OPCODE!		; if written
+		2490 foo 2 OPCODE!		; fail 
+		-90 foo 2 OPCODE!		; fail
+	}
+
+	foo: { SIGN SIGN SIGN }
+	_EOF_
+
+	Expected{ 1 1 1    1 1 0   0 1 1 }
+}
+
+//{ call, if, ifelse - test protection barriers respected }
+UnitTest_KFORTH{
+	ProtectedCodeBlocks{15}
+	ProtectedInstructions{ sqrt /mod SIGN Tuck }
+
+	Code<<_EOF_
+	main: {
+		100 row10 call R0!
+		200 foo call R1!
+
+		101 1 row10 if R2!
+		202 1 foo if R3!
+
+		190 0 row10 row10 ifelse R4!
+		290 1 foo foo ifelse R5!
+
+		start call
+
+		R0 R1 R2 R3 R4 R5 R6 R7 R8 R9
+	}
+
+	_trap1: { }
+	_trap2: { }
+	_trap3: { }
+	_trap4: { }
+	_trap5: { }
+	_trap6: { }
+	_trap7: { }
+	_trap8: { }
+	_trap9: { }
+
+	row10: { 23 * }
+	row11: { }
+	row12: { }
+	row13: { }
+	row14: {}
+
+	start: {
+		11 row10 call R6!
+		22 foo call R7!
+
+		-11 1 row10 if R8!
+		-22 1 foo if R9!
+
+		144 1 row10 row10 ifelse		; 1st test result
+		244 0 foo foo ifelse			; 2nd test result
+	}
+
+	foo: { 23 * }
+
+		; 101*23 = 2323
+		; 202*23 = 4646
+		; 190*23 = 4370
+		; 290*23 = 6670
+		; 11*23 = 253
+		; 22*23 = 506
+		; 144*23 = 3312
+		; 244*23 = 5612
+	_EOF_
+
+	Expected{144 5612  2300 4600 2323 4646 4370 6670   11 506  -11 -506 }
+}
+
+//{ test program size limits - huge code block }
+UnitTest_KFORTH{
+	//{ this is a huge program
+	//
+	//	it tests kforth's ability to parse a program consisting of 
+	//	a code block with more than 16,000 items.
+	//}
+	HEREDOC{ Code{huge_code_block.kf} }
+
+	ExpectedError{ code block 1 is too big }
+}
+
+//{ test program size limits - huge # of code blocks }
+UnitTest_KFORTH{
+	//{ this is a huge program
+	//
+	//	it tests kforth's ability to parse a program consisting of 
+	//	a so many code blocks that you will blow your mind. about ~16,000.
+	//}
+	HEREDOC{ Code{huge_program.kf} }
+
+	ExpectedError{ too many code blocks }
+}
+
+//{
+////////////////////////////////////////////////////////////////////////
+//
+// CELL TESTS
+//
+////////////////////////////////////////////////////////////////////////
+//}
+
+//{ ======================================================================
+// basic
+//}
+UnitTest_CELL{
+
+	Setup<<_EOF_
+		A[0]->organism->energy = 100;
+
+		B[0]->organism->energy = 20;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#....A#
+		#.....#
+		#..Ccc#
+		#.c...#
+		#..B..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			2 2
+			R1! ; y
+			R0! ; x
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2 2}
+}
+
+//{ ======================================================================
+// OMOVE
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#....A#
+		#.....#
+		#..Ccc#
+		#.c...#
+		#..B..#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#....A#
+		#..Ccc#
+		#.c...#
+		#.....#
+		#..B..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 1 OMOVE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{4}
+}
+
+//{ ======================================================================
+// OMOVE  - (0,0) rule
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#....A#
+		#.....#
+		#..Cc.#
+		#.c...#
+		#..B..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 0 OMOVE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0}
+}
+
+//{ ======================================================================
+// OMOVE  - 32000 return code
+// This fails because it cannot be read/written to a file
+// test the 3200 limit some way else.
+//}
+-UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->ncells = 35000; // this is very fragile to test something
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 -1 OMOVE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{32000}
+}
+
+
+//{ ======================================================================
+// CMOVE
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#.....#
+		#...C.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 -1 CMOVE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1}
+}
+
+
+//{ ======================================================================
+// CMOVE
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...c.#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...c.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 -1 CMOVE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0}
+}
+
+//{ ======================================================================
+// CMOVE
+// }
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#.....#
+		#..Cc.#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...c.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 1 CMOVE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1}
+}
+
+//{ ======================================================================
+// CMOVE
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#.....#
+		#..Cc.#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#.....#
+		#...c.#
+		#..C..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 CMOVE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1}
+}
+
+//{ ======================================================================
+// CSHIFT
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..c..#
+		#..Cc.#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#..c..#
+		#..C..#
+		#...c.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 1 CSHIFT R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2}
+}
+
+//{ ======================================================================
+// CSHIFT
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..c..#
+		#..Cc.#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#..c..#
+		#..C..#
+		#...c.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 1 CSHIFT R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2}
+}
+
+//{ ======================================================================
+// CSHIFT
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#C......#
+		#cc.....#
+		#c.c....#
+		#cc.....#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#c......#
+		#c.C....#
+		#cc.c...#
+		#....c..#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 -1 CSHIFT R0!
+			1 -1 CSHIFT R1!
+			1 -1 CSHIFT R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{3 3 0}
+}
+
+
+//{ ======================================================================
+// CSHIFT
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#C......#
+		#cc.....#
+		#c.c....#
+		#ccc....#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#c......#
+		#c......#
+		#cccC...#
+		#....c..#
+		#.....c.#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 -1 CSHIFT R0!
+			1 -1 CSHIFT R1!
+			1 -1 CSHIFT R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{3 3 3}
+}
+
+
+
+
+//{ ======================================================================
+// ROTATE - not diagonal, not centered, counter-clockwise
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 0;
+		u->strop[0].rotate_mode = 2;
+	_EOF_
+
+	Map<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#......cC......#
+		#.......c......#
+		#......cc......#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	AfterMap<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#.....c.c......#
+		#.....ccC......#
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 ROTATE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{5}
+}
+
+
+//{ ======================================================================
+// ROTATE - not diagonal, not centered, clockwise
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 0;
+		u->strop[0].rotate_mode = 2;
+	_EOF_
+
+	Map<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#......cC......#
+		#.......c......#
+		#......cc......#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	AfterMap<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#.......Ccc....#
+		#.......c.c....#
+		#..............#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 ROTATE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{5}
+}
+
+
+//{ ======================================================================
+// ROTATE - not diagonal, centered, clockwise
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 0;
+		u->strop[0].rotate_mode = 2;
+	_EOF_
+
+	Map<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#......cC......#
+		#.......c......#
+		#......cc......#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	AfterMap<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#.......Ccc....#
+		#.......c.c....#
+		#..............#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 ROTATE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{5}
+}
+
+
+//{ ======================================================================
+// ROTATE - not diagonal, centered, counter-clockwise
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 0;
+		u->strop[0].rotate_mode = 2;
+	_EOF_
+
+	Map<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#......cC......#
+		#.......c......#
+		#......cc......#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	AfterMap<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#.....c.c......#
+		#.....ccC......#
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 ROTATE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{5}
+}
+
+
+//{ ======================================================================
+// ROTATE - diagonal, not centered, clockwise
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+		u->strop[0].rotate_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#......cC......#
+		#.......c......#
+		#......cc......#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	AfterMap<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#.......C......#
+		#......c.c.....#
+		#........cc....#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 ROTATE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{5}
+}
+
+
+//{ ======================================================================
+// ROTATE - diagonal, not centered, counter-clockwise
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+		u->strop[0].rotate_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#......cC......#
+		#.......c......#
+		#......cc......#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	AfterMap<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#......c.......#
+		#.......C......#
+		#.....cc.......#
+		#.....c........#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 ROTATE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{5}
+}
+
+//{ ======================================================================
+// EAT
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 0;
+		u->strop[1].eat_mode = 0;
+		C[0]->organism->energy = 100;
+		B[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...B...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			wait10 call
+			0 -1 LOOK R1! pop
+			ENERGY R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{100 3 200}
+}
+
+
+//{ ======================================================================
+// EAT
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 0;
+		u->strop[1].eat_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...O...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			wait10 call
+			0 -1 LOOK R1! pop
+			ENERGY R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{100 3 200}
+}
+
+//{ ======================================================================
+// EAT - B is un-eatable
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 0;
+		u->strop[1].eat_mode = 8;		// B cell, un-eatable
+		C[0]->organism->energy = 100;
+		B[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...B...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			wait10 call
+			0 -1 LOOK R1! pop
+			ENERGY R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{0 1 100}
+}
+
+//{ ======================================================================
+// EAT - B is strain-eatable
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 2;		// A cell, cannot eat other strains
+		u->strop[1].eat_mode = 0;
+		C[0]->organism->energy = 100;
+		B[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...B...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			wait10 call
+			0 -1 LOOK R1! pop
+			ENERGY R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{0 1 100}
+}
+
+//{ ======================================================================
+// EAT - self eat 
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 1;	// self eat
+		C[0]->organism->energy = 110;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...c...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			wait10 call
+			0 -1 LOOK R1! pop
+			ENERGY R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{55 1 55}
+}
+
+//{ ======================================================================
+// EAT - self eat
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 1;	// self eat
+		C[0]->organism->energy = 1000;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...c...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			wait10 call
+			0 -1 LOOK R1! pop
+			ENERGY R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{500 1 500}
+}
+
+//{ ======================================================================
+// EAT - remainder eat
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 0;	// remainder
+		C[0]->organism->energy = 100;
+
+		A[0]->organism->energy = 500;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...A...#
+		#...aa..#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{168 Calculate{100+168}}
+}
+
+//{ ======================================================================
+// EAT - no remainder eat
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 16;	// no remainder
+		C[0]->organism->energy = 100;
+
+		A[0]->organism->energy = 500;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...A...#
+		#...aa..#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{166 Calculate{100+166}}
+}
+
+//{ ======================================================================
+// EAT - cannot eat my own spore
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 4;	// can't eat my own strain
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...S...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 100}
+}
+
+//{ ======================================================================
+// EAT - I can eat spore from my own strain
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...s...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1 101}
+}
+
+}} //{ ==== IFEQUAL foo fooOFF ===================== KJS KJS END OF DISABLED SECTION, RE-ENABLE }
+
+//{ ======================================================================
+// EAT - interrupt test
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 4096 + 2048 + 128 + 512;		// trap6, (Half+Remainder), don't terminate cell
+		C[0]->organism->energy = 10;
+		A[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...A...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			ENERGY R1!
+			wait10 call
+			0 -1 LISTEN pop R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	ACode<<_EOF_
+		main: {
+			other_cells call
+		}
+
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: {}
+		_trap5: {}
+		_trap6: { 123 MOOD! }
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{50 60 123}
+}
+
+//{ ======================================================================
+// MAKE-SPORE -- (0,0) fails
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 0 10 MAKE-SPORE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0}
+}
+
+//{ ======================================================================
+// MAKE-SPORE -- can't create spore onto of cell
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...Cc..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0}
+}
+
+//{ ======================================================================
+// MAKE-SPORE -- unable to meet minumum energy
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_energy = 11;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 0 LOOK R2! pop
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 100 4}
+}
+
+//{ ======================================================================
+// MAKE-SPORE -- able to meet minumum energy
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 0;
+		u->strop[0].make_spore_energy = 10;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 0 LOOK R2! pop
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1 90 1}
+}
+
+//{ ======================================================================
+// MAKE-SPORE -- fertilize
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 0;
+		u->strop[0].make_spore_energy = 10;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...CS..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 0 LOOK R2! R3!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{-1 90 1 1}
+}
+
+//{ ======================================================================
+// MAKE-SPORE -- can't fertilize another strain
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 0;
+		u->strop[0].make_spore_energy = 10;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...Cs..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 0 LOOK R2! R3!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 100 1 2}
+}
+
+//{ ======================================================================
+// MAKE-SPORE -- my organism doesn't have enough energy
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 0;
+		C[0]->organism->energy = 10;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#..c....#
+		#..cCs..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 11 MAKE-SPORE R0!
+			ENERGY R1!
+			1 0 LOOK R2! R3!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 10 1 2}
+}
+
+//{ ======================================================================
+// MAKE-SPORE - basic test
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 0 LOOK R2! R3!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1 90 1 2}
+}
+
+//{ ======================================================================
+// MAKE-SPORE - bit 2 - cannot fertilize spore
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 2;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 0 10 MAKE-SPORE R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1 90 0}
+}
+
+//{ ======================================================================
+// MAKE-SPORE - bit 8 - cannot create spore
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 8;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 100}
+}
+
+//{ ======================================================================
+// MAKE-SPORE - bit 16 - cannot fertilize spore
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 16;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 0 10 MAKE-SPORE R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1 90 0}
+}
+
+//{ ======================================================================
+// MAKE-SPORE - bit 32 - minimum energy required to fertilize
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 32;
+		u->strop[0].make_spore_energy = 10;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 0 10 MAKE-SPORE R2!
+			ENERGY R3!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1 90 -1 80}
+}
+
+//{ ======================================================================
+// MAKE-SPORE - bit 4 - cannot fertilize spore created by others
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 4;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...CS..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 100}
+}
+
+//{ ======================================================================
+// MAKE-SPORE - not bit 4 - can fertilize spore created by others
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_spore_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...CS..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-SPORE R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{-1 90}
+}
+
+//{ ======================================================================
+// MAKE-ORGANIC
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_organic_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...CO..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 11 MAKE-ORGANIC R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{11 89}
+}
+
+//{ ======================================================================
+// MAKE-ORGANIC - not enough energy
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_organic_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 110 MAKE-ORGANIC R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 100}
+}
+
+//{ ======================================================================
+// MAKE-ORGANIC - blocked
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_organic_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C#..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C#..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 110 MAKE-ORGANIC R0!
+			ENERGY R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 100}
+}
+
+//{ ======================================================================
+// MAKE-ORGANIC - append
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_organic_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...CO..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...CO..#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 0 10 MAKE-ORGANIC R0!
+			ENERGY R1!
+			1 0 TEMPERATURE R2! R3!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{10 90 1 110}
+}
+
+//{ ======================================================================
+// GROW - basic success case
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+		C[0]->organism->energy = 1000;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#.......#
+		#..C....#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...c...#
+		#..C....#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 1 GROW R0!
+
+			R0 -1 = new_cell if
+
+			wait10 call
+
+			RECV R1!
+			ENERGY R2!
+
+			1 R9!
+		}
+
+		new_cell: {
+			ENERGY BROADCAST { 1 ?loop } call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{1 1000 1000}
+}
+
+//{ ======================================================================
+// GROW - another success case
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+		C[0]->organism->energy = 2;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#.......#
+		#..C....#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#.......#
+		#..C....#
+		#.c.....#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 -1 GROW R0!
+
+			R0 -1 = new_cell if
+
+			wait10 call
+
+			RECV R1!
+			ENERGY R2!
+
+			1 R9!
+		}
+
+		new_cell: {
+			ENERGY BROADCAST { 1 ?loop } call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{1 2 2}
+}
+
+//{ ======================================================================
+// GROW - fail, not enough grow energy
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].grow_energy = 10;
+		C[0]->organism->energy = 2;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#.......#
+		#..C....#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#.......#
+		#..C....#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 -1 GROW R0!
+
+			R0 -1 = new_cell if
+
+			wait10 call
+
+			RECV R1!
+			ENERGY R2!
+
+			1 R9!
+		}
+
+		new_cell: {
+			ENERGY BROADCAST { 1 ?loop } call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{0 0 2}
+}
+
+//{ ======================================================================
+// GROW - fail, too big to grow more
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].grow_size = 3;
+		C[0]->organism->energy = 2;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...c...#
+		#..Cc...#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...c...#
+		#..Cc...#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 -1 GROW R0!
+
+			R0 -1 = new_cell if
+
+			wait10 call
+
+			RECV R1!
+			ENERGY R2!
+
+			1 R9!
+		}
+
+		new_cell: {
+			ENERGY BROADCAST { 1 ?loop } call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 0 2}
+}
+
+//{ ======================================================================
+// GROW.CB - basic test
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+		C[0]->organism->energy = 1000;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#.......#
+		#..C....#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...X...#
+		#..C....#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 1 new_cell GROW.CB R0!
+
+			wait10 call
+
+			RECV R1!
+
+			1 R9!
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+
+		new_cell: {
+			ENERGY BROADCAST { 1 ?loop } call
+		}
+	_EOF_
+
+	Expected{1 1000}
+}
+
+//{ ======================================================================
+// GROW.CB - bogus cb
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+		C[0]->organism->energy = 1000;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#.......#
+		#..C....#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	AfterMap<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#.......#
+		#..C....#
+		#.......#
+		#.......#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 1 100 999 GROW.CB R0!
+			wait10 call
+			RECV R1!
+			1 R9!
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{0 0}
+}
+
+//{ ======================================================================
+// NEAREST
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].look_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#....##
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			255 NEAREST
+				R1! ; y
+				R0! ; x
+				1 R9!
+		}
+	_EOF_
+
+	Expected{2 2}
+}
+
+
+//{ ======================================================================
+// FARTHEST
+//
+//}
+
+
+//{ ======================================================================
+// SIZE
+//
+//}
+
+//{ ======================================================================
+// BIGGEST
+//
+//}
+
+//{ ======================================================================
+// SMALLEST
+//
+//}
+
+//{ ======================================================================
+// TEMPERATURE
+//
+//}
+
+//{ ======================================================================
+// HOTTEST
+//
+//}
+
+//{ ======================================================================
+// COLDEST
+//
+//}
+
+//{ ======================================================================
+// EXUDE / SMELL
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			4444 1 1 EXUDE
+			1 1 SMELL R0!
+
+			1 R9!
+		}
+	_EOF_
+
+	Expected{4444}
+}
+
+//{ ======================================================================
+// EXUDE / SMELL - normalized coordinates
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			3333 2 1 EXUDE
+			4444 1 1 EXUDE
+			2 1 SMELL R0!
+
+			1 R9!
+		}
+	_EOF_
+
+	Expected{4444}
+}
+
+//{ ======================================================================
+// EXUDE / SMELL - mode bits - Disable exuding
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].exude_mode = 1+2+4+8+16+32;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.O#..#
+		#.SCB.#
+		#..cA.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 0 1 EXUDE		; barrier
+			999 1 0 EXUDE		; B
+			789 1 -1 EXUDE		; A
+			770 0 -1 EXUDE		; c
+			-111 -1 -1 EXUDE	; blank
+			991 -1 0 EXUDE		; S
+			119 -1 1 EXUDE		; O
+
+			0 1 SMELL R0!		; barrier
+			1 0 SMELL R1!		; B
+			1 -1 SMELL R2!		; A
+			0 -1 SMELL R3!		; c
+			-1 -1 SMELL R4!		; blank
+			-1 0 SMELL R5!		; S
+			-1 1 SMELL R6!		; O
+
+			1 R9!
+		}
+
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{0 0 0 0 -111 0 0}
+}
+
+//{ ======================================================================
+// EXUDE / SMELL - mode bits - exude is enabled
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].exude_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.O#..#
+		#.SCB.#
+		#..cA.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 0 1 EXUDE		; barrier
+			999 1 0 EXUDE		; B
+			789 1 -1 EXUDE		; A
+			770 0 -1 EXUDE		; c
+			-111 -1 -1 EXUDE	; blank
+			991 -1 0 EXUDE		; S
+			119 -1 1 EXUDE		; O
+
+			0 1 SMELL R0!		; barrier
+			1 0 SMELL R1!		; B
+			1 -1 SMELL R2!		; A
+			0 -1 SMELL R3!		; c
+			-1 -1 SMELL R4!		; blank
+			-1 0 SMELL R5!		; S
+			-1 1 SMELL R6!		; O
+
+			1 R9!
+		}
+
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{123 999 789 770 -111 991 119}
+}
+
+//{ ======================================================================
+// MOOD / MOOD!
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#..c..#
+		#.cCc.#
+		#..c..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			5 MOOD!
+			call wait10
+			0 0 MOOD R0!
+
+			0 -1 MOOD
+			1 0 MOOD +
+			0 1 MOOD +
+			-1 0 MOOD +
+			R1!
+
+			1 R9!
+		}
+		other_cells: { 40 MOOD!  forever call }
+		forever: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{5 Calculate{40 + 40 + 40 + 40}}
+}
+
+
+//{ ======================================================================
+// BROADCAST
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#..c..#
+		#.cCc.#
+		#..c..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-123 BROADCAST
+			1 G0 =
+			wait10 call
+			RECV R0!
+
+			0 -1 SMELL
+			1 0 SMELL +
+			0 1 SMELL +
+			-1 0 SMELL +
+			R1!
+
+			1 R9!
+		}
+		other_cells: { G0 0 = ?loop  RECV 40 + 0 0 EXUDE 2 G0! forever call }
+		forever: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{-123 Caculate{-83 + -83 + -83 + -83}}
+}
+
+
+//{ ======================================================================
+// BROADCAST - interrupt
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].broadcast_mode = 6;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#..c..#
+		#.cCc.#
+		#..c..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			5 BROADCAST
+			wait10 call
+
+			0 -1 MOOD
+			1 0 MOOD +
+			0 1 MOOD +
+			-1 0 MOOD +
+			R0!
+
+			1 R9!
+		}
+
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { RECV 2 * MOOD! }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{40}
+}
+
+
+//{ ======================================================================
+// SEND
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#..c..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			420 0 -1 SEND
+			1 G0!
+			{ G0 2 <> ?loop } call
+			RECV		R0!
+			1 R9!
+		}
+		other_cells: { G0 0 = ?loop  RECV 666 + 0 1 SEND 2 G0! { 1 ?loop } call }
+	_EOF_
+
+	Expected{Calculate{420+666}}
+}
+
+//{ ======================================================================
+// SEND - interrupt
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].send_mode = 6;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...c.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			420 1 -1 SEND
+			wait10 call
+			v 0 NUMBER R0!
+			1 R9!
+		}
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { RECV 666 + v 0 NUMBER! }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		v: { 0 }
+
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{Calculate{420+666}}
+}
+
+
+//{ ======================================================================
+// SEND / RECV II - error
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#..c..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			420 0 1 SEND
+			1 G0!
+			{ G0 2 <> ?loop } call
+			RECV		R0!
+			1 R9!
+		}
+
+		other_cells: { G0 0 = ?loop  RECV 666 + 0 1 SEND 2 G0! { 1 ?loop } call }
+	_EOF_
+
+	Expected{Calculate{0+666}}
+}
+
+
+//{ ======================================================================
+// SEND-ENERGY - basic test
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 150;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#..c..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			25 0 -1 SEND-ENERGY
+			1 G0!
+			{ G0 2 <> ?loop } call
+			ENERGY		R0!
+			RECV		R1!
+			1 R9!
+		}
+		other_cells: { G0 0 = ?loop  ENERGY BROADCAST 2 G0! { 1 ?loop } call }
+	_EOF_
+
+	Expected{150 150}
+}
+
+//{ ======================================================================
+// SEND-ENERGY -  interrupt on give
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 150;
+		A[0]->organism->energy = 35;
+		u->strop[0].send_energy_mode = 64; // trap4
+		u->strop[1].send_energy_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#..A..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			25 0 -1 SEND-ENERGY R0!
+			wait10 call
+			0 -1 LISTEN pop R1!
+			1 R9!
+		}
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: {}
+		_trap5: {}
+		_trap6: {}
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	ACode<<_EOF_
+		main: { 1 ?loop }
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: { ENERGY MOOD! }
+		_trap5: {}
+		_trap6: {}
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+	_EOF_
+
+	Expected{25 60}
+}
+
+//{ ======================================================================
+// SEND-ENERGY -  interrupt on take
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 150;
+		A[0]->organism->energy = 35;
+		u->strop[0].send_energy_mode = 128 + 512; // trap5 on take
+		u->strop[1].send_energy_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#..A..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-25 0 -1 SEND-ENERGY R0!
+			wait10 call
+			0 -1 LISTEN pop R1!
+			1 R9!
+		}
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: {}
+		_trap5: {}
+		_trap6: {}
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	ACode<<_EOF_
+		main: { 1 ?loop }
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: {}
+		_trap5: { ENERGY MOOD! }
+		_trap6: {}
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+	_EOF_
+
+	Expected{25 10}
+}
+
+//{ ======================================================================
+// SEND-ENERGY -  remote test OFF, + interrupt 
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 150;
+		A[0]->organism->energy = 35;
+		u->strop[0].send_energy_mode = 64; // trap4 on give
+		u->strop[1].send_energy_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#..A..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-25 0 -1 SEND-ENERGY R0!
+			wait10 call
+			0 -1 LISTEN pop R1!
+			1 R9!
+		}
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: {}
+		_trap5: {}
+		_trap6: {}
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	ACode<<_EOF_
+		main: { 1 ?loop }
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: { ENERGY MOOD! }
+		_trap5: {}
+		_trap6: {}
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+	_EOF_
+
+	Expected{0 0}
+}
+
+//{ ======================================================================
+// SEND-ENERGY -  remote test ON, + interrupt 
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 150;
+		A[0]->organism->energy = 35;
+		u->strop[0].send_energy_mode = 64 + 1024; // trap4 on give
+		u->strop[1].send_energy_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#..A..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			25 0 -1 SEND-ENERGY R0!
+			wait10 call
+			0 -1 LISTEN pop R1!
+			1 R9!
+		}
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: {}
+		_trap5: {}
+		_trap6: {}
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	ACode<<_EOF_
+		main: { 1 ?loop }
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: { ENERGY MOOD! }
+		_trap5: {}
+		_trap6: {}
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+	_EOF_
+
+	Expected{25 60}
+}
+
+
+//{ ======================================================================
+// SEND-ENERGY -  errors
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 150;
+		A[0]->organism->energy = 35;
+		B[0]->organism->energy = 600;
+		u->strop[0].send_energy_mode = 2 + 4;
+		u->strop[1].send_energy_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#..As.#
+		#.cCS.#
+		#..B..#
+		#..#..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-10 0 -1 SEND-ENERGY R0!			; take 10 from strain 1 cell
+			10 0 -1 SEND-ENERGY R1!				; give 10 to strain 1 cell
+			10 1 0 SEND-ENERGY R2!				; give 10 to spore
+			-1 1 0 SEND-ENERGY R3!				; take 1 from spore
+			-2 1 0 SEND-ENERGY R4!				; take 2 from spore
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	ACode<<_EOF_
+		main: { 1 ?loop }
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: { ENERGY MOOD! }
+		_trap5: {}
+		_trap6: {}
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+	_EOF_
+
+	Expected{0 10 0 1 0}
+}
+
+//{ ======================================================================
+// SEND-ENERGY -  take all spore energy, deletes the spore from grid.
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 150;
+		u->strop[0].send_energy_mode = 0;
+		u->strop[1].send_energy_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..CS.#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 1 0 SEND-ENERGY R0!
+			-1 1 LOOK R1! R2!			; dist what
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{1 3 8}
+}
+
+
+//{ ======================================================================
+// ENERGY
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.cc..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			ENERGY R0!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{100}
+}
+
+//{ ======================================================================
+// ENERGY - max'ed out at 32767
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 33000;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.cc..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			ENERGY R0!
+			ENERGY MAX_INT = R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{32767 1}
+}
+
+//{ ======================================================================
+// AGE - 8 cells
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#c.cc.#
+		#c.C..#
+		#ccc..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			wait10 call
+			AGE R0!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{57}
+	//{ Expected{55} - when return optimization is enabled }
+}
+
+//{ ======================================================================
+// AGE - 2 cells
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.c...#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			wait10 call
+			AGE R0!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{57}
+	//{ Expected{55} -- return optimization - unrolls trailing returns }
+}
+
+
+//{ ======================================================================
+// NUM-CELLS
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#c.cc.#
+		#c.C..#
+		#ccc..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			NUM-CELLS R0!
+
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{8}
+}
+
+
+//{ ======================================================================
+// HAS-NEIGHBOR
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#...c.#
+		#.#C..#
+		#..c..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 HAS-NEIGHBOR R0!
+			1 -1 HAS-NEIGHBOR R1!
+			1 0 HAS-NEIGHBOR R2!
+			1 1 HAS-NEIGHBOR R3!
+			0 1 HAS-NEIGHBOR R4!
+			-1 1 HAS-NEIGHBOR R5!
+			-1 0 HAS-NEIGHBOR R6!
+			-1 -1 HAS-NEIGHBOR R7!
+			0 0 HAS-NEIGHBOR R8!
+
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1 0 0 1 0 0 0 0 1}
+}
+
+
+//{ ======================================================================
+// DIST
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-5 6 DIST R0!
+			-5 6 DIST R1!
+			6 -5 DIST R2!
+			6 5 DIST R3!
+			0 0  DIST R4!
+			1000 0  DIST R5!
+			0 1000  DIST R6!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{6 6 6 6 0 1000 1000}
+}
+
+
+
+//{ ======================================================================
+// CHOOSE
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			10 20 CHOOSE R0!
+			1000 1005 CHOOSE R1!
+			-1000 1005 CHOOSE R2!
+			min_int max_int CHOOSE R3!
+			0 0 CHOOSE R4!
+			5 4 CHOOSE R5!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{19 1004 -873 2882 0 4}
+}
+
+
+//{ ======================================================================
+// RND
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			RND R0!
+			RND R1!
+			RND R2!
+			RND R3!
+			RND R4!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{20512 -25348 -11083 2882 16467}
+}
+
+
+//{ ======================================================================
+// POPULATION
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.c...#
+		#..Cc.#
+		#..cc.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION R0!
+			POPULATION.S R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1 1}
+}
+
+//{ ======================================================================
+// POPULATION
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.c...#
+		#..Cc.#
+		#..cc.#
+		#..A..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION R0!
+			POPULATION.S R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2 2}
+}
+
+//{ ======================================================================
+// POPULATION
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#..B..#
+		#.c...#
+		#..Cc.#
+		#..cc.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION R0!
+			POPULATION.S R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2 1}
+}
+
+//{ ======================================================================
+// POPULATION
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#....B#
+		#.c...#
+		#..Cc.#
+		#..cc.#
+		#..A..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION R0!
+			POPULATION.S R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{3 2}
+}
+
+
+//{ ======================================================================
+// POPULATION.S
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.c...#
+		#..Cc.#
+		#..cc.#
+		#..A..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION.S R0!
+			POPULATION R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2 2}
+}
+
+//{ ======================================================================
+// POPULATION.S - a case whwere POPULATION and POPULATION.S are same
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#....B#
+		#.c...#
+		#..Cc.#
+		#..cc.#
+		#..A..#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION.S R0!
+			POPULATION R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2 3}
+}
+
+//{ ======================================================================
+// POPULATION.S
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#....B#
+		#.c...#
+		#..Cc.#
+		#..cc.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION.S R0!
+			POPULATION R1!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1 2}
+}
+
+//{ ======================================================================
+// GPS
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.c...#
+		#..Cc.#
+		#..cc.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			GPS R1! R0!
+			-1 0 OMOVE pop
+			GPS R3! R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{3 3 2 3}
+}
+
+//{ ======================================================================
+// NEIGHBORS
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.c...#
+		#..Cc.#
+		#..cc.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			NEIGHBORS R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	//{ expecting in binary nw w sw s se e ne n
+	//		10011100 = 156
+	//}
+
+	Expected{156}
+}
+
+//{ ======================================================================
+// NEIGHBORS
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			NEIGHBORS R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	//{ expecting in binary nw w sw s se e ne n
+	//		00100111 = 39
+	//}
+
+	Expected{0}
+}
+
+//{ ======================================================================
+// NEIGHBORS
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.sAO.#
+		#.cC#.#
+		#..#..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			NEIGHBORS R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	//{ expecting in binary nw w sw s se e ne n
+	//		01000000 = 64
+	//}
+
+	Expected{64}
+}
+
+//{ ======================================================================
+// G0!  / G0  same cell
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1234 G0!
+			G0 R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{ -1234 }
+}
+
+//{ ======================================================================
+// G0!  / G0 - value shared between same organism
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#...c.#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			wait10 call
+			G0 R0!
+			1 R9!
+		}
+		other_cells: { -1234 G0! 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{ -1234 }
+}
+
+//{ ======================================================================
+// G0!  / G0 - shared between organisms
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#...c.#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION.S 1 = {
+				-1 -1 10 MAKE-SPORE pop
+				-1 -1 10 MAKE-SPORE pop
+				wait10 call
+				G0 R0!
+				RECV R1!
+				1 R9!
+			} {
+				-1234 G0! other_cells call
+			} ifelse
+		}
+		other_cells: { 666 -1 -1 SEND 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{ -1234 666 }
+}
+
+//{ ======================================================================
+// G0 wakes up as 0.
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			G0 R0!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{0}
+}
+
+
+//{ ======================================================================
+// MAKE-BARRIER - simple
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_barrier_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.#...#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 -1 MAKE-BARRIER R0!
+			1 R9!
+		}
+
+	_EOF_
+
+	Expected{ 1 }
+}
+
+
+//{ ======================================================================
+// MAKE-BARRIER - not allowed to create
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_barrier_mode = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 -1 MAKE-BARRIER R0!
+			1 R9!
+		}
+
+	_EOF_
+
+	Expected{ 0 }
+}
+
+//{ ======================================================================
+// MAKE-BARRIER - simple clear
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_barrier_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#..#..#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 MAKE-BARRIER R0!
+			1 R9!
+		}
+
+	_EOF_
+
+	Expected{ 1 }
+}
+
+
+//{ ======================================================================
+// MAKE-BARRIER - cannot clear
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].make_barrier_mode = 1 | 2;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#..#..#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#..#..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 MAKE-BARRIER R0!
+			1 R9!
+		}
+
+	_EOF_
+
+	Expected{ 0 }
+}
+
+//{ ======================================================================
+// SHOUT - basic test
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].shout_mode = 0;
+		u->strop[1].shout_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#A...c#
+		#....c#
+		#S.Ccc#
+		#.O#..#
+		#....B#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 SHOUT R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2}
+}
+
+//{ ======================================================================
+// SHOUT - cannot shout thru self
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].shout_mode = 1;
+		u->strop[1].shout_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#A...c#
+		#....c#
+		#S.Ccc#
+		#.O#..#
+		#....B#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 SHOUT R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2}
+}
+
+//{ ======================================================================
+// SHOUT - cannot shout thru self
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].shout_mode = 1 | 2;
+		u->strop[1].shout_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#A...c#
+		#....c#
+		#S.Ccc#
+		#.O#..#
+		#....B#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 SHOUT R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{2}
+}
+
+//{ ======================================================================
+// SHOUT - cannot shout to other strains
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].shout_mode = 1 + 4;
+		u->strop[1].shout_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#A...c#
+		#....c#
+		#S.Ccc#
+		#.O#..#
+		#....B#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 SHOUT R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1}
+}
+
+//{ ======================================================================
+// SHOUT - other strain blocks
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].shout_mode = 1;
+		u->strop[1].shout_mode = 8;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#A...c#
+		#....c#
+		#S.Ccc#
+		#.O#..#
+		#....B#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 SHOUT R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{1}
+}
+
+//{ ======================================================================
+// SHOUT - recieve a message back from offspring
+//}
+UnitTest_CELL{
+        Setup<<_EOF_
+                u->strop[0].shout_mode = 0;
+                u->strop[1].shout_mode = 0;
+                C[0]->organism->energy = 100;
+        _EOF_
+
+        Map<<_EOF_
+                #######
+                #.....#
+                #.....#
+                #..C..#
+                #.....#
+                #.....#
+                #######
+        _EOF_
+
+        AfterMap<<_EOF_
+                #######
+                #....X#
+                #.....#
+                #..C..#
+                #.....#
+                #.....#
+                #######
+        _EOF_
+
+        Code<<_EOF_
+                main: {
+                        POPULATION.S 1 = {
+                                0 1 10 MAKE-SPORE pop
+                                0 1 10 MAKE-SPORE pop
+                                wait10 call
+                                RECV R0!
+                        } {
+                                0 1 OMOVE pop
+                                1 0 OMOVE pop
+                                1 0 OMOVE pop
+                                1232 SHOUT pop
+                                other_cells call
+                        } ifelse
+
+                        1 R9!
+                }
+                other_cells: { 1 ?loop }
+                wait10: { 10 { 1- dup 0 > ?loop } call }
+        _EOF_
+
+        Expected{1232}
+}
+
+//{ ======================================================================
+// SHOUT - recieve a message back from offspring - interrupt version
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].shout_mode = 7 << 4;		// trap7
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#....X#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: { doit call }
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { }
+		_trap7: { RECV negate R0! }
+		_trap8: { }
+		_trap9: { }
+
+		doit: {
+			POPULATION.S 1 = {
+				0 1 10 MAKE-SPORE pop
+				0 1 10 MAKE-SPORE pop
+				wait10 call
+			} {
+				0 1 OMOVE pop
+				1 0 OMOVE pop
+				1 0 OMOVE pop
+				1232 SHOUT pop
+				other_cells call
+			} ifelse
+
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{ -1232 }
+}
+
+
+//{ ======================================================================
+// SHOUT - blocked from recieving a message back from offspring
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].shout_mode = 4;
+		u->strop[1].shout_mode = 0;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#....X#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION.S 1 = {
+				0 1 10 MAKE-SPORE pop
+				0 1 10 MAKE-SPORE pop
+				wait10 call
+				RECV R0!
+			} {
+				0 1 OMOVE pop
+				1 0 OMOVE pop
+				1 0 OMOVE pop
+				1232 SHOUT pop
+				other_cells call
+			} ifelse
+
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{0}
+}
+
+//{ ======================================================================
+// KEY-PRESS - set once
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		Universe_SetKey(u, 'A');
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			KEY-PRESS R0!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{65}
+}
+
+//{ ======================================================================
+// KEY-PRESS - set twice
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		Universe_SetKey(u, 'A');
+		Universe_SetKey(u, 'B');
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			KEY-PRESS R0!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{66}
+}
+
+//{ ======================================================================
+// KEY-PRESS - clear
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		Universe_SetKey(u, 'A');
+		Universe_ClearKey(u);
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			KEY-PRESS R0!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{0}
+}
+
+//{ ======================================================================
+// KEY-PRESS - wake up cleared
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			KEY-PRESS R0!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{0}
+}
+
+//{ ======================================================================
+// KEY-PRESS - interrupts
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].key_press_mode = 6;
+		Universe_SetKey(u, 'A');
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			wait10 call
+			v 0 NUMBER R0!
+			1 R9!
+		}
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { KEY-PRESS 10 + v 0 NUMBER! }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+
+		v: { 0 }
+	_EOF_
+
+	Expected{75}
+}
+
+//{ ======================================================================
+// MOUSE-POS - set
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		Universe_SetMouse(u, 2, 5);
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			MOUSE-POS R1! R0!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{2 5}
+}
+
+//{ ======================================================================
+// MOUSE-POS - clear
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		Universe_SetMouse(u, 2, 5);
+		Universe_ClearMouse(u);
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			MOUSE-POS R1! R0!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{-1 -1}
+}
+
+//{ ======================================================================
+// MOUSE-POS - wake up -1 -1
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			MOUSE-POS R1! R0!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{-1 -1}
+}
+
+//{ ======================================================================
+// MOUSE-POS - interrupts
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].key_press_mode = 6 << 3;		// trap6 for mouse pos
+		Universe_SetMouse(u, 2, 5);
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			wait10 call
+			v 0 NUMBER R0! ; x
+			v 1 NUMBER R1! ; y
+			1 R9!
+		}
+
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { MOUSE-POS v 1 NUMBER! v 0 NUMBER! }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+		v: { 0 0 }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{2 5}
+}
+
+//{ ======================================================================
+// DIST
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 1 DIST R0!
+			-1 -1 DIST R1!
+			0 1 DIST R2!
+			-1 0 DIST R3!
+			5 -8 DIST R4!
+			8 -5 DIST R5!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{1 1 1 1 8 8}
+}
+
+//{ ======================================================================
+// CHOOSE
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 0 CHOOSE R0!
+			1 1 CHOOSE R1!
+			5 6 check call R2!
+			-5 7 check call R3!
+			-5 7 check call R4!
+			-5 7 check call R5!
+			-5 7 check call R6!
+			1 R9!
+		}
+
+		; (low high -- success)
+		; run CHOOSE on these two value. Return 1 if the result is within the range
+		check: {
+			2dup			; low high low high
+			CHOOSE			; low high val
+			tuck			; low val high val
+			>=				; low val high>=val
+			-rot			; high>=val low val 
+			<=				; high>=val low<=val 
+			and				; (high>=val && low<=val)
+		}
+
+	_EOF_
+
+	Expected{0 1  1 1 1 1 1 }
+}
+
+
+//{ ======================================================================
+// CHOOSE
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 0 check call R0!
+			1 1 check call R1!
+			5 6 check call R2!
+			100 103 check call R3!
+			100 103 check call R4!
+			16000 16006 check call R5!
+			-16000 -15000 check call R6!
+			1 R9!
+		}
+
+		; (low high -- success)
+		; run CHOOSE on two values. Return 1 if the result is within the range.
+		check: {
+			2dup			; low high low high
+			CHOOSE			; low high val
+			tuck			; low val high val
+			>=				; low val high>=val
+			-rot			; high>=val low val 
+			<=				; high>=val low<=val 
+			and				; (high>=val && low<=val)
+		}
+
+	_EOF_
+
+	Expected{1 1 1 1 1 1 1 }
+}
+
+//{ ======================================================================
+// SPAWN - basic test
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#...x.#
+		#..C..#
+		#...x.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			1 -1 10 1 new_spawn SPAWN R0!
+			1  1 10 1 new_spawn SPAWN R1!
+
+			ENERGY R2!
+			POPULATION R3!
+			POPULATION.S R4!
+
+			1 R9!
+		}
+
+		new_spawn:
+		{
+			1 ?loop
+		}
+
+	_EOF_
+
+	Expected{1 1 80 3 1}
+}
+
+//{ ======================================================================
+// SPAWN - don't inherit cell state
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...x.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			411 R8!
+			1 -1 10 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			R8 G0! 1 ?loop
+		}
+
+	_EOF_
+
+	Expected{1 0}
+}
+
+//{ ======================================================================
+// SPAWN - inherit cell state
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4|1;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...x.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			411 R8!
+			1 -1 10 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			R8 G0! 1 ?loop
+		}
+
+	_EOF_
+
+	Expected{1 411}
+}
+
+
+//{ ======================================================================
+// SPAWN - inherit organism state
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4|2;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...x.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 10 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			var 0 NUMBER G0! 1 ?loop
+		}
+		var: { 0 }
+
+	_EOF_
+
+	Expected{1 988}
+}
+
+
+//{ ======================================================================
+// SPAWN - generic test
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...x.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 10 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			var 0 NUMBER G0! 1 ?loop
+		}
+		var: { 0 }
+
+	_EOF_
+
+	Expected{1 988}
+}
+
+//{ ======================================================================
+// SPAWN - negative energy fails
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 -20 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			var 0 NUMBER G0! 1 ?loop
+		}
+		var: { 0 }
+	_EOF_
+
+	Expected{0 0}
+}
+
+//{ ======================================================================
+// SPAWN - too much energy fails
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 100 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			var 0 NUMBER  G0! 1 ?loop
+		}
+		var: { 0 }
+
+	_EOF_
+
+	Expected{0 0}
+}
+
+//{ ======================================================================
+// SPAWN - max energy works
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4|2|1;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...x.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 99 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			ENERGY R2!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			var 0 NUMBER G0! 1 ?loop
+		}
+		var: { 0 }
+
+	_EOF_
+
+	Expected{1 988 1}
+}
+
+//{ ======================================================================
+// SPAWN - strain is bogus
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 50 2 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			var 0 NUMBER  G0! 1 ?loop
+		}
+		var: { 0 }
+
+	_EOF_
+
+	Expected{0 0}
+}
+
+//{ ======================================================================
+// SPAWN - strain is bogus, cause strain_mode doesn't allow
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 0;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 50 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			var 0 NUMBER  G0! 1 ?loop
+		}
+		var: { 0 }
+
+	_EOF_
+
+	Expected{0 0}
+}
+
+//{ ======================================================================
+// SPAWN - cb is bogus
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 50 0 1001 SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		var: { 0 }
+	_EOF_
+
+	Expected{0 0}
+}
+
+//{ ======================================================================
+// SPAWN - Instruction Re-mapping success case
+//		An instruction is removed from strain 0 causing remapping to occur
+//}
+UnitTest_CELL{
+
+	DeleteInstructions0{OMOVE GROW.CB}
+	DeleteInstructions1{CMOVE GROW EXUDE}
+
+	ProtectedCodeBlocks0{0}
+	ProtectedInstructions0{2swap 2over}
+
+	ProtectedCodeBlocks1{0}
+	ProtectedInstructions1{2over 2negate halt}
+
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4|1;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...x.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 50 1 new_strain SPAWN R0!
+			wait10 call
+			G0 R1!
+			1 R9!
+		}
+		new_strain: {
+			var 0 NUMBER  G0! { 1 ?loop } call
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		var: { 0 }
+	_EOF_
+
+	Expected{1 988}
+}
+
+//{ ======================================================================
+// SPAWN - Instruction Re-mapping fail case
+//		An instruction is removed from strain 0 causing remapping to occur
+//		EXUDE instruction
+//}
+UnitTest_CELL{
+
+	DeleteInstructions0{OMOVE GROW.CB}
+	DeleteInstructions1{CMOVE GROW EXUDE}
+
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4|1;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			988 var 0 NUMBER!
+			1 -1 50 1 new_strain SPAWN R0!
+			wait10 call
+			G0 R1!
+
+			100 0 0 EXUDE pop		; causes failure to remap
+
+			1 R9!
+		}
+		new_strain: {
+			var 0 NUMBER  G0! { 1 ?loop } call
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		var: { 0 }
+	_EOF_
+
+	Expected{0 0}
+}
+
+//{ ======================================================================
+// SPAWN - energy transfer test so.mode == 1
+//}
+UnitTest_CELL{
+
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4|1;
+		u->strop[1].spawn_mode = 0;
+		u->strop[0].enabled = 1;
+		u->strop[1].enabled = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...X.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			1 -1 55 0 new_strain SPAWN R0!
+			wait10 call
+			G0 R1!
+			ENERGY R2!
+
+			1 R9!
+		}
+		new_strain: {
+			ENERGY G0! { 1 ?loop } call
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{1 55 45}
+}
+
+
+//{ ======================================================================
+// SPAWN - inherit data stack N elements
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 64 + 16;		// 5 elements
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...X.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			100		; fill stack with 11 values
+			200
+			300
+			400
+			500
+			600
+			700				; 1st
+			800				; 2nd
+			900				; 3rd
+			1000			; 4th
+			1100			; 5th
+			
+			1 -1 50 0 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			ENERGY R2!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			+		; 1st 2nd 3rd 4th 5th -- 1st 2nd 3rd 4th+5th
+			+		; -- 1st 2nd 3rd+4th+5th
+			+		; -- 1st 2nd+3rd+4th+5th
+			+		; -- 1st+2nd+3rd+4th+5th
+
+			G0!
+
+			{ 1 ?loop } call
+		}
+
+	_EOF_
+
+	Expected{1 4500 50}
+}
+
+//{ ======================================================================
+// SPAWN - don't mutate, bit-3.
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 8;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...X.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			1 -1 50 0 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			ENERGY R2!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			11223 G0!
+
+			{ 1 ?loop } call
+		}
+
+	_EOF_
+
+	Expected{1 11223 50}
+}
+
+//{ ======================================================================
+// SPAWN - same, program as above. but massive mutations will be imposed, so unlikely it will succeed
+//			bit-3 mutate bit is on. mutate.
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 0;
+
+		u->kfmo[0].prob_mutate_codeblock = PROBABILITY_SCALE / 2;	// 50%
+		u->kfmo[0].prob_duplicate = PROBABILITY_SCALE;				// 100%
+		u->kfmo[0].prob_delete = PROBABILITY_SCALE;					// 100%
+		u->kfmo[0].prob_insert = PROBABILITY_SCALE;					// 100%
+		u->kfmo[0].prob_transpose = PROBABILITY_SCALE;				// 100%
+		u->kfmo[0].prob_modify = PROBABILITY_SCALE;					// 100%
+		u->kfmo[0].max_code_blocks = 20;
+		u->kfmo[0].max_apply = 10;
+		u->kfmo[0].merge_mode = 0;
+		u->kfmo[0].xlen = 10;
+		u->kfmo[0].protected_codeblocks = 0;
+
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...X.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			1 -1 50 0 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			ENERGY R2!
+			1 R9!
+		}
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			11223 G0!
+
+			{ 1 ?loop } call
+		}
+
+	_EOF_
+
+	Expected{1 0 50}
+}
+
+//{ ======================================================================
+// SPAWN - protected code blocks, bit-1 ON, use old strain's
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4+2+8;				// no mutations,  strain can change
+		C[0]->organism->energy = 100;
+		C[0]->organism->program.nprotected = 2;
+		u->kfmo[1].protected_codeblocks = 2;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...x.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			1 -1 50 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			ENERGY R2!
+			1 R9!
+		}
+		row1: { 11223 }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			row1 0 NUMBER G0!
+
+			{ 1 ?loop } call
+		}
+
+	_EOF_
+
+	Expected{1 11223 50}
+}
+
+//{ ======================================================================
+// SPAWN - protected code blocks changes, bit-1 is OFF, use new strain's
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].spawn_mode = 4+8;				// no mutations,  strain can change
+		C[0]->organism->energy = 100;
+		C[0]->organism->program.nprotected = 2;
+		u->kfmo[1].protected_codeblocks = 2;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#...x.#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			1 -1 50 1 new_spawn SPAWN R0!
+			wait10 call
+			G0 R1!
+			ENERGY R2!
+			1 R9!
+		}
+		row1: { 11223 }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		new_spawn:
+		{
+			row1 0 NUMBER G0!
+
+			{ 1 ?loop } call
+		}
+
+	_EOF_
+
+	Expected{1 -1 50}
+}
+
+//{ ======================================================================
+// S0!  / S0  same cell
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1234 S0!
+			S0 R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{ -1234 }
+}
+
+//{ ======================================================================
+// S0! / S0 - value shared between same organism
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#...c.#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			wait10 call
+			S0 R0!
+			1 R9!
+		}
+		other_cells: { -1234 S0! 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{ -1234 }
+}
+
+//{ ======================================================================
+// S0!  / S0 - shared between organisms
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+		C[0]->organism->energy = 100;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#...c.#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			POPULATION.S 1 = {
+				-1 -1 10 MAKE-SPORE pop
+				-1 -1 10 MAKE-SPORE pop
+				wait10 call
+				S0 R0!
+				RECV R1!
+				1 R9!
+			} {
+				-1234 S0! other_cells call
+			} ifelse
+		}
+		other_cells: { 666 -1 -1 SEND 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{ -1234 666 }
+}
+
+//{ ======================================================================
+// S0 wakes up as 0.
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			S0 R0!
+			1 R9!
+		}
+	_EOF_
+
+	Expected{0}
+}
+
+//{ ======================================================================
+// S0 not shared between organisms of different strains
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 100;
+		u->strop[0].enabled = 1;
+		u->strop[0].spawn_mode = 4; // change strain
+		u->strop[1].enabled = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#...x.#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 1 50 1 new_strain SPAWN R0!
+			wait10 call
+
+			S0 R1!
+			1 R9!
+		}
+
+		new_strain: {
+			777 S0!  { 1 ?loop } call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{1 0}
+}
+
+//{ ======================================================================
+// S0 I{is} shared between organisms of different strains
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		C[0]->organism->energy = 100;
+		u->strop[0].enabled = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+
+	AfterMap<<_EOF_
+		#######
+		#.....#
+		#...X.#
+		#..C..#
+		#.....#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 1 50 0 new_strain SPAWN R0!
+			wait10 call
+
+			S0 R1!
+			1 R9!
+		}
+
+		new_strain: {
+			777 S0!  { 1 ?loop } call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{1 777}
+}
+
+//{ ======================================================================
+// LOOK - what values
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].look_mode = 0;
+
+		C[0]->organism->energy = 100;
+
+		A[0]->organism->energy = 800;
+
+		B[0]->organism->energy = 1200;
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#..........S#
+		#...........#
+		#..S........#
+		#...c.O.....#
+		#...c.......#
+		#o..ccC.....#
+		#...........#
+		#.....s.Aa..#
+		#.......aa..#
+		#.....aaaa..#
+		#Bb.........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 LOOK pop R0!
+			1 -1 LOOK pop R1!
+			1  0 LOOK pop R2!
+			1  1 LOOK pop R3!
+			0  1 LOOK pop R4!
+			-1  1 LOOK pop R5!
+			-1  0 LOOK pop R6!
+			-1 -1 LOOK pop R7!
+
+			1 R9!
+		}
+
+		other_cells: {
+			1 ?loop
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{2 1 8 2 4 2 4 1}
+}
+
+//{ ======================================================================
+// LOOK - where values
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].look_mode = 0;
+
+		C[0]->organism->energy = 100;
+
+		A[0]->organism->energy = 800;
+
+		B[0]->organism->energy = 1200;
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#..........S#
+		#...........#
+		#..S........#
+		#...c.O.....#
+		#...c.......#
+		#o..ccC.....#
+		#...........#
+		#.....s.Aa..#
+		#.......aa..#
+		#.....aaaa..#
+		#Bb.........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 LOOK R0! pop
+			1 -1 LOOK R1! pop
+			1  0 LOOK R2! pop
+			1  1 LOOK R3! pop
+			0  1 LOOK R4! pop
+			-1  1 LOOK R5! pop
+			-1  0 LOOK R6! pop
+			-1 -1 LOOK R7! pop
+
+			1 R9!
+		}
+
+		other_cells: {
+			1 ?loop
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{2 2 6 5 2 3 5 5}
+}
+
+
+//{ ======================================================================
+// NEAREST
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].look_mode = 0;
+
+		C[0]->organism->energy = 100;
+
+		A[0]->organism->energy = 800;
+
+		B[0]->organism->energy = 1200;
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#..........S#
+		#...........#
+		#..S........#
+		#...c.O.....#
+		#...c.......#
+		#o..ccC.....#
+		#...........#
+		#.....s.Aa..#
+		#.......aa..#
+		#.....aaaa..#
+		#Bb.........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 NEAREST R1! R0!
+			2 NEAREST R3! R2!
+			4 NEAREST R5! R4!
+			8 NEAREST R7! R6!
+
+			1 R9!
+		}
+
+		other_cells: {
+			1 ?loop
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{ 2 -2   0 -2   0 2   6 0 }
+}
+
+//{ ======================================================================
+// SIZE - check size values
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].look_mode = 0;
+
+		C[0]->organism->energy = 100;
+
+		A[0]->organism->energy = 800;
+
+		B[0]->organism->energy = 1200;
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#..........S#
+		#...........#
+		#..S........#
+		#...c.O.....#
+		#...c.......#
+		#o..ccC.....#
+		#...........#
+		#.....s.Aa..#
+		#.......aa..#
+		#.....aaaa..#
+		#Bb.........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 SIZE pop R0!
+			1 -1 SIZE pop R1!
+			1  0 SIZE pop R2!
+			1  1 SIZE pop R3!
+			0  1 SIZE pop R4!
+			-1  1 SIZE pop R5!
+			-1  0 SIZE pop R6!
+			-1 -1 SIZE pop R7!
+
+			1 R9!
+		}
+
+		other_cells: {
+			1 ?loop
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{1 8 0 1 1 1 1 2}
+}
+
+//{ ======================================================================
+// SIZE - check distance values
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].look_mode = 0;
+
+		C[0]->organism->energy = 100;
+
+		A[0]->organism->energy = 800;
+
+		B[0]->organism->energy = 1200;
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#..........S#
+		#...........#
+		#..S........#
+		#...c.O.....#
+		#...c.......#
+		#o..ccC.....#
+		#...........#
+		#.....s.Aa..#
+		#.......aa..#
+		#.....aaaa..#
+		#Bb.........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 SIZE R0! pop
+			1 -1 SIZE R1! pop
+			1  0 SIZE R2! pop
+			1  1 SIZE R3! pop
+			0  1 SIZE R4! pop
+			-1  1 SIZE R5! pop
+			-1  0 SIZE R6! pop
+			-1 -1 SIZE R7! pop
+
+			1 R9!
+		}
+
+		other_cells: {
+			1 ?loop
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{2 2 6 5 2 3 5 5}
+}
+
+//{ ======================================================================
+// LISTEN - test mood values returned from LISTEN
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].listen_mode = 0;
+		u->strop[1].listen_mode = 0;
+
+		C[0]->mood = 666;
+		C[1]->mood = 666;
+		C[2]->mood = 666;
+		C[3]->mood = 666;
+		C[4]->mood = 666;
+
+		A[0]->mood = 80;
+		A[1]->mood = 90;
+		A[2]->mood = 110;
+		A[3]->mood = 120;
+		A[4]->mood = 130;
+		A[5]->mood = 140;
+		A[6]->mood = 150;
+		A[7]->mood = 160;
+
+		B[0]->mood = -2000;
+		B[1]->mood = -3000;
+
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#..........S#
+		#...........#
+		#..S........#
+		#...c.O.....#
+		#...c.......#
+		#o..ccC.....#
+		#...........#
+		#.....s.Aa..#
+		#.......aa..#
+		#.....aaaa..#
+		#Bb.........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			wait10 call
+			0 -1 LISTEN pop R0!
+			1 -1 LISTEN pop R1!
+			1  0 LISTEN pop R2!
+			1  1 LISTEN pop R3!
+			0  1 LISTEN pop R4!
+			-1  1 LISTEN pop R5!
+			-1  0 LISTEN pop R6!
+			-1 -1 LISTEN pop R7!
+
+			1 R9!
+		}
+
+		other_cells: {
+			GPS pop MOOD! { 1 ?loop } call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{0 80 0 0 0 0 0 -2000}
+}
+
+//{ ======================================================================
+// LISTEN - test distance values returned from LISTEN
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].listen_mode = 0;
+		u->strop[1].listen_mode = 0;
+
+		C[0]->mood = 666;
+		C[1]->mood = 666;
+		C[2]->mood = 666;
+		C[3]->mood = 666;
+		C[4]->mood = 666;
+
+		A[0]->mood = 80;
+		A[1]->mood = 90;
+		A[2]->mood = 110;
+		A[3]->mood = 120;
+		A[4]->mood = 130;
+		A[5]->mood = 140;
+		A[6]->mood = 150;
+		A[7]->mood = 160;
+
+		B[0]->mood = -2000;
+		B[1]->mood = -3000;
+
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#..........S#
+		#...........#
+		#..S........#
+		#...c.O.....#
+		#...c.......#
+		#o..ccC.....#
+		#...........#
+		#.....s.Aa..#
+		#.......aa..#
+		#.....aaaa..#
+		#Bb.........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			wait10 call
+			0 -1 LISTEN R0! pop
+			1 -1 LISTEN R1! pop
+			1  0 LISTEN R2! pop
+			1  1 LISTEN R3! pop
+			0  1 LISTEN R4! pop
+			-1  1 LISTEN R5! pop
+			-1  0 LISTEN R6! pop
+			-1 -1 LISTEN R7! pop
+
+			1 R9!
+		}
+
+		other_cells: {
+			GPS pop MOOD! { 1 ?loop } call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{0 2 0 0 0 0 0 5}
+}
+
+//{ ======================================================================
+// LISTEN - test different listen_mode's
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].listen_mode = 1;		// strain 0 - can hear self
+		u->strop[1].listen_mode = 8;	// strain 1 is "un-listenable"
+
+		C[0]->mood = 666;
+		C[1]->mood = 667;
+		C[2]->mood = 668;
+		C[3]->mood = 669;
+		C[4]->mood = 670;
+
+		A[0]->mood = 80;
+		A[1]->mood = 90;
+		A[2]->mood = 110;
+		A[3]->mood = 120;
+		A[4]->mood = 130;
+		A[5]->mood = 140;
+		A[6]->mood = 150;
+		A[7]->mood = 160;
+
+		B[0]->mood = -2000;
+		B[1]->mood = -3000;
+
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#..........S#
+		#...........#
+		#..S........#
+		#...c.O.....#
+		#...c.......#
+		#o..ccC.....#
+		#...........#
+		#.....s.Aa..#
+		#.......aa..#
+		#.....aaaa..#
+		#Bb.........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			wait10 call
+			0 -1 LISTEN pop R0!
+			1 -1 LISTEN pop R1!
+			1  0 LISTEN pop R2!
+			1  1 LISTEN pop R3!
+			0  1 LISTEN pop R4!
+			-1  1 LISTEN pop R5!
+			-1  0 LISTEN pop R6!
+			-1 -1 LISTEN pop R7!
+
+			1 R9!
+		}
+
+		other_cells: {
+			GPS pop MOOD! { 1 ?loop } call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{0 80 0 0 0 4 5}
+}
+
+//{ ======================================================================
+//
+// SAY - basic test
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].listen_mode = 0;			// default
+		u->strop[0].say_mode = 0;				// default
+
+		u->strop[1].listen_mode = 0;			// default
+		u->strop[1].say_mode = 0;				// default
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#.....c.....#
+		#.....C.....#
+		#....B......#
+		#.......A...#
+		#...........#
+		#...........#
+		#...........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 0 1 SAY R0!
+			222 -1 -1 SAY R1!
+			300 1 -1 SAY R2!
+
+			wait10 call
+
+			1 -1 LISTEN R4! R3!
+
+			1 R9!
+		}
+
+		other_cells: {
+			RECV MOOD! 1 ?loop
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	ACode<<_EOF_
+		main: {
+			RECV MOOD!
+			1 ?loop
+		}
+	_EOF_
+
+	Expected{0 1 2 300 2}
+}
+
+//{ ======================================================================
+//
+// SAY - interrupt test
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].listen_mode = 0;			// default
+		u->strop[0].say_mode = 64+128;			// interrupt me on trap6.
+
+		u->strop[1].listen_mode = 0;			// default
+		u->strop[1].say_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#.....c.....#
+		#.....C.....#
+		#....B......#
+		#.......A...#
+		#...........#
+		#...........#
+		#...........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 0 1 SAY R0!
+			222 -1 -1 SAY R1!
+			300 1 -1 SAY R2!
+
+			wait10 call
+
+			1 -1 LISTEN R4! R3!
+
+			1 R9!
+		}
+
+		other_cells: {
+			RECV MOOD! 1 ?loop
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	ACode<<_EOF_
+		main: {
+			1 ?loop
+		}
+
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { RECV MOOD! }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+	_EOF_
+
+	Expected{0 1 2 300 2}
+}
+
+//{ ======================================================================
+//
+// SAY - some bits
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].listen_mode = 1;
+		u->strop[0].say_mode = 1 + 8;
+
+		u->strop[1].listen_mode = 0;			// default
+		u->strop[1].say_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#.....c.....#
+		#.....C.....#
+		#....B......#
+		#.......A...#
+		#...........#
+		#...........#
+		#...........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			123 0 1 SAY R0!
+			222 -1 -1 SAY R1!
+			300 1 -1 SAY R2!
+
+			wait10 call
+
+			0 1 LISTEN R4! R3!
+
+			1 R9!
+		}
+
+		other_cells: {
+			RECV MOOD! 1 ?loop
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	Expected{1 0 2 123 1}
+}
+
+//{ ======================================================================
+//
+// READ - basic test
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].read_mode = 4 + 1;
+		u->strop[1].read_mode = 0;			// default
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#....scS....#
+		#.....C.....#
+		#....B.A....#
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 1 0 nwcb READ R0!
+			0 1 0 ncb READ R1!
+			1 1 0 necb READ R2!
+			-1 -1 0 swcb READ R3!
+			1 -1 10 secb READ R4!		; read 'hello' cb
+			0 0 0 zzcb READ R5!
+			1 0 0 vvcb READ R6!
+
+			secb 0 NUMBER R7!
+
+			0 R8!
+			nwcb 0 NUMBER 1 = { R8++ } if
+			necb 0 NUMBER 1 = { R8++ } if
+			ncb 0 NUMBER 1 = { R8++ } if
+			secb 0 NUMBER 123 = { R8++ } if
+			swcb 0 NUMBER 1 = { R8++ } if
+
+			1 R9!
+		}
+
+		other_cells: {
+			1 ?loop
+		}
+
+		ncb: { }
+		nwcb: { }
+		necb: { }
+		swcb: { }
+		secb: { }
+		zzcb: { }
+		vvcb: { }
+	_EOF_
+
+	ACode<<_EOF_
+		main: {
+			1 ?loop
+		}
+
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		hello: { 123 nop pop }
+	_EOF_
+
+	Expected{2 85 2 2 3 85 -3 123 4 }
+}
+
+//{ ======================================================================
+//
+// WRITE - basic test
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].read_mode = 4 + 1;
+		u->strop[1].read_mode = 0;
+
+		u->strop[0].write_mode = 4 + 1;
+		u->strop[1].write_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#....scS....#
+		#.....C.....#
+		#....B.A....#
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 1 2 junk WRITE R0!		; write to 'data' in loop_forever cb
+			0 1 x junk WRITE R1!
+			1 1 2 junk WRITE R2!		; write to 'data' in loop_forever cb
+			-1 -1 2 junk WRITE R3!		; write to 'data' in loop_forever cb
+			1 -1 10 junk WRITE R4!		; write to 'hello' in ACode
+			0 0 x2 junk WRITE R5!
+			1 0 0 junk WRITE R6!
+
+			-1 1 2 nwcb READ pop
+			0 1 x ncb READ pop
+			1 1 2 necb READ pop
+			-1 -1 2 swcb READ pop
+			1 -1 10 secb READ pop		; read 'hello' cb
+			0 0 x2 zzcb READ pop
+
+			secb call R7!
+
+			0 R8!
+			nwcb 0 NUMBER 666 = { R8++ } if
+			necb 1 NUMBER 777 = { R8++ } if
+			ncb 2 NUMBER 888 = { R8++ } if
+			secb 3 NUMBER 999 = { R8++ } if
+			swcb 4 OPCODE OPCODE' + = { R8++ } if
+
+			1 R9!
+		}
+
+		other_cells: {
+			1 ?loop
+		}
+
+		junk: { 666 777 888 999 + + + }
+		x: { }
+		x2: { }
+
+		ncb: { }
+		nwcb: { }
+		necb: { }
+		swcb: { }
+		secb: { }
+		zzcb: { }
+		vvcb: { }
+	_EOF_
+
+	ACode<<_EOF_
+		main: {
+			1 ?loop
+		}
+
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		hello: { 123 nop pop }
+	_EOF_
+
+	Expected{7 7 7 7 7 7 -3 3330 5}
+}
+
+//{ ======================================================================
+//
+// WRITE - interrupt
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].write_mode = 4 + 1 + 128 + 64;		// trap1
+		u->strop[1].write_mode = 4 + 1 + 128 + 64;		// trap1
+	_EOF_
+
+	Map<<_EOF_
+		#############
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#.....C.....#
+		#......A....#
+		#...........#
+		#...........#
+		#...........#
+		#...........#
+		#############
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			1 -1 10 row12 WRITE R0!
+			wait_for_resp call
+			row13 call R1!
+			1 R9!
+		}
+
+		_trap1: { 1 f 0 NUMBER! }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		other_cells: {
+			1 ?loop
+		}
+
+		f: {0}
+
+		row12: { 666 777 888 999 + + + }
+		row13: { }
+		wait_for_resp: { f 0 NUMBER 0 = ?loop }
+	_EOF_
+
+	ACode<<_EOF_
+		main: {
+			1 ?loop
+		}
+
+		_trap1: { -1 1 13 row10 WRITE pop }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		row10: { 123 nop pop }
+	_EOF_
+
+	Expected{7 3330}
+}
+
+//{ ======================================================================
+//
+// I: Test Protected-Code-Blocks and Protected-Instructions (NUMBER!)
+//
+//}
+UnitTest_CELL{
+	DeleteInstructions0{}
+	DeleteInstructions1{}
+
+	ProtectedCodeBlocks0{start}		//{ if a non-number word given, lookup label!!! }
+	ProtectedInstructions0{}
+
+	ProtectedCodeBlocks1{0}
+	ProtectedInstructions1{}
+
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#...c.#
+		#..C..#
+		#.c...#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			911 varp 4 NUMBER!
+			-911 var 4 NUMBER!
+
+			start call
+
+			wait10 call
+			wait10 call
+			wait10 call
+
+			varp 0 NUMBER R0!
+			varp 1 NUMBER R1!
+			varp 2 NUMBER R2!
+			varp 3 NUMBER R3!
+			varp 4 NUMBER R4!
+			var  0 NUMBER R5!
+			var  1 NUMBER R6!
+			var  2 NUMBER R7!
+			var  3 NUMBER R8!
+
+			1 R9!
+		}
+
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		other_cells: {
+			GPS pop 2 = p_cell_nw p_cell_se ifelse
+		}
+
+		p_cell_nw: {
+			101 varp 0 NUMBER!
+			1010 var 0 NUMBER!
+			cell_nw call
+		}
+
+		p_cell_se: {
+			222 varp 1 NUMBER!
+			2220 var 1 NUMBER!
+			cell_se call
+		}
+
+		varp: { 0 0 0 0 0 }
+
+		start: {
+		}
+
+		cell_nw: {
+			701 varp 2 NUMBER!
+			7010 var 2 NUMBER!
+		}
+
+		cell_se: {
+			822 varp 3 NUMBER!
+			8220 var 3 NUMBER!
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		var: { 0 0 0 0 0 }
+	_EOF_
+
+	Expected{101 222 0 0 911    1010 2220 7010 8220 }
+}
+
+//{ ======================================================================
+//
+// II: Test Protected-Code-Blocks and Protected-Instructions
+//	('call', 'trap' does not call protected code blocks)
+//
+//}
+UnitTest_CELL{
+	DeleteInstructions0{}
+	DeleteInstructions1{}
+
+	ProtectedCodeBlocks0{start}		//{ if a non-number word given, lookup label!!! }
+	ProtectedInstructions0{}
+
+	ProtectedCodeBlocks1{0}
+	ProtectedInstructions1{}
+
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#...c.#
+		#..C..#
+		#.c...#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			start call
+
+			wait10 call
+			wait10 call
+			wait10 call
+
+			results 0 NUMBER R0!
+			results 1 NUMBER R1!
+			results 2 NUMBER R2!
+			results 3 NUMBER R3!
+			results 4 NUMBER R4!
+			results 5 NUMBER R5!
+			results 6 NUMBER R6!
+			results 7 NUMBER R7!
+
+			1 R9!
+		}
+
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { 444 results 6 NUMBER! }
+		_trap5: { 333 results 7 NUMBER! }
+		_trap6: { }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		other_cells: {
+			GPS pop 2 = p_cell_nw p_cell_se ifelse
+		}
+
+		p_cell_nw: {
+			10 f call results 0 NUMBER!
+			11 g call results 1 NUMBER!
+			cell_nw call
+		}
+
+		p_cell_se: {
+			20 f call results 2 NUMBER!
+			22 g call results 3 NUMBER!
+			cell_se call
+			trap4
+		}
+
+		f: { 2* }
+
+		start: {
+		}
+
+		cell_nw: {
+			100 f call results 4 NUMBER!
+			101 g call results 5 NUMBER!
+		}
+
+		cell_se: {
+			trap5
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+		g: { 3 * }
+
+		results: { 0 0   0 0   0 0   0 0 }
+	_EOF_
+
+	Expected{20 33   40 66   100 303   444 333 }
+}
+
+
+//{ ======================================================================
+//
+// III: Test ?NUMBER! spin-lock example
+//
+//}
+UnitTest_CELL{
+	DeleteInstructions0{}
+	DeleteInstructions1{}
+
+	ProtectedCodeBlocks0{0}		//{ if a non-number word given, lookup label!!! }
+	ProtectedInstructions0{}
+
+	ProtectedCodeBlocks1{0}
+	ProtectedInstructions1{}
+
+	Setup<<_EOF_
+	_EOF_
+
+	Map<<_EOF_
+		#######
+		#.....#
+		#.....#
+		#..C..#
+		#..c..#
+		#.....#
+		#######
+	_EOF_
+
+	Code<<_EOF_
+		main:
+		{
+			wait10 call
+			spin_lock call
+			spin_unlock call
+			G0 R0!
+			1 R9!
+		}
+
+		_trap1: { }
+		_trap2: { }
+		_trap3: { }
+		_trap4: { }
+		_trap5: { }
+		_trap6: { }
+		_trap7: { }
+		_trap8: { }
+		_trap9: { }
+
+		lock_var: { 0 }
+
+		spin_lock:   { 1 lock_var 0 ?NUMBER! 0 = ?loop }
+		spin_unlock: { 0 lock_var 0 NUMBER! }
+
+		other_cells: {
+			spin_lock call
+			wait10 call
+			wait10 call
+			wait10 call
+			wait10 call
+			wait10 call
+			wait10 call
+			666 G0!
+			spin_unlock call
+		}
+
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+
+	_EOF_
+
+	Expected{666}
+}
+
+//{ ====================================================================== }
+
+//{
+//
+// MUTATION TESTS
+//
+//}
+
+//{ basic - nothing should happen }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{50}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+}
+
+//{ basic - insert a code block }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+	CodeAfter<<_EOF_
+	main:
+	{
+	      nop 
+	}
+	
+	row1:
+	{
+	      1  2  3  if  nop 
+	}
+	
+	row2:
+	{
+	      99  88  77  if  nop 
+	}
+	_EOF_
+
+}
+
+//{ basic mutation - delete a code block }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{1.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+    _EOF_
+}
+
+
+//{ basic mutation - transpose code blocks }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{1.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      99  88  77  if  nop 
+	}
+
+	row1:
+	{
+	      1  2  3  if  nop 
+	}
+
+	row2:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+    _EOF_
+}
+
+//{ basic mutation - insert code block }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      nop 
+	}
+
+	row1:
+	{
+	      1  2  3  if  nop 
+	}
+
+	row2:
+	{
+	      99  88  77  if  nop 
+	}
+
+	row3:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+	_EOF_
+}
+
+//{ basic mutation - duplicate code block }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+
+	row2:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+
+	row3:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+	_EOF_
+}
+
+//{ basic mutation - modify code block }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      3  4  4  if  nop 
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+
+	row2:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+	_EOF_
+}
+
+//{ ===== instruction-level mutations ============================================================== }
+
+//{ basic - nothing should happen, mutate instruction-level but all mutation rates are 0.0 }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{50}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+}
+
+//{ basic - insert instructions }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  nop  KEY-PRESS 2  3  if  nop 
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+    _EOF_
+}
+
+//{ basic mutation - delete instructions }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{1.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+
+	row1:
+	{
+	      99  77  if  nop 
+	}
+    _EOF_
+}
+
+//{ basic mutation - transpose instructions }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{1.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  99  88  if  nop 
+	}
+
+	row1:
+	{
+	      2  3  77  if  nop 
+	}
+
+	row2:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+    _EOF_
+}
+
+//{ basic mutation - insert instructions }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+	CodeAfter<<_EOF_
+	main:
+	{
+	      1  nop  KEY-PRESS  2  3  if  nop 
+	}
+	
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+	
+	row2:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+	
+	_EOF_
+
+
+}
+
+//{ basic mutation - duplicate instructions }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+
+	row1:
+	{
+	      ifelse  nop  HALT  1122  99  88  77
+	      if  nop 
+	}
+
+	row2:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+	_EOF_
+}
+
+//{ basic mutation - modify instructions }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      2  5  3  if  nop 
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+
+	row2:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+	_EOF_
+}
+
+//{ ==================== advanced mutation tests CODE BLOCK LEVEL ==================== }
+
+//{ advanced mutation - delete code block I, with protected code blocks }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{row2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{1.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+	_EOF_
+}
+
+//{ advanced mutation - delete code block II, with protected code blocks, when nothing to delete }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{1.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+	_EOF_
+}
+
+//{ advanced mutation - duplicate code block I, with protected code blocks NORMAL CASE}
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{row2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+
+	row2:
+	{
+	      ifelse  nop  HALT  1122  nop
+	}
+
+	row3:
+	{
+	      ifelse  nop  HALT  1122  nop
+	}
+	_EOF_
+}
+
+//{ advanced mutation - duplicate code block II, with protected code blocks, BREAKAGE CASE }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{row2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42070}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+	; --- protected/unprotected ---
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+	row2:
+	{
+	      ifelse  nop  HALT  1122  nop
+	}
+
+	row3:
+	{
+	      ifelse  nop  HALT  1122  nop
+	}
+	_EOF_
+}
+
+//{ advanced mutation - duplicate code block III, with protected code blocks, NOTHING TO DUPLICATE }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{3}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42070}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+	_EOF_
+}
+
+//{ advanced mutation - duplicate code block IV, with protected code blocks, MAX_CODE_BLOCKS limit reached }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{3}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{10}
+    Seed{42070}
+    MaxCodeBlocks{5}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		1 2 3 * +
+    }
+	; ---- protected/unprotected ---
+    row3:
+    {
+		dup pop nop
+    }
+    row4:
+    {
+		2over 1 -2
+    }
+    row5:
+    {
+		-1 0 OMOVE
+    }
+    row6:
+    {
+		NEAREST EAT rot
+    }
+    row7:
+    {
+		NEAREST EAT -rot
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		1 2 3 * +
+    }
+	; ---- protected/unprotected ---
+    row3:
+    {
+		dup pop nop
+    }
+    row4:
+    {
+		2over 1 -2
+    }
+    row5:
+    {
+		-1 0 OMOVE
+    }
+    row6:
+    {
+		NEAREST EAT rot
+    }
+    row7:
+    {
+		NEAREST EAT -rot
+    }
+	_EOF_
+}
+
+//{ advanced mutation - transpose code blocks I, with protected code blocks }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{row2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{1.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    row3:
+    {
+		1 2 * 999 ifelse nop -999
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+	row2:
+	{
+	      1  2  *  999  ifelse  nop  -999
+	}
+	row3:
+	{
+	      ifelse  nop  HALT  1122  nop
+	}
+	_EOF_
+}
+
+//{ advanced mutation - transpose code blocks II, with protected code blocks, NOTHING TO TRANSPOSE }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{1.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+	_EOF_
+}
+
+//{ advanced mutation - transpose code blocks III, with protected code blocks, NOTHING TO TRANSPOSE }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{1.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+	; --- protected/unprotected ---
+    junk:
+    {
+		1000 2000 3000 4000 5000 
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    junk:
+    {
+		1000 2000 3000 4000 5000
+    }
+	_EOF_
+}
+
+//{ advanced mutation - insert code blocks I , with protected code blocks }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{row2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+	CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+	
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+	
+	row2:
+	{
+	      nop 
+	}
+	
+	row3:
+	{
+	      ifelse  nop  HALT  1122  nop 
+	}
+	
+	_EOF_
+
+}
+
+//{ advanced mutation - insert code blocks II , with protected code blocks, with no unprotected code blocks }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+	
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+	
+	row2:
+	{
+	      nop 
+	}
+	_EOF_
+}
+
+//{ advanced mutation - insert code blocks III , with protected code blocks, with no unprotected code blocks code blocks avail. }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{3}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{10}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+	_EOF_
+}
+
+//{ advanced mutation - modify code block I, with protected code blocks }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{row2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42074}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		10 20 30 ifelse nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+
+	row2:
+	{
+	      13  22  29  ifelse  nop
+	}
+	_EOF_
+}
+
+//{ advanced mutation - modify code block II, with protected code blocks, NOTHING TO MODIFY }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42074}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+	_EOF_
+}
+
+//{ ==================== advanced mutation tests INSTRUCTION LEVEL ==================== }
+
+//{ advanced mutation - delete instructions I, with protected code blocks }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{row2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{1.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42070}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+
+	row2:
+	{
+	      ifelse  nop HALT nop
+	}
+	_EOF_
+}
+
+//{ advanced mutation - delete instructions II, with protected code blocks, NOTHING TO DELETE }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{1.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+	_EOF_
+}
+
+//{ advanced mutation - duplicate instructions I, with protected code blocks }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42070}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		ifelse nop halt 1122 nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+
+	row2:
+	{
+	      ifelse  nop  HALT  1122  1122  nop
+	}
+	_EOF_
+}
+
+//{ advanced mutation - duplicate instructions II, nothing to duplicate }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42070}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+	_EOF_
+}
+
+
+//{ advanced mutation - duplicate instructions III, do many times }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42070}
+    MaxCodeBlocks{100}
+    Times{20}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		900 800 700 -1 -2 -3
+    }
+    row3:
+    {
+		ifelse call >= <= + /
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+
+	row2:
+	{
+	      call  700  700  -2  900  800  +  700
+	      700  >=  <=  700  700  >=  -1  <=  +
+	      900  800  ifelse  call  700  700  -2
+	      <=  -2  <=  +  -2  900  800  -1  <=
+	      +  900  +  900  800  -3  >=
+	}
+
+	row3:
+	{
+	      ifelse  900  800  call  -2  -3  700
+	      +  >=  700  >=  +  call  <=  -2  -3
+	      700  <=  +  /
+	}
+	_EOF_
+}
+
+
+//{ advanced mutation - insert instructions I, with protected code blocks, RESPECTS PROTECTED CODE BLOCKS }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42022}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		sqrt abs tuck 1 2 3 tuck
+    }
+
+    _EOF_
+
+	CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+	
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+	
+	row2:
+	{
+	      20  R1++  sqrt  abs  tuck  1  2  3
+	      tuck 
+	}
+	_EOF_
+
+}
+
+//{ advanced mutation - insert instructions II, with protected code blocks, nothing to insert into }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{3}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42022}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		sqrt abs tuck 1 2 3 tuck
+    }
+
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+
+	row2:
+	{
+	      sqrt  abs  tuck  1  2  3  tuck
+	}
+	_EOF_
+}
+
+//{ advanced mutation - insert instructions III, with protected code blocks, no protected instruction generated }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{
+		call if ifelse ?loop ?exit pop dup swap over rot ?dup -rot 2swap
+		2over 2dup 2pop nip tuck 1+ 1- 2+ 2- 2/ 2* abs sqrt + - *
+		/ mod /mod negate 2negate \<\< >> = \<> \< > \<= >=
+		0= or and not invert xor min max CB R0 R1 R2 R3 R4 R5 R6 R7
+		R8 R9 R0! R1! R2! R3! R4! R5! R6! R7! R8! R9! SIGN PACK2 UNPACK2 MAX_INT MIN_INT
+		HALT NOP R0++ --R0 R1++ --R1 R2++ --R2 R3++ --R3 R4++ --R4 R5++ --R5 R6++ --R6 R7++
+		--R7 R8++ --R8 R9++ --R9 PEEK POKE CBLEN DSLEN CSLEN TRAP1 TRAP2 TRAP3
+		TRAP4 TRAP5 TRAP6
+	}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42022}
+    MaxCodeBlocks{4}
+    Times{20}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		sqrt abs tuck 1 2 3 tuck
+    }
+    row3:
+    {
+		nop nop
+    }
+    row4:
+    {
+		nop
+    }
+    row5:
+    {
+		nop nop
+    }
+    _EOF_
+
+	CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+	
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+	
+	row2:
+	{
+	      NEIGHBORS  sqrt  abs  -81  -8  WRITE
+	      98  tuck  ENERGY  -92  -91  -55  1
+	      2  3  tuck 
+	}
+	
+	row3:
+	{
+	      -50  TRAP8  88  SMALLEST  SEND-ENERGY
+	      -10  nop  nop  MOUSE-POS  88  -14 
+	}
+	
+	row4:
+	{
+	      -10  -57  10  POPULATION.S  66  -48
+	      -65  54  -80  61  24  -35  POPULATION.S
+	      22  CMOVE  35  nop 
+	}
+	
+	row5:
+	{
+	      LOOK  TRAP8  40  OPCODE  NUM-CELLS
+	      -26  SAY  RND  SHOUT  EXUDE  31  nop
+	      20  S0  nop 
+	}
+	
+	_EOF_
+
+}
+
+
+//{ advanced mutation - transpose instructions I, with protected code blocks, no protected instructions transposed }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{1.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42022}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		sqrt abs tuck 1 2 3 tuck
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+
+	row2:
+	{
+	      sqrt  abs  1  tuck  1  3  tuck
+	}
+	_EOF_
+}
+
+//{ advanced mutation - transpose instructions II, with protected code blocks, nothing to transpose }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{1.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42066}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+	_EOF_
+}
+
+
+//{ advanced mutation - modify instructions I, with protected code blocks, respect protected code blocks }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42066}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row2:
+    {
+		peek poke 0 -1
+    }
+    _EOF_
+
+	CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+	
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+	
+	row2:
+	{
+	      R3++  tuck  3  -4 
+	}
+	
+	_EOF_
+
+}
+
+//{ advanced mutation - modify instructions II, with protected code blocks, nothing to modify }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+    ProtectedInstructions{ }
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42066}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop
+	}
+
+	row1:
+	{
+	      99  88  77  if  nop
+	}
+	_EOF_
+}
+
+//{ advanced mutation - modify instructions III, with protected code blocks, protected instructions not inserted }
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+
+    ProtectedInstructions{
+		call if ifelse ?loop ?exit pop dup swap over rot ?dup -rot 2swap
+		2over 2dup 2pop nip tuck 1+ 1- 2+ 2- 2/ 2* abs sqrt + - *
+		/ mod /mod negate 2negate \<\< >> = \<> \< > \<= >=
+		0= or and not invert xor min max CB R0 R1 R2 R3 R4 R5 R6 R7
+		R8 R9 R0! R1! R2! R3! R4! R5! R6! R7! R8! R9! SIGN PACK2 UNPACK2 MAX_INT MIN_INT
+		HALT NOP R0++ --R0 R1++ --R1 R2++ --R2 R3++ --R3 R4++ --R4 R5++ --R5 R6++ --R6 R7++
+		--R7 R8++ --R8 R9++ --R9 PEEK POKE CBLEN DSLEN CSLEN TRAP1 TRAP2 TRAP3
+		TRAP4 TRAP5 TRAP6
+	}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{82066}
+    MaxCodeBlocks{5}
+    Times{20}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    row3:
+    {
+		nop 2over
+    }
+    row4:
+    {
+		-100
+    }
+    row5:
+    {
+		666 swap
+    }
+    _EOF_
+
+	CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+	
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+	
+	row2:
+	{
+	      ENERGY  NUM-CELLS 
+	}
+	
+	row3:
+	{
+	      103 
+	}
+	
+	row4:
+	{
+	      -665  GROW.CB 
+	}
+	
+	_EOF_
+
+}
+
+
+//{ ==================== super advanced mutation tests ==================== }
+
+//{ super advanced mutation - insert code block II, with protected code blocks, Protected Instructions, not generated
+// none of the instructions generated should be in the protected list.
+//}
+UnitTest_MUTATION{
+	DeleteInstructions{ }
+    ProtectedCodeBlocks{2}
+
+    ProtectedInstructions{
+		call if ifelse ?loop ?exit pop dup swap over rot ?dup -rot 2swap
+		2over 2dup 2pop nip tuck 1+ 1- 2+ 2- 2/ 2* abs sqrt + - *
+		/ mod /mod negate 2negate \<\< >> = \<> \< > \<= >=
+		0= or and not invert xor min max CB R0 R1 R2 R3 R4 R5 R6 R7
+		R8 R9 R0! R1! R2! R3! R4! R5! R6! R7! R8! R9! SIGN PACK2 UNPACK2 MAX_INT MIN_INT
+		HALT NOP R0++ --R0 R1++ --R1 R2++ --R2 R3++ --R3 R4++ --R4 R5++ --R5 R6++ --R6 R7++
+		--R7 R8++ --R8 R9++ --R9 PEEK POKE CBLEN DSLEN CSLEN TRAP1 TRAP2 TRAP3
+		TRAP4 TRAP5 TRAP6
+	}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{1.0}
+    XLEN{4}
+    MaxApply{1}
+    Seed{42074}
+    MaxCodeBlocks{100}
+    Times{10}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 if nop
+    }
+    row1:
+    {
+		99 88 77 if nop
+    }
+    _EOF_
+
+	CodeAfter<<_EOF_
+	main:
+	{
+	      1  2  3  if  nop 
+	}
+	
+	row1:
+	{
+	      99  88  77  if  nop 
+	}
+	
+	row2:
+	{
+	      SHOUT 
+	}
+	
+	row3:
+	{
+	      NEIGHBORS  MAKE-ORGANIC  BROADCAST 
+	}
+	
+	row4:
+	{
+	      AGE 
+	}
+	
+	row5:
+	{
+	      79 
+	}
+	
+	row6:
+	{
+	      60 
+	}
+	
+	row7:
+	{
+	      NUMBER!  -95  -48  COLDEST 
+	}
+	
+	row8:
+	{
+	      RECV 
+	}
+	
+	row9:
+	{
+	      2  OPCODE!  66  -92 
+	}
+	
+	row10:
+	{
+	      GPS 
+	}
+	
+	row11:
+	{
+	      TRAP8 
+	}
+	
+	_EOF_
+
+}
+
+//{ basic - Strand Length Basic Test (xlen) xlen=1 }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{1}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 1
+    }
+    _EOF_
+}
+
+//{ Strand Length Basic Test (xlen) xlen=2 duplicate }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{1.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{2}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        300 200
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        300 200 300 200
+    }
+    _EOF_
+}
+
+//{ Strand Length Basic Test (xlen) xlen=1 delete }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{1.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{1}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 4 5 6
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        1 3 4 5 6
+    }
+    _EOF_
+}
+
+//{ Strand Length insert code block, xlen=1 }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{0.0}
+    Probability_Insert{1.0}
+    Probability_CB{1.0}
+    XLEN{1}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        666
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+       nop
+    }
+    row1:
+    {
+       666
+    }
+    _EOF_
+}
+
+//{ Strand Length transpose instructions, xlen=1 }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{1.0}
+    Probability_Modify{0.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{1}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        666 -555
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+        -555 666
+    }
+    _EOF_
+}
+
+//{ Strand Length modify instructions, xlen=1 }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{1}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 4 5 6 7 8 9 10
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+       1 2 4 4 5 6 7 8 9 10
+    }
+    _EOF_
+}
+
+//{ Strand Length modify instructions, xlen=10 }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{10}
+    MaxApply{1}
+    Seed{42069}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1 2 3 4 5 6 7 8 9 10 11 12   13 14   15 16
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+       1 2 3 4 5 6 7 8 9 10 11 12   14 17   15 16
+    }
+    _EOF_
+}
+
+//{ Strand Length modify instructions, xlen=20 }
+UnitTest_MUTATION{
+	DeleteInstructions{}
+    ProtectedCodeBlocks{0}
+    ProtectedInstructions{}
+
+    Probability_Delete{0.0}
+    Probability_Duplicate{0.0}
+    Probability_Transpose{0.0}
+    Probability_Modify{1.0}
+    Probability_Insert{0.0}
+    Probability_CB{0.0}
+    XLEN{20}
+    MaxApply{1}
+    Seed{42088}
+    MaxCodeBlocks{100}
+    Times{1}
+
+    Code<<_EOF_
+    main:
+    {
+        1   2 3 4 5 6 7 8 9 10 11 12    13 14 15 16
+    }
+    _EOF_
+
+    CodeAfter<<_EOF_
+    main:
+    {
+       1    5 -1 2 7 5 4 12 5 7 15 8    13 14 15 16
+    }
+    _EOF_
+}
+
+//{ ====================================================================== }
+
+//{
+//
+// MERGE TESTS
+//
+//}
+
+//{ merge - basic test mode 0 }
+UnitTest_MERGE{
+	Seed{12309}
+	MergeMode{0}
+
+	Code1<<_EOF_
+	main: { 420 }
+	row1: { nop dup 10 -20 }
+	row2: { TRAP9 600 }
+	row3: { swap 2dup OMOVE MAKE-SPORE }
+	row4: { -1 -1 }
+	row5: { 200 -1 -1 EXUDE SMELL nop pop }
+	_EOF_
+
+	Code2<<_EOF_
+	main: { 5 call 4 call 9 call }
+	row1: { 2 2 + }
+	row2: { dup rot 100 + 90 / }
+	row3: { SEND -rot nop 100 100 100 50 2dup ifelse }
+	row4: { 1 2 }
+	row5: { 5 555 5544 5 5555 }
+	_EOF_
+
+	CodeAfter<<_EOF_
+main:
+{
+      420 
+}
+
+row1:
+{
+      nop  dup  10  -20 
+}
+
+row2:
+{
+      dup  rot  100  +  90  / 
+}
+
+row3:
+{
+      SEND  -rot  nop  100  100  100  50
+      2dup  ifelse 
+}
+
+row4:
+{
+      1  2 
+}
+
+row5:
+{
+      5  555  5544  5  5555 
+}
+	_EOF_
+}
+
+//{ merge - basic test mode 0 (again, different seed)}
+UnitTest_MERGE{
+	Seed{920322}
+	MergeMode{0}
+
+	Code1<<_EOF_
+	main: { 420 }
+	row1: { nop dup 10 -20 }
+	row2: { TRAP9 600 }
+	row3: { swap 2dup OMOVE MAKE-SPORE }
+	row4: { -1 -1 }
+	row5: { 200 -1 -1 EXUDE SMELL nop pop }
+	_EOF_
+
+	Code2<<_EOF_
+	main: { 5 call 4 call 9 call }
+	row1: { 2 2 + }
+	row2: { dup rot 100 + 90 / }
+	row3: { SEND -rot nop 100 100 100 50 2dup ifelse }
+	row4: { 1 2 }
+	row5: { 5 555 5544 5 5555 }
+	_EOF_
+
+	CodeAfter<<_EOF_
+main:
+{
+      5  call  4  call  9  call 
+}
+
+row1:
+{
+      nop  dup  10  -20 
+}
+
+row2:
+{
+      dup  rot  100  +  90  / 
+}
+
+row3:
+{
+      SEND  -rot  nop  100  100  100  50
+      2dup  ifelse 
+}
+
+row4:
+{
+      -1  -1 
+}
+
+row5:
+{
+      200  -1  -1  EXUDE  SMELL  nop  pop 
+}
+	_EOF_
+}
+
+//{ merge - basic test mode 1 (Parent1 then Parent2 ...)}
+UnitTest_MERGE{
+	Seed{1100993}
+	MergeMode{1}
+
+	Code1<<_EOF_
+	main: { 420 }
+	row1: { nop dup 10 -20 }
+	row2: { TRAP9 600 }
+	row3: { swap 2dup OMOVE MAKE-SPORE }
+	row4: { -1 -1 }
+	row5: { 200 -1 -1 EXUDE SMELL nop pop }
+	_EOF_
+
+	Code2<<_EOF_
+	main: { 5 call 4 call 9 call }
+	row1: { 2 2 + }
+	row2: { dup rot 100 + 90 / }
+	row3: { SEND -rot nop 100 100 100 50 2dup ifelse }
+	row4: { 1 2 }
+	row5: { 5 555 5544 5 5555 }
+	_EOF_
+
+	CodeAfter<<_EOF_
+main:
+{
+      420 
+}
+
+row1:
+{
+      2  2  + 
+}
+
+row2:
+{
+      TRAP9  600 
+}
+
+row3:
+{
+      SEND  -rot  nop  100  100  100  50
+      2dup  ifelse 
+}
+
+row4:
+{
+      -1  -1 
+}
+
+row5:
+{
+      5  555  5544  5  5555 
+}
+
+	_EOF_
+}
+
+//{ merge - basic test mode 2 (Parent2 then Parent1) }
+UnitTest_MERGE{
+	Seed{1100993}
+	MergeMode{2}
+
+	Code1<<_EOF_
+	main: { 420 }
+	row1: { nop dup 10 -20 }
+	row2: { TRAP9 600 }
+	row3: { swap 2dup OMOVE MAKE-SPORE }
+	row4: { -1 -1 }
+	row5: { 200 -1 -1 EXUDE SMELL nop pop }
+	_EOF_
+
+	Code2<<_EOF_
+	main: { 5 call 4 call 9 call }
+	row1: { 2 2 + }
+	row2: { dup rot 100 + 90 / }
+	row3: { SEND -rot nop 100 100 100 50 2dup ifelse }
+	row4: { 1 2 }
+	row5: { 5 555 5544 5 5555 }
+	_EOF_
+
+	CodeAfter<<_EOF_
+main:
+{
+      5  call  4  call  9  call 
+}
+
+row1:
+{
+      nop  dup  10  -20 
+}
+
+row2:
+{
+      dup  rot  100  +  90  / 
+}
+
+row3:
+{
+      swap  2dup  OMOVE  MAKE-SPORE 
+}
+
+row4:
+{
+      1  2 
+}
+
+row5:
+{
+      200  -1  -1  EXUDE  SMELL  nop  pop 
+}
+	_EOF_
+}
+
+//{ === use '-' to turn off tests =================================================================== }
+
+-UnitTest_MUTATION{
+	Code<<_EOF_
+	main: { 420  }
+	_EOF_
+
+	Expected{0}
+}
+
+-UnitTest_MUTATION{
+	Code<<_EOF_
+	main: { 69 420 + }
+	_EOF_
+
+	ExpectedCode<<_EOF_
+	main: { 69 420 + }
+	_EOF_
+
+	Test{ D 2 3 }
+
+	Expected{}
+}

@@ -1,0 +1,1151 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - The KFORTH Language }
+MySite.body{
+
+Section{The KFORTH Language}
+
+B{Table of Contents:}
+
+BulletList{
+Item{ LINK{ URL{#introduction} Introduction } }
+Item{ LINK{ URL{#labels} Labels } }
+Item{ LINK{ URL{#registers} Registers } }
+Item{ LINK{ URL{#comments} Comments } }
+Item{ LINK{ URL{#flowcontrol} Flow Control } }
+Item{ LINK{ URL{#nesting} Nested Code Blocks } }
+Item{ LINK{ URL{#datatypes} Data Types } }
+Item{ LINK{ URL{#ram} RAM } }
+Item{ LINK{ URL{#selfmod} Self Modifying Code } }
+Item{ LINK{ URL{#traps} Traps and Trap Handlers } }
+Item{ LINK{ URL{#trapsafety} Trap Safety } }
+Item{ LINK{ URL{#protections} Protections } }
+Item{ LINK{ URL{#int} Interrupts } }
+Item{ LINK{ URL{#intsafety} Interrupt Safety } }
+Item{ LINK{ URL{#reference} Instruction Reference } }
+Item{ LINK{ URL{#examples} Examples } }
+}
+
+HRULE{}
+
+REF{introduction}
+SubSection{Introduction:}
+P{
+So you want to learn KFORTH, do you? Well lets start with a simple example.
+}
+
+P{
+First launch the KFORTH Interpreter from the Evolve program. You'll see this
+dialog:
+}
+
+IMG{KforthInterpreter.jpg}
+
+P{
+Now lets write a program to subtract two years. In the KFORTH SOURCE CODE pane enter the
+following KFORTH program:
+}
+
+CodeSample<<_EOF_
+
+{ 2022  1968 - }
+
+_EOF_
+
+P{
+All KFORTH instructions must be enclosed within curly braces. This is called a "code block". Code blocks
+are assigned numbers starting with 0.
+Inside of the curly braces goes "the code". This consists of numbers and instructions
+(using in postfix notation).
+}
+
+P{
+Now press the B{[Compile]} button. And this is what you will see in
+the upper pane:
+}
+
+CodeSample<<_EOF_
+main:
+{
+     2022  1968 -
+}
+_EOF_
+
+P{
+The compiled version looks very similar to what we typed it. The first thing to note is
+the label B{main:} was added in front our code block. In KFORTH the first code
+block (code block 0) is where program execution starts.
+That is why the disassmbler inserted the label B{main:}.
+}
+
+P{
+Now click on B{[RUN]}. The answer '54' will appear in the data stack pane. You can also
+single-step through this example. To single step, first press B{[Reset]}.
+}
+
+P{
+Lets add another code block to this example.
+}
+
+IMGCB{findx.jpg}
+
+P{
+Your neighbor is building a BBQ, to measure for the foundation he
+needs to know what 'x' is (I know, lame example, but I'm hungry right now).
+You want to help him so he'll invite you over for BBQ.
+You realize that this is a perfect job for KFORTH!
+We will add a new code block to our example, which when executed will compute 'x':
+}
+
+P{
+Here, type this:
+}
+
+CodeSample<<_EOF_
+	{ 2022 1968 - }
+	{ 98 dup * 71 dup * + sqrt }
+_EOF_
+
+P{
+When you compile this program, the disassembly will be shown as:
+}
+
+CodeSample<<_EOF_
+main:
+{
+	2022 1968 -
+}
+
+row1:
+{
+	98 dup * 71 dup * + sqrt
+}
+_EOF_
+
+P{
+The disassembler gives every code block a label.
+The first one, as we already saw is called B{main:} subsequent code
+blocks are labeled B{row1, row2, row3 and so on...}
+}
+
+P{
+Now click on B{[Run]}. Whoooa! What the fuck? The data stack only shows the
+same value '54'? What's wrong?
+}
+
+P{
+The problem is KFORTH automatically executes code block 0, but all other code blocks
+must be explictly called, using the B{call} instruction.
+}
+
+P{
+Let's try this again.... Now we will add B{'1 call'} to the end of the first code block, like so:
+}
+
+CodeSample<<_EOF_
+	{ 2022 1968 - 1 call }
+	{ 98 dup * 71 dup * + sqrt }
+_EOF_
+
+P{
+Now click on B{[Compile]} and then B{[Run]}.
+}
+
+P{
+Hopefully, when the program terminates there are two items on the stack. '121' and '54'.
+The '121' is the answer to our "find x?" problem. Since KFORTH only uses integers
+the answer has been rounded to the nearest whole number.
+}
+
+P{
+This example shows how code blocks are treated as executable functions. The B{call}
+instructions pops a number from the top of the data stack and treats it as a
+code block number, and calls that code block.
+}
+
+P{
+When humans write KFORTH they should use labels, so here is the same program with labels
+added:
+}
+
+CodeSample<<_EOF_
+main:
+	{ 2022 1968 - findx call }
+
+findx:
+	{ 98 dup * 71 dup * + sqrt }
+_EOF_
+
+P{
+When your B{[Compile]} this, your labels are lost and the disassembler picks
+labels like: B{"main, row1, row2, row3, ..."}. Anyway, here is what
+you'll see in the disassembly pane:
+}
+
+CodeSample<<_EOF_
+main:
+{
+	2022 1968 - 1 call
+}
+
+row1:
+{
+	98 dup * 71 dup * + sqrt
+}
+_EOF_
+
+P{
+Also notice the label before the B{call} instruction is B{1} not B{row1}. This
+is because the disassembler cannot reliably regenerate labels INSIDE of code blocks
+(I don't want to go into the reasons why, but you could calculate the code block number
+rather than hard code a value).
+}
+
+HRULE{}
+
+REF{labels}
+SubSection{Labels}
+P{
+A label is any text followed by a colon 'TT{:}'. A label
+can consist of any characters except: whitespace, colon 'TT{:}', semi-colon 'TT{;}' ,
+or curly braces 'TT{\{}', 'TT{\}}'.
+Also, a label cannot clash with the name of an existing instruction.
+}
+
+P{
+To define a label simply follow it by a colon (without spaces). The value of
+the label is the next code block number to be assigned (code block numbers
+are assigned startig at 0 and then incrementing by 1 for each new code block).
+}
+
+P{
+To use a label, just enter its name (do not use colon). The compiler will
+convert this label reference to the code block number.
+}
+
+HRULE{}
+
+SubSection{Case Insensitive}
+P{
+Instructions and labels are case insensitive. So "MAKE-SPORE" is the same as "Make-Spore".
+}
+
+HRULE{}
+
+REF{registers}
+SubSection{Registers}
+P{
+The KFORTH computing model includes ten registers R0 through R9. These can be used
+to store/retrieve temporary values. For example,
+}
+
+CodeSample<<_EOF_
+main:
+{	2022 1968 - R1!
+	findx call R5!
+	R1 R5 + R9!
+}
+
+findx:
+{
+	98 dup * 71 dup * + sqrt
+}
+_EOF_
+
+P{
+This is the same example as before, but we have added B{'R5!'} and B{'R1!'}.
+These instructions take the value on top of the data stack and stores it
+into the indicated register.
+}
+
+P{
+The line B{R1 R5 + R9!} fetches the value of R1 and R5 and adds these values
+and then writes the result to register B{R9}.
+}
+
+P{
+Registers are not used by any KFORTH instructions, so they can be managed and
+used by the user without worrying about conflicts.
+}
+
+HRULE{}
+
+REF{comments}
+SubSection{Comments}
+P{
+Use the semi-colon B{;} to insert a comment into a KFORTH program.
+The rest of the line after the semi-colon is ignored.
+}
+
+CodeSample<<_EOF_
+
+; my first KFORTH program
+main:
+{
+	2022 1968 - R1! ; compute difference between 2022 and 1968
+	findx call R5!  ; call the findx routine and store in result in R5.
+	R1 R5 + R9!
+}
+
+; my first KFORTH subroutine
+findx:
+{
+	98 dup * 71 dup * + sqrt
+}
+_EOF_
+
+HRULE{}
+
+SubSection{Stack Underflow}
+P{
+It can be expected that a mutated KFORTH program would attempt instructions
+without having enough data on the data stack. How does KFORTH handle this?
+}
+
+P{
+KFORTH's policy for B{stack underflow} is to treat the operation as a NO-OP.
+Meaning the program just continues to the next instruction without removing
+anything from the stack.
+}
+
+P{
+For example, this code calls the plus (+) instruction but only 1 data item is
+on the stack.
+}
+
+CodeSample<<_EOF_
+main:
+{
+	200 + 3 *
+}
+_EOF_
+
+P{
+The B{'+'} operation needs two values on the stack. Since this is not the case, the
+stack underflow policy is to simply proceed to the next instruction. When
+the B{'*'} operation is executed it finds two values on the data stack, so it is able
+to perform its job (computes 600, replacing 200 and 3 on the data stack).
+}
+
+HRULE{}
+
+SubSection{Undefined Functions}
+P{
+In addition to stack underflow, sometimes the value to an instruction (a function) are
+not defined. For example division by 0 and trying to take the square root of a negative number.
+Therefore, B{div}
+B{mod}, and B{/mod} will act as NO-OP instructions when the second operand is zero. And
+when the argument to B{sqrt} is negative the instruction leaves the stack unchanged.
+}
+
+HRULE{}
+
+REF{flowcontrol}
+SubSection{Flow Control}
+P{
+We already know about the B{call} instruction, which transfers control to
+a new code block. What else can we do? KFORTH includes the following instructions
+for flow control:
+}
+
+BulletList{
+Item{ S{call} - call a code block }
+Item{ S{if} - call a code block IF true }
+Item{ S{ifelse} - call one of two code blocks IF true/false}
+Item{ S{?loop} - jump to beginning of code block if true }
+Item{ S{?exit} - jump to end of code block if true }
+Item{ S{trap1 ... trap9} - call one of the trap handlers }
+}
+
+HRULE{}
+
+SubSection{call}
+P{
+We have already seen this instruction at work. It's the unconditional form
+of subroutine call. Below we explore B{if} and B{ifelse} which
+are conditional subroutine call instructions.
+}
+
+P{
+You may be wondering what "call" does with a bogus code block number?
+For example, "-900 call", or "555 call". 
+When B{call} instruction (and B{if}, B{ifelse}) is used with a bogus
+code block number, it removes the values from the stack, as if this were a normal instruction, but
+it won't call any code block. Conceptually, we can think of a KFORTH program
+as having empty rows for every possible integer (except the ones that have been defined).
+}
+
+CodeSample<<_EOF_
+main:
+{
+	5000 call
+}
+
+row1: { }
+row2: { }
+row3: { }
+row4: { }
+row5: { }
+row6: { }
+...
+row9999999: { }
+
+_EOF_
+
+HRULE{}
+
+SubSection{if}
+P{
+Here's an example of using the IF instruction.
+}
+
+CodeSample<<_EOF_
+main:
+{
+	521 R1!
+	R1 dup 500 >= blah if
+}
+
+blah:
+{
+	500 -
+}
+_EOF_
+
+P{
+This code checks if R1 is greater than 500 and if true, calls the subroutine
+B{blah}. Blah will subtract 500. The 'dup' instruction creates
+a 2nd copy of R1 on the data stack.
+}
+
+HRULE{}
+
+REF{nesting}
+SubSection{Nested Code Blocks:}
+There is another human friendly way to write this same thing. It is
+called nested code blocks. Here is how to re-write this example,
+
+CodeSample<<_EOF_
+main:
+{
+	521 R1!
+	R1 dup 500 >= { 500 - } if
+}
+_EOF_
+
+P{
+We nested the code block that use to be B{blah}, directly into main.
+If you B{[Compile]}, you'll notice that the nesting is removed. This
+reveals how the nesting actually works. Nesting code blocks is just for
+human convienience.
+}
+
+P{
+When compiled it maps to the orginal version we wrote that used the
+code block B{blah}, see:
+}
+
+CodeSample<<_EOF_
+main:
+{
+	521 R1! R1 dup 500 >= 1 if 
+}
+
+row1:
+{
+	500 - 
+}
+_EOF_
+
+P{
+Nesting can be of unlimited depth. But, again this nesting is a lexical
+feature, and does not imply and special powers in the KFORTH language.
+It is simply a way to make writing KFORTH programs
+simpler.
+}
+
+HRULE{}
+
+SubSection{ifelse}
+P{
+This instruction calls one of two code blocks depening on if
+the condition is true or false.
+}
+
+CodeSample<<_EOF_
+main:
+{
+	499 R1!
+	R1 dup 500 >=
+		{ 500 - R1! }
+		{ 2 / R1! }  ifelse
+}
+_EOF_
+
+P{
+First notice that the KFORTH compiler is free-format, allowing you
+to space your KFORTH programs any way which you desire.
+}
+
+P{
+This is what the code will be converted into by the compiler:
+}
+
+CodeSample<<_EOF_
+main:
+{
+	499 R1! R1 dup 500 >= 1 2 ifelse 
+}
+
+row1:
+{
+	500 - R1! 
+}
+
+row2:
+{
+	2 / R1! 
+}
+_EOF_
+
+P{
+Which does the same as this C code:
+}
+
+CodeSample<<_EOF_
+/* C code, not KFORTH */
+void main()
+{
+	int R1;
+
+	R1 = 499;
+	if( R1 >= 500 ) {
+		R1 = R1 - 500;
+	} else {
+		R1 = R1 / 2;
+	}
+}
+_EOF_
+
+P{
+The B{ifelse} instruction requires three arguments to be on the data stack. If this
+is not the case, then the B{stack underflow} policy is to just treat the B{ifelse}
+as a no-op.
+}
+
+HRULE{}
+
+SubSection{?loop}
+
+IMGC{loopop.gif}
+
+P{
+As this awsome diagram illustrates, the B{?loop} instruction loops! It is a form
+of controlled goto. It does not do a subroutine call, instead we simply branch back
+to the beginning of the current code block (if the value on top of the stack is non-zero).
+Otherwise we continue to the next instruction.
+}
+
+CodeSample<<_EOF_
+main:
+{
+	{ ...stuff... 1 ?loop } call
+}
+_EOF_
+
+P{
+The instructions B{1 ?loop} causes execution to return to the start of the code block, therefore this will
+loop forever running the instructions TT{...stuff...}.
+}
+
+HRULE{}
+
+SubSection{?exit}
+IMGC{exitop.gif}
+
+P{
+This diagram shows how the exit instruction works. The B{?exit} instruction conditionally
+exits (branches to the end of the code block) the current code block.
+If the top of the data stack is non-zero then we
+jump to the end of the code-block. Otherwise we continue to the next instruction.
+As with B{?loop}, this instruction does not involve any subroutine calling. It is a branch.
+}
+
+P{
+These are the only branching instructions in KFORTH.
+}
+
+HRULE{}
+
+REF{datatypes}
+SubSection{DATA TYPES}
+P{
+KFORTH has the most elaborate and rich data types in the whole history of computer
+languages!!!! Bwhahahahaha! Just kidding. KFORTH only has one data type: a 16-bit signed integer.
+}
+
+P{
+That's it. There are no strings, booleans, arrays, etc...
+}
+
+P{
+A 16-bit number isn't very large. Here is the min/max range of this data type:
+}
+
+P{
+	B{-32,768} to B{+32,767}
+}
+
+P{
+Only decimal notation is accepted. Numeric literals may be preceeded by a minus (-) sign to
+indicate a negative value.
+}
+
+HRULE{}
+
+REF{ram}
+SubSection{RAM}
+P{
+The kforth program is itself a memory store. It appears to be just code, but
+it is in fact a read and write storage. The numbers and instructions share the same
+16-bit word. This means numbers stored in RAM must be reduced to 15-bit values by dropping the top bit.
+}
+
+P{
+The instructions: TT{NUMBER}, TT{NUMBER!}, TT{?NUMBER!}, TT{OPCODE}, TT{OPCODE!}
+read and write to RAM. There are 16,000 code block addressess. And each code block can hold 16,000 values.
+This gives about 256MB of storage.
+}
+
+P{Before:}
+
+CodeSample<<_EOF_
+main:
+{
+	666 mydata 2 NUMBER!
+	777 mydata 5 NUMBER!
+}
+mydata: { 0 0 0 0 0 0 0 }
+_EOF_
+
+P{After:}
+
+CodeSample<<_EOF_
+main:
+{
+	666 mydata 2 NUMBER!
+	777 mydata 5 NUMBER!
+}
+mydata: { 0 0 666 0 0 777 0 }
+_EOF_
+
+HRULE{}
+
+REF{selfmod}
+SubSection{Self Modifying Code}
+P{
+The previous example shows that the program area can be written to. In addition
+to being able to read & write numbers, you can write instructions  with the TT{OPCODE!} instruction.
+}
+
+P{Before:}
+
+CodeSample<<_EOF_
+main:
+{
+	OPCODE' >= myfunc 2 OPCODE!
+	OPCODE' ?exit myfunc 3 OPCODE!
+}
+myfunc: { nop nop nop nop }
+_EOF_
+
+P{After:}
+
+CodeSample<<_EOF_
+main:
+{
+	OPCODE' >= myfunc 2 OPCODE! 
+	OPCODE' ?exit myfunc 3 OPCODE!
+}
+myfunc: { nop nop >= ?exit }
+_EOF_
+
+HRULE{}
+
+REF{traps}
+SubSection{Traps & Trap Handlers}
+P{
+There are 9 instructions, TT{TRAP1}, TT{TRAP2}, ..., TT{TRAP9}, which are for implementing system calls.
+The trap instructions call the code block numbers 1, 2, ... 9. They are the same as,
+
+CodeSample<<_EOF_
+ {
+	trap2		; call code block 2
+	2 call		; call code block 2, if not going from unprotected to protected code.
+ }
+_EOF_
+}
+
+P{
+The difference between trap2 and TT{2 call} is the call instruction respects
+the boundary between the protected code and unprotected code.
+Unprotected code cannot call protected code (unless a trap is used).
+}
+
+P{
+You can reserve the first 10 code blocks for your trap handlers.
+Then protect your code. Here _trap9 is the label for the 9th code block. It
+will get called when the instruction TT{trap9} is executed.
+}
+
+CodeSample<<_EOF_
+main:
+{
+	evolve call
+}
+
+_trap1: { }
+_trap2: { }
+_trap3: { }
+_trap4: { }
+_trap5: { }
+_trap6: { }
+_trap7: { }
+_trap8: { }
+_trap9: { EAT }
+
+; ---- protected / unprotected ----
+
+evolve: { 10 -9 trap9  }
+_EOF_
+
+P{
+How does this help implement system calls? If you split your program into two parts. A protected part
+and an unprotected part. You can implement special operations that only protected code can do.
+You can expose this functionality as a trap handler.
+Now the unprotected code must call a trap to use this functionality.
+}
+
+P{
+In this example TT{EAT} is the special operation. To make this special you would mark this instruction
+as PROTECTED. That way it won't be available in the unprotected part of the program.
+}
+
+HRULE{}
+REF{trapsafety}
+SubSection{Trap Safety}
+
+P{
+If you write your own evolving robots with traps/interrupts you will discover
+that I{evolving} code will call your trap handlers with all possible stack states.
+A full or partially full data stack can cause your protected code to misbehave and
+end up doing unintended things. Evolution likes to exploit such opportunities.
+This section covers how to protect your trap handler.
+}
+
+P{
+The trap instruction will not call the trap handler unless there are at least B{2} data
+stack elements available on the data stack. If there is not, then the trap instruction behaves
+like NOP. There must also be B{1} call stack element available to perform the subroutine call to the trap handler.
+This is done so that the trap handler can always perform safety checks such as these:
+}
+
+CodeSample<<_EOF_
+_trap7: {
+	DSLEN 60 > ?exit
+	CSLEN 59 > ?exit
+	DSLEN 3 < ?exit		; make sure three arguments provided
+	do_something call
+}
+_EOF_
+
+P{
+Here we ensure there at least 4 (64-60) data stack elements and 5 (64-59) call stack elements available
+before proceeding. Why are these safety checks important? Because the caller won't be expected to
+follow your API conventions. The caller of this trap could be B{evolving} code, which could have
+all of their stacks filled up. Or any other strange state.
+}
+
+P{
+Why is this a concern? Why not allow the trap handler to fail in strange ways when
+the evolved code has called you in strange ways? 
+Won't this just harm the evolving creature and it won't persists?
+It ends up exposing a whole host of functionality you didn't intend to the evolving code, and that
+will mess up your newly invented physics. 
+}
+
+HRULE{}
+REF{protections}
+SubSection{Protections}
+P{
+This section documents the properites of B{Protected Code Blocks} and B{Protected Instructions}.
+See the section, LINK{ URL{architecture.html} CPU Architecture}, for a good explaination of protections.
+Here are the rules they follow inside the simulator.
+}
+
+SubSubSection{Protected Instructions}
+P{
+A protected instruction,
+}
+NumberedList{
+	Item{ H{will not be generated by the mutation algorithm} }
+	Item{ H{cannot be generated by TT{OPCODE}, TT{OPCODE!} and TT{OPCODE'}} (when executed in unprotected code) }
+}
+
+P{
+This applies to the 'insert code block' and 'insert instruction' mutations as well as the
+'modify instruction' and 'modify code block' mutations.
+}
+
+P{
+This means you are allowed to have a kforth program that starts out with
+protected instructions inside of unprotected code. There is no restriction
+on this (by the rules above).
+}
+
+P{
+But if you choose to make an instruction
+only available to your protected code, then you shouldn't put
+any protected instructions into the unprotected zone, this would
+defeat the purpose.
+}
+
+SubSubSection{Protected Code Blocks}
+P{
+A protected code block,
+}
+NumberedList{
+	Item{ H{will not be mutated by the mutation algorithm} }
+	Item{ H{is not callable from unprotected code} (except via TT{TRAP} instructions) }
+	Item{ H{is not readable from unprotected code} ( TT{CBLEN} / TT{OPCODE} / TT{NUMBER} / TT{?NUMBER!} instructions) }
+	Item{ H{is not writable from unprotected code} ( TT{OPCODE!} / TT{NUMBER!} / TT{?NUMBER!} instructions) }
+}
+
+P{B{Configuring:} Use this LINK{ URL{strain_properties_dialog.html#protections} dialog} to configure protections.}
+
+P{
+Them's the rules.
+}
+
+HRULE{}
+REF{int}
+SubSection{Interrupts}
+P{
+Some of the instructions that interact with other cells can be configured to B{interrupt} the cell which was
+acted on. For example, the TT{SEND} instruction will write a value to another cell, but if configured, it will
+also cause that other cell to be interrupted.
+}
+
+P{
+When a cell is interrupted its flow of control transferred to one of the trap handlers.
+}
+
+P{
+B{Masking:} All interrupt handling logic will mask an interrupt if it finds that the target cell
+is already running inside of the corresponding trap code block. If you transfer control to another code block
+number, then you will need to set a flag to ensure the interrupt remains masked (See Interrupt Safety below).
+}
+
+P{
+B{Other rules:} As with traps, if the data stack does not have B{2} elements available, then the interrupt
+will not be triggered. Also, at least B{1} call stack element must be available to perform the subroutine call
+to the trap handler.
+}
+
+P{
+B{Configuring:} There are three bits in the Instruction LINK{ URL{modes.html} Modes} for some instructions. These three bits control
+which trap handler will be called. This only allows trap's 1 thru 7 to be configured (not trap8 or trap9).
+For example a three bit value of B{110} corresponds to TT{trap6}.
+}
+
+HRULE{}
+REF{intsafety}
+SubSection{Interrupt Safety}
+P{
+The normal trap safety applies to interrupt handlers.
+You will want to add a way to check if you are already inside of the interrupt handler.
+If you keep your logic within the original trap handler you are okay, because the interrupt will
+be masked for you. But if you call another code block, you'll need to check a flag.
+}
+
+P{
+With the test-and-set instruction you can ensure only one cell enters the interrupt
+handler logic. When done, you clear the flag, and the interrupt is re-activated.
+}
+
+CodeSample<<_EOF_
+;
+; interrupt handler.
+; 'flag' will be set to 1 if somebody is already servicing this interrupt.
+;
+_trap3: {
+    DSLEN 60 > ?exit
+    CSLEN 59 > ?exit
+    1 flag 0 ?NUMBER!  not ?exit   ; check lock flag
+    do_something call
+    0 flag 0 NUMBER!        ; clear the flag, re-enable this interrupt.
+}
+
+...
+
+do_something:
+{
+    ...
+}
+
+flag: { 0 }
+_EOF_
+
+
+HRULE{}
+REF{reference}
+SubSection{KFORTH INSTRUCTION REFERENCE}
+
+P{
+The core KFORTH instructions are summarized below,
+complete instruction documentation is available LINK{ URL{kforth_reference.html} here}.
+}
+
+P{
+The instructions that control organisms/cells are listed LINK{ URL{organisms.html#reference} here}.
+}
+
+P{
+The USAGE column uses forth notation to document these instructions.
+This notation attempts to show the data stack before and after the call
+to the instruction. For example,
+}
+
+Code<<_EOF_
+    (a b c -- n )
+_EOF_
+
+P{
+The stuff before TT{--} is the state of the data stack before calling the
+instruction. And the stuff after TT{--} is state of the data stack AFTER this
+instruction finishes.
+}
+
+P{
+In this example, the instruction takes three arguments B{a}, B{b}, and B{c}. After
+the instruction executes those three arguments are replaced with a single value B{n}
+(which is the result).
+}
+
+InstructionTable{CORE}
+
+HRULE{}
+
+REF{examples}
+SubSection{Example Code 1}
+CodeSample<<_EOF_
+main:
+{
+  
+    3 cube call
+    99 cube call
+
+   ; this line computes (9^3)^3
+   9 cube call cube call
+
+}
+
+;
+; cube the value on top of the stack
+;
+cube:
+{
+    dup dup * *
+}
+_EOF_
+
+HRULE{}
+
+SubSection{Example Code 2}
+CodeSample<<_EOF_
+main:
+{
+	20 fact call
+}
+
+;
+; Recursive factorial algorithm:
+; ( n -- factorial(n) )
+;
+fact:
+{
+	dup 0 =
+		{ pop 1 }
+		{ dup 1 - fact call * } ifelse
+}
+_EOF_
+
+HRULE{}
+
+SubSection{Example Code 3}
+CodeSample<<_EOF_
+;
+; compute: (R0 * 8 / R3 + R1) * R2
+;
+; Where:
+;   R0 = 10
+;   R1 = 20
+;   R2 = 5
+;   R3 = 2
+;
+main:
+{
+    10 R0!
+    20 R1!
+    5  R2!
+    2 R3!
+
+   R0 8 * R3 / R1 + R2 *
+}
+_EOF_
+
+HRULE{}
+
+SubSection{Example Code 4}
+CodeSample<<_EOF_
+main:
+{
+	20 fact call
+}
+
+;
+; non-recursive factorial algorithm:
+; ( n -- factorial(n) )
+;
+fact:
+{
+    1 swap
+    {
+        dup 0 = ?exit
+        dup 1- -rot
+        * swap
+        1 ?loop
+    } call
+
+    pop
+}
+
+_EOF_
+
+HRULE{}
+
+SubSection{Example Code 5}
+CodeSample<<_EOF_
+;
+; use code blocks as a form of array/table lookup.
+; This will fetch the pair (5, 6) from the "table":
+;
+main:
+{
+    mytable 3 + call
+}
+
+
+mytable:
+   { 2 3 }		; index 0
+   { 1 1 }		; index 1
+   { 3 4 }		; index 2
+   { 5 6 }		; index 3
+   { 10 5 }	; index 4
+
+_EOF_
+
+HRULE{}
+
+SubSection{Example Code 6}
+CodeSample<<_EOF_
+;
+; Code blocks can also be used as a cheap
+; way to implement named contants.
+; (see PI).
+;
+main: {
+	ugly call 100 511 897 + + +
+}
+
+ugly: {
+    987 PI call +
+}
+
+; a constant, as a code block
+PI: { 3 }
+
+_EOF_
+
+HRULE{}
+
+SubSection{Example Code 7}
+CodeSample<<_EOF_
+;
+; look_n_fertilize
+; ----------------
+;
+; USAGE: (x y e -- r)
+;
+; DESCRIPTION:
+;	This subroutine looks for a spore in direction (x, y).
+;	If a spore is found, then ferilize it with a second
+;	spore with energy 'e'
+;
+; RETURNS
+;	0 is no spore found, or could not create a spore
+;	1 is returned on success
+;
+; HOW TO CALL:
+;	1 0 5 look_n_fertilize call
+; 
+look_n_fertilize:
+{
+	-rot 2dup look-spore
+		{ rot make-spore } { 2pop pop 0 } ifelse
+}
+_EOF_
+
+HRULE{}
+
+SubSection{Example Code 8}
+CodeSample<<_EOF_
+main:
+{
+    -100 19 normalize call
+    -40 -234 normalize call
+}
+
+;
+;  ( x y -- NORM(x) NORM(y) )
+;
+; normalized a pair of values:
+;
+normalize:
+{
+         norm1 call swap norm1 call swap
+}
+
+;
+; (n -- NORM(n))
+;
+; Compute this function:
+;
+;	n < 0	NORM(n) = -1
+;	n = 0	NORM(n) = 0
+;	n > 0	NORM(n) = 1
+;
+norm1:
+{
+	dup 0 > { pop 1 } { 0= { 0 } { -1 } ifelse } ifelse
+}
+_EOF_
+
+
+HRULE{}
+
+SubSection{Example Code 9}
+P{
+See an example of LINK{ URL{hanoi_example.html} Towers of Hanoi} in KFORTH.
+}
+
+} //{ MySite.body }

@@ -1,0 +1,29 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Links }
+MySite.body{
+
+HRULE{}
+
+SubSection{Links}
+P{
+B{EvolveName{} Blog:} LINK{ URL{blog/index.html} Latest news and updates regarding the software and things to do with the software. }
+}
+
+P{
+B{GitHub:} LINK{ URL{ GitHubRepo{} } GitHubRepo{} }
+}
+
+P{
+B{Ken Stauffer's Home Page:} LINK{ URL{http://www.etcutmp.com} http://www.etcutmp.com }
+}
+
+P{
+B{Contact:} LINK{ URL{mailto:evolve5ken@gmail.com} evolve5ken@gmail.com }
+}
+
+BREAK{}
+BREAK{}
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

@@ -1,0 +1,27 @@
+include{common.tt}
+MySite.window_title{ Activity 6: Barrier Bot }
+MySite.body{
+
+Title{Activity 6: Barrier Bot}
+
+P{
+Add this organism to a simulation. It will roam around randomly. But whenever
+it detects the B{SPACE} key, it draws a barrier block.
+}
+
+P{
+This is file B{rnd_drawer.kf} in the application resource folder ev5stuff.
+}
+
+BREAK{}
+
+//{ **************************************** }
+
+HEREDOC{ CodeSample{rnd_drawer.kf} }
+
+//{ **************************************** }
+
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

@@ -1,0 +1,40 @@
+include{common.tt}
+MySite.window_title{ Saving and Loading Simulations }
+MySite.body{
+
+Section{Saving and Loading Simulations}
+P{
+Evolve allows for multiple documents to be loaded at the same time.
+}
+
+SubSection{To Save:}
+P{
+Press the tool bar button Icon{tb_save.jpg} to save the current simulation.
+Use "Save As..." from the menu to save the simulation with a different name. duh!
+}
+
+SubSection{To Load:}
+P{
+Press the tool bar button Icon{tb_open.jpg} to load a new simulation.
+}
+
+SubSection{To Create a New Simulation:}
+P{
+Press the tool bar button Icon{tb_new.jpg} to create a blank simulation.
+}
+
+P{
+To create a new simulation using the New Universe dialog, go to the menu B{File >> New}.
+}
+
+SubSection{ASCII Formatted Files:}
+P{
+The simulation files used by EvolveName{} are ascii text files.
+The .txt extension is often used for Evolve simulation files.
+}
+
+P{
+Here's an exmple of the LINK{ URL{ascii_example.html} ASCII file format}.
+}
+
+} //{ MySite.body }

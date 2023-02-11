@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+<title>{{window_title}}</title>
+<!--Change this href to "msfunk_03.css" to give the page a different look!-->
+<link rel="stylesheet" type="text/css" href="msfunk_02.css" />
+
+</head>
+<body>
+<!--Begin headers-->
+<div id="title2" class="title2">
+<B>Last updated:</B> {{LastUpdated}}
+</div>
+
+<div id="title3" class="title3">
+<a name="title">{{title}}</a>
+</div>
+
+
+<div id="subnav" class="subnav">
+    {% for item in top %}
+		<a href="{{item.url}}">{{item.text}}</a>
+		{% if not loop.last %} | {% endif %}
+    {% endfor %}
+</div>
+<!--End headers-->
+
+<!--Begin nav-->
+<div id="menu">
+
+
+<!-- ********************************************************************** -->
+{% for H in side %}
+	{% for L in H.links %}
+		<p class="menu"><a href="{{L.url}}">{{L.text}}</a></p>
+	{% endfor %}
+{% endfor %}
+<!-- ********************************************************************** -->
+
+</div>
+
+<!--End nav-->
+
+<!--Begin main text-->
+<div id="maintext" height="600px">
+
+<IMG SRC="e.gif"><B><FONT SIZE=5>VOLVE</FONT> &nbsp;&nbsp; <FONT SIZE=6>{{evolve_version}}</FONT></B>
+
+{{body}}
+</div>
+
+<div id="footer">
+&copy; {{year}} {{name}}. All rights reserved.<BR>
+Generated on: {{lastmodified}}
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Towers of Hanoi }
+MySite.body{
+
+Section{Towers of Hanoi}
+
+//{ **************************************** }
+
+HEREDOC{ CodeSample{code_hanoi.kf} }
+
+//{ **************************************** }
+
+} //{ MySite.body }

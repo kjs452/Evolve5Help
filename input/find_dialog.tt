@@ -1,0 +1,118 @@
+include{common.tt}
+MySite.window_title{ Find Dialog }
+MySite.body{
+
+SubSection{Find Dialog}
+P{
+IMGC{FindDialog.jpg}
+Caption{match organisms that consist of 100 or more cells}
+}
+
+P{
+The find dialog can be accessed by the B{Edit >> Find} menu item, or pressing
+B{Ctrl+F}.
+}
+
+P{
+Use this dialog if you want to search for organisms with certain properties. You enter
+a search expression using KFORTH notation. The matching organisms will be tagged using
+the radioactive tracer feature.
+}
+
+SubSection{Examples}
+CodeSampleL<<_EOF_
+
+  MAX-ENERGY ENERGY =
+
+_EOF_
+
+P{
+Find all organisms that have the maximum energy.
+}
+
+CodeSampleL<<_EOF_
+
+  AGE 100 >=  NCHILDREN 1 = and
+
+_EOF_
+
+P{
+Find organisms that are at least 100 steps old, and have 1 living children
+}
+
+CodeSampleL<<_EOF_
+
+  NUM-CB 45 = NUM-DEAD 1 >= and
+
+_EOF_
+
+P{
+Find organisms that have a kforth program consiting of 45 code blocks, and have 1 or more dead cells.
+}
+
+CodeSampleL<<_EOF_
+
+  NUM-CELLS 20 >= NUM-CELLS 25 <= and
+
+_EOF_
+
+P{
+Find organisms with between 20 and 25 cells.
+}
+
+CodeSampleL<<_EOF_
+
+  parent1 parent2 <>
+
+_EOF_
+
+P{
+Find organisms that were created sexually.
+}
+
+P{
+Click on B{[INSTRUCTIONS]} to see the available kforth instructions for this
+mode. (only the find related instructions are shown).
+}
+
+P{
+The results of the find operation are shown using
+LINK{ URL{radioactive_tracers.html} Radioactive Tracers }. A find expression of "0" or blank will
+clear all tracers.
+}
+
+P{
+NOTE: Syntax errors will be checked for. However another kind of error is one in which the number of
+items on the data stack is not 1. In this case the expression is treated as FALSE. (For
+example the expression, "AGE AGE" leaves two values on the stack, and so always is treated as FALSE).
+}
+
+P{
+The LINK{ URL{strain_population_dialog.html} strain population dialog} will show
+the number of organisms with radioactive tracers.
+}
+
+SubSection{Minimum, Maximum, Average Instructions}
+P{
+There are a couple KFORTH instructions that are computed by examining all organisms.
+These are the MIN, MAX and AVG instructions.
+}
+
+P{
+The MIN / MAX / AVG instructions return values that get computed based on the overall simulation.
+So MAX-ENERGY would be the maximum energy value for all organisms in the current
+simulation. AVG-ENERGY is the average energy value for all organisms. MIN-ENERGY would the
+smallest energy value found after examining all organisms. THese MIN/MAX/AVG constants can be
+used to search for the organism with the most or least value. (Click on the [Instructions] button
+to see the full list).
+}
+
+REF{find_instructions}
+SubSection{Find Instruction Reference}
+
+InstructionTable{FIND}
+BREAK{}
+
+
+
+} //{ MySite.body }

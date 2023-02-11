@@ -1,0 +1,42 @@
+include{common.tt}
+MySite.window_title{ Radioactive Tracers }
+MySite.body{
+
+Section{Radioactive Tracers}
+
+IMGCB{radioactive_tracer.jpg}
+
+P{
+Click on Icon{tb_rctool.jpg}, and select the radioactive tracer tool. Now you can "tag"
+organisms and spores in the simulation window. They will look like the screenshot above.
+}
+
+P{
+A radioactive tracer follows the organism, and its spores and offspring. It works for both sexual and
+asexual births. In the case of sexual reproduction only one of the contributed spores needs a radioactive
+tracer for the offspring to have it.
+}
+
+P{
+To clear all the tracers, use the menu item: B{Edit >> Clear Radioactive Tracers}.
+}
+
+P{
+Radioactive tracers have absolutely no effect on the running of the simulation. Tracers let you
+see the progress of a set of organisms through time. The strain population dialog shows how many
+have radioactive tracers. See:
+}
+
+P{
+IMGC{population_dialog_tracer.jpg}
+}
+
+P{
+Radioactive markers are stored in the simulation file.
+}
+
+P{
+The LINK{ URL{find_dialog.html} Find Dialog} uses this mechanism to tag organisms that match the find expression.
+}
+
+} //{ MySite.body }

@@ -1,0 +1,44 @@
+include{common.tt}
+MySite.window_title{ Kforth Activity 3: Self Modifying Code }
+MySite.body{
+
+Title{Kforth Activity 3: Self Modifying Code}
+
+P{
+This code example will write random code to a chunk of memory:
+}
+
+//{ **************************************** }
+
+CodeSample<<_EOF_
+main: {
+    bob call
+    var 2 NUMBER 1+ var 2 NUMBER! 1 ?loop
+}
+
+bob: {
+   {
+        R0 code CBLEN >= ?exit 
+       0 160 CHOOSE
+        code R0++ OPCODE!
+    1 ?loop } call
+}
+
+var: { 0 0 0 0 0 0 0 }
+
+code: {
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+}
+_EOF_
+
+//{ **************************************** }
+
+} //{ MySite.body }
+

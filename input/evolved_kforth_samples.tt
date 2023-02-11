@@ -1,0 +1,195 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Evolved KFORTH samples }
+MySite.body{
+
+Section{Evolved KFORTH Programs}
+
+//{ **************************************** }
+CodeSample<<_EOF_
+main:
+{
+      13  call 
+}
+
+row1:
+{
+      DSLEN  50  >=  ?exit  DSLEN  2  <  ?exit
+      R0  R1  2swap  R1!  R0!  R0  R1  1  5  10
+      SPAWN  pop  R1!  R0! 
+}
+
+row2:
+{
+     
+}
+
+row3:
+{
+     
+}
+
+row4:
+{
+     
+}
+
+row5:
+{
+     
+}
+
+row6:
+{
+      DSLEN  60  >=  ?exit  R1!  R0!  R0  R1  1
+      5  10  SPAWN  pop 
+}
+
+row7:
+{
+     
+}
+
+row8:
+{
+     
+}
+
+row9:
+{
+     
+}
+
+row10:
+{
+      R0  R1  2dup  11  call  12  call  HALT 
+}
+
+row11:
+{
+      2dup  OMOVE  ?loop 
+}
+
+row12:
+{
+      2dup  EAT  pop  2dup  OMOVE  pop  255  NEAREST
+      EAT  ?loop 
+}
+
+; ----- protected / unprotected -----
+
+row13:
+{
+      2  OMOVE  22  call  2dup  14  call  22  call
+      15  call  22  call  16  call  22  call  17
+      22  call  22  0  30  18  call  call  44
+      R6  22  call  20  2dup  pop  OMOVE  and
+      R2!  2dup  EAT  GROW  OMOVE  1+  29  BIGGEST
+      -95  13  -41  R4++  -1  pop  OMOVE  2  ?loop
+      R8!  30  R6++ 
+}
+
+row14:
+{
+      2dup  EAT  0  GROW  4  GROW  OMOVE  -85
+      GROW  EAT  pop  -85  HOTTEST  2dup  EAT
+      ?loop  OMOVE  1+  -38  R0  OMOVE  ?loop
+      -87  -50 
+}
+
+row15:
+{
+      HOTTEST  OMOVE  GROW  54  GROW  -26  OMOVE
+      -26  GROW  54  GROW  GROW  -4  -51  nop
+      R8++  51  -16  -74 
+}
+
+row16:
+{
+      -48  0  NUM-CELLS  --R6  73  GROW  OMOVE
+      invert  GROW  2dup  9  GROW  OMOVE  pop
+      /  ?loop  pack2  94  --R4  -1  2dup  EAT
+      pop  OMOVE 
+}
+
+row17:
+{
+      2+  55  -7  SIZE  86  16  call  2  OMOVE
+      -12  37  2+  63  R5!  61  -1  R4!  -41  53
+      SPREAD-ENERGY  58 
+}
+
+row18:
+{
+      ENERGY  3  /  R0!  -2  -3  R0  MAKE-SPORE
+      -5  -51  R0  MAKE-SPORE  -85  LOOK  -6  CB
+      15  52  OMOVE 
+}
+
+row19:
+{
+      -48  GROW  54  99  COLDEST  31  1-  -44
+      R0  79  -71  AGE  79  -71  -28  -24  R5++
+      -50  MAKE-SPORE  29  PEEK  --R8  -22  max
+      0  NUM-CELLS 
+}
+
+row20:
+{
+      GROW 
+}
+
+row21:
+{
+      /mod 
+}
+
+row22:
+{
+      2dup  EAT  ?loop  ?loop  62  -48  -51 
+}
+
+row23:
+{
+      R5!  63  +  or 
+}
+
+row24:
+{
+      MAKE-ORGANIC  not  78  R2++  -22 
+}
+
+row25:
+{
+      -93 
+}
+
+row26:
+{
+      MAKE-SPORE  -26  *  -22  not  -38  R2++
+      POKE  rot  -52 
+}
+
+row27:
+{
+      87  -26  unpack2  TRAP5  ?exit  0  R8++
+      51  R8++  51  54  --R4  > 
+}
+
+row28:
+{
+      -87  MAKE-SPORE  <=  74  22  call  2dup
+      14  call  15  call  22  call  16  call  22
+      call  17  22  call  22  0  call  /mod  -59
+      R9!  85  call  44  R6  -11  41  22  call
+      20  2dup  pop  OMOVE  and  -3  R3  LOOK
+      R6++  OMOVE  1+  29  BIGGEST  -95  13  2+
+      63  R5!  -38  R4++  -1  pop  OMOVE  2  ?loop
+      R8!  30  R6++ 
+}
+_EOF_
+
+BREAK{}
+
+//{ **************************************** }
+
+} //{ MySite.body }

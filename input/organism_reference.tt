@@ -1,0 +1,68 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Organism Instruction Reference }
+MySite.body{
+
+Section{ORGANISM INSTRUCTION REFERENCE}
+P{
+The core KFORTH instruction (like dup, pop, +, *, /, etc..) are covered
+in the section entitled LINK{ URL{kforth.html#reference} the KFORTH Language}.
+What follows is a detailed reference guide for the instructions that control organisms and cells:
+}
+
+SubSection{Interacting with the universe:}
+InstructionTableOfContents{INTERACT}
+
+SubSection{Vision:}
+InstructionTableOfContents{VISION}
+
+SubSection{Communicating between cells:}
+InstructionTableOfContents{COMMS}
+
+SubSection{Query information about ourselves:}
+InstructionTableOfContents{QUERY}
+
+SubSection{Universe Instructions:}
+InstructionTableOfContents{UNIVERSE}
+
+SubSection{Misc. instructions:}
+InstructionTableOfContents{MISC}
+
+SubSection{Interacting with the universe:}
+InstructionTable{INTERACT}
+BREAK{}
+
+SubSection{Vision:}
+InstructionTable{VISION}
+BREAK{}
+
+SubSection{Communicating between cells:}
+InstructionTable{COMMS}
+BREAK{}
+
+SubSection{Query information about ourselves:}
+InstructionTable{QUERY}
+BREAK{}
+
+SubSection{Universe Instructions:}
+InstructionTable{UNIVERSE}
+BREAK{}
+
+SubSection{Misc. instructions:}
+InstructionTable{MISC}
+BREAK{}
+
+HRULE{}
+
+InstructionDetails{INTERACT}
+InstructionDetails{VISION}
+InstructionDetails{COMMS}
+InstructionDetails{QUERY}
+InstructionDetails{UNIVERSE}
+InstructionDetails{MISC}
+
+BREAK{}
+BREAK{}
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

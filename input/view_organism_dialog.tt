@@ -1,0 +1,236 @@
+include{common.tt}
+MySite.window_title{ Examine Organism Dialog }
+MySite.body{
+
+SubSection{Examine Organism Dialog}
+P{
+When you double-click on an organism, this dialog will appear.
+This dialog shows the inner details of an organism.
+}
+
+IMG{ViewOrganism.jpg}
+
+P{
+The ORGANISM area of this dialog displays stuff common to the entire organism. The CELL
+area displays the stuff unique to that cell. To examine different cells, click on
+the cell you want to view.
+}
+
+SubSection{ORGANISM}
+P{
+This section shows various details about the organism. The genetic
+program (which is shared among all the cells) is shown in the text
+control. The highlighted instruction is where the selected cell is
+currently executing.
+}
+
+BulletList{
+Item{ S{Organism ID:} Every organism is assigned a unique 64-bit ID number. This
+	ID increments as organisms are created. This field displays this organisms
+	unique ID.
+}
+
+Item{ S{Parent 1:} ID value for the first parent (and only parent if this organism
+	was created asexually).
+}
+
+Item{ S{Parent 2:} ID value for the second parent (if this organism
+	was created sexually). It will be blank if this organism was
+	created asexually.
+}
+
+Item{ S{Generation} The generation of this organism all the way back to the first
+	organism. We compute this field based on the parents 'generation':
+
+	Code<<_EOF_
+		generation = MAX(parent1.generation, parent2.generation) + 1
+	_EOF_
+}
+
+Item{ S{# of cells:} The number of cells in this organism.
+}
+
+Item{ S{# of living children:} number of organism that have this organism as a parent.
+}
+
+Item{ S{Age:} The number of simulation steps this organism has survived through.
+}
+
+Item{ S{Energy:} How much energy does this organism have? This excludes the amount of energy
+	that went into stack elements.
+}
+
+Item{ S{Strain #:} This is the strain number for the whole organism. The color of the organism
+is also a clue to its strain.
+}
+
+}
+
+SubSection{CELL}
+P{
+This section shows the state of the cell you have selected in the
+display window. Use your mouse to select different cells. The
+current cell is highlighted with a blue rectangle.
+}
+
+P{
+These fields comprise the "execution context". Each cell has its own copy of these fields:
+}
+
+BulletList{
+Item{ S{Code Block:} This specifies the code block currently being executed by
+	this cell. Code block numbers begin at 0. Code block zero is normally labeled "main:", and
+	subsequent code blocks are labeled "row1, row2, row3, ...".
+}
+
+Item{ S{Program Counter:} This is the instruction offset within the code block. This counter
+	begins at 0. If program counter refers to the last instruction plus 1, then this
+	cell has just reached the end of a code block.
+}
+
+Item{ S{R0 - R9:} General Purpose registers. Can be set with the instructions
+	B{Rn!, R0!, R1!, R2!, ...} and the cell can fetch a register value
+	with the instructions B{Rn, R0, R1, R2, ...}.
+}
+
+Item{ S{Mood:} This is like a general purpose register. The cell can set this field by
+	using the B{MOOD!} instruction. Other cells can query our mood by using the
+	B{MOOD} instruction.
+}
+
+Item{ S{Location:} The grid location of this cell.
+}
+
+Item{ S{Message:} Like a general purpose register except other cells can set this field by
+	using the B{SEND} and B{BROADCAST} instructions. This cell can fetch the value
+	of this field by using the B{RECV} instruction.
+}
+
+Item{ S{Cell:} The cell number within the organism.
+}
+
+Item{ S{Data Stack:} Like the Forth programming language, this stack is used to
+keep track of data items that the cell is using for computation.
+The top of this list box represents the top of the stack.
+}
+
+Item{ S{Call Stack:} Like the Forth programming language, this stack
+contains the call history. As code blocks are entered/exited this stack grows
+ The top of this list box represents the top of the stack.and shrinks.
+}
+
+}
+
+SubSection{BUTTONS:}
+
+BulletList{
+Item{ S{Vision Data:} This button will pop up another dialog showing
+the vision data that the KFORTH instructions LOOK, WHERE, WHAT, NEAREST, FARTHEST.
+LINK{ URL{vision_dialog.html} See vision dialog} for more information.
+}
+
+Item{ S{Step:} This button will simulate the universe for 1 step. The current
+instruction about to execute is highlighted. In this way
+you can observe the inner workings of a genetic program.
+(Function key: B{F11}).
+}
+
+Item{ S{Step Over:} This button will simulate the universe for 1 step, but step
+over any subroutine calls. (Function key: B{F10}).
+}
+
+Item{ S{Run:} Begin running the program (actually this begins simulating the whole
+universe). Stop when the cell dies, or when a breakpoint is reached.
+(Function key: B{F5}).
+}
+
+Item{ S{Breakpoint:} Insert a breakpoint at the current cursor position. Just
+select an instruction and press this button. A breakpoint will be added (or removed).
+A breakpoint will show up as a vertical bar '|' next to the instruction.
+
+P{
+Breakpoints only apply to the current cell being debugged. When you switch cells, the
+breakpoints are retained, and will be applied to the new cell.
+(Function key: B{F9}).
+}
+}
+
+Item{ S{Clear Breakpoints:} All breakpoints will be cleared.
+(Function key: B{F8}).
+}
+
+Item{ S{Instructions:} This button will pop up a list of KFORTH instructions
+for your reference. Whatever instruction the cursor is pointing to will be displayed
+in the KFORTH Instruction dialog.
+}
+
+}
+
+HRULE{}
+
+SubSection{Vision Tab}
+P{
+Pressing the B{[Vision]} tab will display the following dialog. This
+dialog shows all the current vision data that will be used by the KFORTH instructions pertaining
+to vision (LOOK, WHAT, WHERE, NEAREST, FARTHEST).
+}
+
+IMG{VisionDialog.jpg}
+
+P{
+The distance to each cell in the 8 directions are shown in B{red}.
+}
+
+P{Choose from these items in the combo box:}
+BulletList{
+Item{ H{LOOK:} Reveals the type of object of seen in that direction }
+Item{ H{SIZE:} Reveals the size of the organisms surrounding this cell}
+Item{ H{TEMPERATURE:} Reveals the amount of energy of the organisms surrounding this cell}
+}
+
+
+HRULE{}
+
+SubSection{Sound Tab}
+P{
+Pressing the B{[Sound]} tab will display the following information.
+This tab shows what the cell is "hearing".
+The MESSAGE and MOOD registers for the cells surrounding the current cell are shown.
+The instructions for sound are SAY, SHOUT, SEND, MOOD, RECV, MOOD!.
+}
+
+IMG{soundtab.jpg}
+
+P{
+The distance to each cell in the 8 directions are shown in B{red}.
+}
+
+P{Choose from these items in the combo box:}
+BulletList{
+Item{ H{MESSAGE:} Reveals the message register of each cell seen }
+Item{ H{MOOD:} Reveals the mood register of each cell seen }
+}
+
+HRULE{}
+
+SubSection{Odor Tab}
+P{
+Pressing the B{[Odor]} tab will display the following information.
+This tab shows what the cell is "smelling".
+This screen shows the odor values surround the current cell.
+The SMELL and EXUDE instructions deal with odor.
+}
+
+IMG{odortab.jpg}
+
+HRULE{}
+
+SubSection{KFORTH Instruction Help Dialog}
+P{
+If you click on B{[Instructions]} the following pop-up dialog will appear. This
+is for reference only.
+}
+
+IMG{KforthInstructions.jpg}
+
+} //{ MySite.body }

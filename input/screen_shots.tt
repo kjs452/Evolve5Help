@@ -1,0 +1,72 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Screen Shots }
+MySite.body{
+
+SubSection{Screen Shot 1}
+P{
+Shown here is the main EvolveName{} simulation window. We are zoomed out to
+view the entire "universe". The yellow stuff in the middle are organisms. Lets zoom
+in more...
+}
+
+IMGCB{ss1.jpg}
+
+HRULE{}
+
+SubSection{Screen Shot 2}
+P{
+After zooming in, we can see the universe better. We can see individual colored squares.
+B{Yellow squares} are living organisms. B{Red squares}
+are cells that have just died. B{White squares} are non-living organic material (which can be eaten
+for energy). B{Blue squares} are spores. Spores are how these organisms reproduce. It is a two
+step process. First a spore is created then another spore is placed on the same position. This allows
+both sexual (spores donated from two different organisms) and asexual reproduction (both spores
+donated from same organism).
+}
+
+IMGCB{ss2.jpg}
+
+HRULE{}
+
+SubSection{Screen Shot 3}
+P{
+Also notice the organism in the middle.
+The user has selected this organism (as indicated by the tiny black squares surrounding the organism).
+Selecting an organism allows you to view the organism (see its internal genetics, and other
+useful statistics). Selecting an organism is also useful if you wish to CUT/COPY/PASTE an organism
+into another simulation window.
+}
+
+IMGCB{ss3.jpg}
+
+HRULE{}
+
+SubSection{Screen Shot 4}
+P{
+Now we have zoomed in a lot. Each square is very large. 
+This shows the FILE menu. See the
+LINK{ URL{overview.html} overview} section for more screen shots and dialogs.
+}
+
+IMGCB{ss4.jpg}
+
+IMG{vobig.jpg}
+
+HRULE{}
+
+SubSection{Screen Shot 5}
+P{
+This is an organism which is running the LINK{ URL{hanoi_example.html} B{Towers of Hanoi} } program.
+}
+
+IMGC{hanoi3.jpg}
+
+P{
+LINK{ URL{ lightmode.html } Light Mode screen shots.}
+}
+
+BREAK{}
+
+IMG{logo.gif} IMG{logo.gif} IMG{logo.gif} IMG{logo.gif}
+
+} //{ MySite.body }

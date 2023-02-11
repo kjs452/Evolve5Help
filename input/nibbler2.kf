@@ -1,0 +1,108 @@
+;
+; Designed to move around and nibble at stuff
+;
+; Use Strain slot 7. or change its definition below.
+; Define strain # that is assigned to the nibbler in R2 in main() below.
+;
+;   R0 - current move vector x
+;   R1 - current move vector y
+;   R2 - what strain this nibbler was assigned to
+;   R3 - energy/4, for reproduce
+;   R4 - x
+;   R5 - y
+;   R6 - random dir index
+;
+
+main:
+{
+    7 R2!               ; Strain 7. set the strain number here (0-7)
+
+    1 R2 5 + <<         ; 000ssssssss00000
+    invert              ; 111ssssssss11111          exclude our strain, see everything else
+    R2!                 ; R2 becomes look mask      This mask 
+
+    {
+        255 FARTHEST R1! R0!
+        {   
+            R0 R1 OMOVE
+        ?loop } call
+
+        rnd_dir call R1! R0!
+        {
+            R0 R1 OMOVE
+        ?loop } call
+
+        nibble call
+
+        255 FARTHEST R1! R0!
+        {   
+            R0 R1 OMOVE
+        ?loop } call
+
+        excrete call
+
+        ; reproduce call ; don't do this, it doesn't work
+
+    1 ?loop } call
+}
+
+rnd_dir: {
+    255 NEAREST + AGE *
+    dup 0 < { negate } if
+    7 mod R6!
+
+    table R6 + call
+}
+
+table:
+    {  0 -1 }
+    {  1 -1 }
+    {  1  0 }
+    {  1  1 }
+    {  0  1 }
+    { -1  1 }
+    { -1  0 }
+    { -1 -1 }
+
+excrete:
+{
+    ENERGY 10 >= {
+        255 FARTHEST ENERGY 2 / MAKE-ORGANIC pop
+    } if
+}
+
+nibble:
+{
+    AGE 32 1000 * >= {              ; don't start eating until you have roamed for 32000 steps
+        R2 NEAREST EAT pop      ; nibble
+    } if
+}
+
+;
+; Keep reproducing giving up 1/2 our energy, until we
+; are down to 5000 units of energy, then don't reproduce anymore.
+;
+reproduce:
+{
+    ENERGY 100 >= {
+        ;
+        ; Where to make spore
+        ;
+        255 FARTHEST R5! R4!
+
+        ;
+        ; compute 1/4 of our energy, and store in R2
+        ;
+        ENERGY 4 / R3!
+
+        ;
+        ; Make 1st spore to the square on our left.
+        ;
+        R4 R5 R3  MAKE-SPORE pop
+
+        ;
+        ; Put 2nd spore at the same spot (fertilizing it)
+        ;
+        R4 R5 R3  MAKE-SPORE pop
+    } if
+}

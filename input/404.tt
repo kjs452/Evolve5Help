@@ -1,0 +1,15 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - 404 Page }
+MySite.body{
+
+Section{404 Page}
+P{
+Invalid link.
+}
+
+BREAK{}
+BREAK{}
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

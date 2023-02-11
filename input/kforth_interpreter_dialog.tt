@@ -1,0 +1,227 @@
+include{common.tt}
+
+MySite.window_title{ KFORTH Interpreter Dialog }
+
+MySite.body{
+
+Title{KFORTH Interpreter Dialog}
+
+P{
+This dialog allows you to experiment with KFORTH programs. You can also develop
+new genetic programs, and verify that they compile.
+}
+
+P{
+IMG{KforthInterpreter.jpg}
+}
+
+SubSection{File Buttons}
+BulletList{
+Item{ H{Load:} First load a KFORTH program (*.kf).
+}
+
+Item{ H{Compile:} Compiles the current program.
+}
+
+Item{ H{Save:} Save's the current program.
+}
+}
+
+P{
+NOTE: If you modify something in the Kforth Source pane you will be prompted to
+save if you try to exit.
+}
+
+SubSection{Debugger Buttons}
+BulletList{
+Item{ H{Step:} Executes the next KFORTH instruction. Will "step into" any subroutine call.
+	(Function key: B{F7})
+}
+
+Item{ H{Step Over:} Executes the next instruction, but if the instruction
+is one of B{call}, B{if}, or B{ifelse} then this button will continue execution
+until this instruction returns. (Function key: B{F6})
+}
+
+
+Item{ H{Run:} Runs the program until it terminates (or a breakpoint reached).
+	The interpreter has special protections
+	against stack overflows and infinite loops. The error, "Step Limit Exceeded", means
+	your program exceeded about 10 million steps. The error, "Stack Size Limit Exceeded", means
+	you have exceeded a stack size of about 10,000 elements. (Function key: B{F5})
+}
+
+Item{ H{Reset:} Resets the interpeter to the start of the program.
+}
+
+Item{ H{Breakpoint:} Add or remove a breakpiont. You can click on an instruction in
+	the Kforth Instruction pane, and add or remove a breakpoint BEFORE this instruction. A
+	little veritical bar will appear before the instruction, which is how we indicate a breakpoint.
+	(Function key: B{F9})
+}
+
+Item{ H{Clear Breakpoints:} Clear all breakpoints. (Function key: B{F8}).
+}
+
+Item{ H{Instructions:} Displays a list of KFORTH instructions. The current instruction will be shown
+in the KFORTH Instruction help dialog. You can also click on an instruction and press this button.
+}
+
+}
+
+P{
+The KFORTH Interpreter allows the special organism instructions
+like OMOVE, LOOK, EAT, etc... Inside of the interpreter these instructions are just
+no-op's. But at least you can examine real genetic programs and single step through them (even
+though they won't actually do anything).
+}
+
+HRULE{}
+
+SubSection{KFORTH MACHINE}
+P{
+This section of the dialog shows the current state of the kforth machine. All 10 registers R0 ... R9
+are shown. CB is the current code block being executed. PC is the current program counter. Both CB
+and PC are 0 based numbers. Code block 0, refers to the code block with the label "main:". PC is
+relative to the current code block being executed.
+}
+P{
+The data stack shows the elements currently on the data stack. The top most item represents the
+"top" of the stack.
+}
+P{
+The call stack shows the saved locations for cb and pc. This stack allows KFORTH to return
+from a subroutine call.
+}
+
+HRULE{}
+
+SubSection{KFORTH INTERPRETER}
+P{
+This dialog allows you to execute generic KFORTH program (that is, KFORTH programs that do
+not use CELL instructions). However "dummy" versions of the CELL instructions are
+provided, so that genetic programs may be explored using this dialog without getting compiler
+errors. You can even step thru the code, but since all the CELL instructions "fail" you won't learn
+much.
+}
+
+HRULE{}
+
+SubSection{KFORTH Instruction Dialog}
+If you click on B{[Instructions]} this pop-up dialog will appear:
+
+P{
+	IMG{KforthInstructions.jpg}
+}
+
+P{
+This dialog lets you browse the list of available instructions.
+}
+
+HRULE{}
+
+SubSection{Function Key Summary}
+BulletList{
+Item{S{ F5 } - Run}
+Item{S{ F6 } - Step over}
+Item{S{ F7 } - Step}
+Item{S{ F8 } - Clear all breakpoints}
+Item{S{ F9 } - Add/remove breakpoint}
+}
+
+HRULE{}
+P{
+The mutations tab.
+}
+IMG{KforthInterpreterMut.jpg}
+
+P{Detailed information about these mutations available LINK{ URL{simulation_options_dialog.html} here.}}
+
+P{
+Here is how the B{[MUTATE!]} button and other fields are used to implement I{mini-evolution}.
+}
+
+CodeSample<<_EOF_
+MUTATE_BUTTON(TIMES, POPULATION, TRIALS)
+{
+    STEP_LIMIT = 10,000 ; fixed constant, prevents infinite loops
+    PROGRAM p1          ; program we start and end with 
+    PROGRAM p           ; program used during trials
+    PROGRAM best        ; best program so far
+    integer best_score  ; best score so far
+    integer best_steps  ; best number of steps
+    integer avg_score   ; average score across # of TRIALs
+    integer avg_nsteps  ; average steps taken over  # of TRIALs
+    bool    first_time  ; on first member of population
+
+    p1 = <KFORTH Disassembly>
+
+    for(i=0; i < TIMES; i++) {
+
+        first_time = true
+        for(j=0; j < POPULATION; j++) {
+
+            p = Mutate(p1)
+
+            avg_score = 0
+            avg_nsteps = 0;
+            for(k=0; k < TRIALS; k++) {
+                rr = Run(p, STEP_LIMIT)
+                avg_score += rr.score
+                avg_nsteps += rr.steps
+            }
+            avg_score = avg_score / TRIALS
+            avg_nsteps = avg_nsteps / TRIALS
+        
+            if first_time
+                    or avg_score > best.score
+                    or (avg_score == best_score and avg_nsteps < best_nsteps)
+            {
+                best = p
+                best_score = avg_score
+                best_nsteps = avg_nsteps
+                first_time = false
+            }
+        }
+
+        p1 = best
+    }
+
+    <KFORTH Disassembly> = p1
+}
+_EOF_
+Caption{Pseudo-Code}
+
+P{The B{Run()} function runs the program for up to 10,000 steps and returns whatever is on the top of the data stack.
+An empty data stack is treated as 0. Returns two things: B{the score} and B{the number of steps required}.
+}
+
+P{B{Scoring} is based on the 16-bit KFORTH integer returned from the program. The larger the value, the better the score.
+}
+
+P{The B{Mutate()} function returns a copy of the provided program, except it has been mutated.
+The algortihm is described LINK{ URL{mutations.html#mutations} here}.
+}
+
+HRULE{}
+P{
+The protections tab.
+}
+IMG{KforthInterpreterProt.jpg}
+
+P{Protections are explained LINK{ URL{architecture.html} here.}}
+
+P{
+B{Lookup Symbol:} This field allows you to lookup a symbol in
+the source code pane and place its code block number into
+the B{Protected Code Blocks} field.
+}
+
+P{
+This is handy when you are
+developing a new program. It is annoying to constantly count
+code block numbers to just set the protections.
+}
+
+
+} //{ MySite.body }

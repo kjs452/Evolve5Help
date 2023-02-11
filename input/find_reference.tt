@@ -1,0 +1,21 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Find Instruction Reference }
+MySite.body{
+
+Section{FIND INSTRUCTION REFERENCE}
+P{
+What follows is a reference guide for the instructions that are used by the LINK{ URL{find_dialog.html} Find Dialog}.
+}
+
+P{
+The core KFORTH instructions (like dup, pop, +, *, /, etc..) are covered LINK{ URL{kforth_reference.html} here}.
+}
+
+InstructionTableOfContents{FIND}
+HRULE{}
+InstructionTable{FIND}
+HRULE{}
+BREAK{}
+InstructionDetails{FIND}
+
+} //{ MySite.body }

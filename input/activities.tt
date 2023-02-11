@@ -1,0 +1,39 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Activities }
+MySite.body{
+
+Section{Activities}
+P{
+This page will link to a list of activities you can try.
+}
+
+SubSection{Table of Contents:}
+
+BulletList{
+Item{ LINK{ URL{act0.html} Activity 0: Basic Simulation} }
+Item{ LINK{ URL{act1.html} Activity 1: Towers of Hanoi } }
+Item{ LINK{ URL{act2.html} Activity 2: Bullet } }
+Item{ LINK{ URL{act3.html} Activity 3: Biomorphs } }
+Item{ LINK{ URL{act4.html} Activity 4: Tank } }
+Item{ LINK{ URL{act5.html} Activity 5: Nibbler } }
+Item{ LINK{ URL{act6.html} Activity 6: Barrier Bot} }
+}
+
+P{
+These activities are for the B{Kforth Interpreter}.
+}
+
+
+BulletList{
+Item{ LINK{ URL{kfact1.html} Kforth Activity 1: Bubble Sort } }
+Item{ LINK{ URL{kfact2.html} Kforth Activity 2: Me'thinks it is a function } }
+Item{ LINK{ URL{kfact3.html} Kforth Activity 3: Self Modifying Code } }
+}
+
+
+BREAK{}
+BREAK{}
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }

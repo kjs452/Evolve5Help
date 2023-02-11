@@ -1,0 +1,44 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - KFORTH Instruction Reference }
+MySite.body{
+
+SubSection{KFORTH INSTRUCTIONS}
+
+InstructionTableOfContents{CORE}
+
+SubSection{KFORTH INSTRUCTION REFERENCE}
+P{
+Here are all the core KFORTH instructions. (the instructions that
+control organisms/cells are listed LINK{ URL{organisms.html#reference} here}).
+}
+
+P{
+The USAGE column uses forth notation to document these instructions.
+This notation attempts to show the data stack before and after the call
+to the instruction. For example,
+}
+
+Code<<_EOF_
+	(a b c -- n )
+_EOF_
+
+P{
+The stuff before TT{--} is the state of the data stack before calling the
+instruction. And the stuff after TT{--} is state of the data stack AFTER this
+instruction finishes.
+}
+
+P{
+In this example, the instruction takes three arguments B{a}, B{b}, and B{c}. After
+the instruction executes those three arguments are replaced with a single value B{n}
+(which is the result).
+}
+
+InstructionTable{CORE}
+
+HRULE{}
+
+InstructionDetails{CORE}
+
+
+} //{ MySite.body }

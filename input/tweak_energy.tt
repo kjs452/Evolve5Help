@@ -1,0 +1,28 @@
+include{common.tt}
+MySite.window_title{ Tweak Energy }
+MySite.body{
+
+Section{Tweak Energy}
+P{
+Click on Icon{tb_rctool.jpg}, and select the B{tweak energy} tool. Now you can click
+on any organism, spore or organic block and modify its allocated energy.
+}
+
+P{
+A small edit field will appear which will allow the user to edit the amount of energy for that object.
+This is what tweaking energy looks like in the simulation window:
+}
+
+IMG{tweak_energy.jpg}
+
+P{
+You can leave the value unchanged by pressing the ENTER key, or the ESC key, or clicking
+on the OK button. Commas may be used. The energy value must be greater than zero.
+}
+
+P{
+This changes the total energy for a simulation (and will be reflected in the Universe Properties
+screen).
+}
+
+} //{ MySite.body }

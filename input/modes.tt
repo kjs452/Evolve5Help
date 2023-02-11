@@ -1,0 +1,104 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} - Instruction Modes }
+MySite.body{
+
+Title{Instruction Modes}
+
+P{
+Instruction Modes are on/off flags associated with a particular instruction.
+Here are all the instruction modes in one handy place.
+}
+
+TableOfContents{}
+
+IMGC{modes.jpg}
+
+Section{EAT MODE}
+InstructionFlags{EAT}
+BREAK{}
+
+Section{SEND-ENERGY MODE}
+InstructionFlags{SEND-ENERGY}
+BREAK{}
+
+Section{LOOK MODE}
+InstructionFlags{LOOK}
+BREAK{}
+
+Section{BROADCAST MODE}
+InstructionFlags{BROADCAST}
+BREAK{}
+
+Section{SEND MODE}
+InstructionFlags{SEND}
+BREAK{}
+
+Section{MAKE-ORGANIC MODE}
+InstructionFlags{MAKE-ORGANIC}
+BREAK{}
+
+Section{MAKE-SPORE MODE}
+InstructionFlags{MAKE-SPORE}
+BREAK{}
+
+Section{GROW MODE}
+InstructionFlags{GROW}
+BREAK{}
+
+Section{CSHIFT MODE}
+InstructionFlags{CSHIFT}
+BREAK{}
+
+Section{CMOVE MODE}
+InstructionFlags{CMOVE}
+BREAK{}
+
+Section{OMOVE MODE}
+InstructionFlags{OMOVE}
+BREAK{}
+
+Section{SPAWN MODE}
+InstructionFlags{SPAWN}
+BREAK{}
+
+Section{MAKE-BARRIER MODE}
+InstructionFlags{MAKE-BARRIER}
+BREAK{}
+
+Section{SHOUT MODE}
+InstructionFlags{SHOUT}
+BREAK{}
+
+Section{LISTEN MODE}
+InstructionFlags{LISTEN}
+BREAK{}
+
+Section{SAY MODE}
+InstructionFlags{SAY}
+BREAK{}
+
+Section{WRITE MODE}
+InstructionFlags{WRITE}
+BREAK{}
+
+Section{READ MODE}
+InstructionFlags{READ}
+BREAK{}
+
+Section{EXUDE MODE}
+InstructionFlags{EXUDE}
+BREAK{}
+
+Section{ROTATE MODE}
+InstructionFlags{ROTATE}
+BREAK{}
+
+Section{KEY-PRESS MODE}
+P{
+Applies to TT{KEY-PRESS} and TT{MOUSE-POS} instructions.
+}
+
+InstructionFlags{KEY-PRESS}
+BREAK{}
+
+} //{ MySite.body }

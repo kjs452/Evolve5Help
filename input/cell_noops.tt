@@ -1,0 +1,5 @@
+//{
+// this file triggers the building of cell_noops.tmpl => cell_noops.cpp
+//}
+
+RenderCode{}

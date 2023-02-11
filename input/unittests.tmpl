@@ -1,0 +1,1610 @@
+//
+// C code
+//
+// This file was generated from Evolve5Test/bin/render_code.py
+//
+// This file was produced from jinja2 template file: unittest.tmpl
+// Combined with UNIT_TESTS.tt tagged text file
+//
+// This is from project Evolve4Help:
+//		unittest.tmpl			The Jinha2 template files to produce this C++ file.
+//		UNIT_TESTS.tt			the tagged text file containined the actual  test case data
+//		tt_unittest.py			python code to process the tagged text unit test case tags
+//		unit_test_generate.py	generates the .cpp unit teseter program
+//		UDO.sh					top level script to do everything
+//
+#include "evolve_simulator.h"
+#include "evolve_simulator_private.h"
+
+//////////////////////////////////////////////////////////////////////
+///
+/// PORTING BEGIN
+///
+//////////////////////////////////////////////////////////////////////
+
+#define __macosx__
+//#define __linux__
+//#define __windows__
+
+#ifdef __windows__
+//
+// WINDOWS
+//
+#endif // __windows__
+
+#ifdef __linux__
+//
+// LUNIX PORTING STUFF
+//
+#define stricmp(x,y)            strcasecmp(x,y)
+#endif // __linux__
+
+#ifdef __macosx__
+//
+// MACOS PORTING STUFF
+//
+#define stricmp(x,y)            strcasecmp(x,y)
+
+#if DEBUG
+#define EVOLVE_DEBUG
+#endif
+
+#endif // __macosx__
+
+#ifdef EVOLVE_DEBUG
+#define ASSERT(x)			assert(x)
+#else
+#define ASSERT(x)
+#endif
+
+#define MALLOC(x)			malloc(x)
+#define CALLOC(n,s)			calloc(n,s)
+#define REALLOC(p,s)		realloc(p,s)
+#define FREE(x)				free(x)
+#define STRDUP(x)			strdup(x)
+
+//////////////////////////////////////////////////////////////////////
+///
+/// PORTING END
+///
+//////////////////////////////////////////////////////////////////////
+
+//
+// Common includes
+//
+#include <stdio.h>
+#include <assert.h>
+#include <math.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+
+/***********************************************************************
+ * Provide dummy implementations to link with the Evolve4 GUI code 
+ * (Just the Simulation subdirectory).
+ *
+ */
+extern "C" {
+	void EvolveFileBridge_rewind()
+	{
+	}
+
+	intptr_t EvolveFileBridge_read(char *buf, intptr_t reqlen)
+	{
+		return 0;
+	}
+
+	intptr_t EvolveFileBridge_write(const char *buf, intptr_t len)
+	{
+		return 0;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+// GLOBALS
+//////////////////////////////////////////////////////////////////////
+static int SuccessCount = 0;
+static int FailCount = 0;
+
+static void FAIL(int id, const char *file, int lineno, const char *msg)
+{
+	printf("FAIL    id=%d, file=%s, lineno=%d \"%s\"\n", id, file, lineno, msg);
+	FailCount += 1;
+}
+
+static void SUCCESS(int id, const char *file, int lineno)
+{
+
+	printf("SUCCESS id=%d, file=%s, lineno=%d\n", id, file, lineno);
+	SuccessCount += 1;
+}
+
+static void REPORT()
+{
+	printf("\n");
+	printf("SUCCESS: %d, FAIL: %d, TOTAL: %d\n", SuccessCount, FailCount,
+				SuccessCount + FailCount );
+
+}
+
+static int match_error(const char *err,  const char *msg)
+{
+	// printf("ERROR: %s\n", err); // uncomment to show the error messages
+	return strstr(err, msg) != NULL;
+}
+
+//
+// compare two result arrays, format message into 'msg' if error detected.
+//
+static int match_result(int* actual, int *expected, int n)
+{
+	int i;
+
+	for(i=0; i < n; i++)
+	{
+		if( actual[i] != expected[i] )
+			return 0;
+	}
+	return 1;
+}
+
+// ----------------------------------------------------------------------
+// sprintf() replacement
+//
+#include <stdarg.h>
+#define BUF_SIZE 1000
+static void errfmt(char *buf, const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(buf, BUF_SIZE, fmt, ap);
+	va_end(ap);
+}
+// ----------------------------------------------------------------------
+
+static void fmt_result(char *msg, int* actual, int *expected, int nresult)
+{
+	int i;
+
+	for(i=0; i < nresult; i++)
+	{
+		if( actual[i] != expected[i]) {
+			errfmt(msg, "actual[%d] != expected[%d]. (%d != %d)",
+							i, i, actual[i], expected[i] );
+			return;
+		}
+	}
+}
+
+/*
+ * Print top element on stack ( n -- )
+ */
+static void kfop_print(KFORTH_OPERATIONS *kfops, KFORTH_PROGRAM *kfp, KFORTH_MACHINE *kfm, void *client_data)
+{
+	KFORTH_INTEGER value;
+
+	ASSERT( kfm != NULL );
+
+	if( kfm->dsp > 0 ) {
+		value = kforth_data_stack_pop(kfm);
+		printf("%d\n", value);
+	}
+}
+
+/*
+ * Print stack, but don't remove anything.
+ */
+static void kfop_print_stack(KFORTH_OPERATIONS *kfops, KFORTH_PROGRAM *kfp, KFORTH_MACHINE *kfm, void *client_data)
+{
+	int i;
+
+	ASSERT( kfm != NULL );
+
+	if( kfm->dsp > 0 ) {
+		for(i=0; i < kfm->dsp; i++) {
+			printf("%02d: %d\n", i, kfm->data_stack[i]);
+		}
+	} else {
+		printf("(empty)\n");
+	}
+}
+
+//
+// Return the data stack in 'result'. The caller expects
+// 'nresult' items to be on the stack after running the kforth program.
+//
+// Return the state of the data stack in 'result'. The items order ordered
+// from oldest to newest.
+//
+//
+static int do_kforth_test(const char *program_text,
+							int protected_cbs,
+							const char **protected_ins,
+							int num_protected_ins,
+							char *errbuf,
+							int *result,
+							int nresult )
+{
+	KFORTH_PROGRAM *kfp;
+	KFORTH_OPERATIONS *kfops;
+	KFORTH_MACHINE *kfm;
+	int i, success;
+
+	/*
+	 * Compile program
+	 */
+	kfops = kforth_ops_make();
+
+	kforth_ops_add(kfops, ".", 0, 0, kfop_print);
+	kforth_ops_add(kfops, "print", 0, 0, kfop_print);
+	kforth_ops_add(kfops, ".S", 0, 0, kfop_print_stack);
+
+	for(i=0; i < num_protected_ins; i++) {
+		kforth_ops_set_protected(kfops, protected_ins[i]);
+	}
+
+	kfp = kforth_compile(program_text, kfops, errbuf);
+	if( kfp == NULL ) {
+		kforth_ops_delete(kfops);
+		return 0;
+	}
+
+	ASSERT( protected_cbs <= kfp->nblocks );
+
+	kfp->nprotected = protected_cbs;
+
+	/*
+	 * Run the program
+	 */
+	kfm = kforth_machine_make();
+
+	while( ! kforth_machine_terminated(kfm) ) {
+		kforth_machine_execute(kfops, kfp, kfm, NULL);
+	}
+
+	if( nresult == kfm->dsp )
+	{
+		for(i=0; i < nresult; i++)
+		{
+			result[i] = kfm->data_stack[i];
+		}
+		success = 1;
+	}
+	else if( kfm->dsp == 0 )
+	{
+		errfmt(errbuf, "stack contains %d items, expecting %d", kfm->dsp, nresult);
+		success = 0;
+	}
+	else if( kfm->dsp >= 1 )
+	{
+		errfmt(errbuf, "stack contains %d items, expecting %d", kfm->dsp, nresult);
+		success = 0;
+	}
+	else {
+		errfmt(errbuf, "unknown condition");
+		success = 0;
+	}
+
+	kforth_machine_delete(kfm);
+	kforth_delete(kfp);
+	kforth_ops_delete(kfops);
+
+	return success;
+}
+
+//////////////////////////////////////////////////////////////////////
+//
+// CELL TESTING HELPER FUNCTIONS
+//
+//////////////////////////////////////////////////////////////////////
+
+//
+// Accepts both Map{} and AfterMap{} characters, 'X', 'x'
+//
+static void measure_map(const char *map, int *width, int *height)
+{
+	const char *p;
+	int countA, countB, countC, counta, countb, countc;
+	int x, y;
+
+	*width = 0;
+	*height = 0;
+
+	countA = 0;
+	countB = 0;
+	countC = 0;
+	counta = 0;
+	countb = 0;
+	countc = 0;
+
+	x = 0;
+	y = 0;
+
+	for(p=map; *p; p++) {
+		switch(*p) {
+		case '\n':
+			*height += 1;
+			if( y == 0 ) {
+				*width = x;
+			} else {
+				ASSERT( *width == x );
+			}
+			y += 1;
+			x = 0;
+			break;
+
+		case 'A':
+			countA++;
+			x += 1;
+			break;
+
+		case 'B':
+			countB++;
+			x += 1;
+			break;
+
+		case 'C':
+			countC++;
+			x += 1;
+			break;
+
+		case 'a':
+			counta++;
+			x += 1;
+			break;
+
+		case 'b':
+			countb++;
+			x += 1;
+			break;
+
+		case 'c':
+			countc++;
+			x += 1;
+			break;
+
+		case '#':
+		case '.':
+		case 'S':
+		case 's':
+		case 'O':
+		case '0':
+		case 'o':
+		case 'X':
+		case 'x':
+			x += 1;
+			break;
+
+		default:
+			ASSERT(0);
+		}
+	}
+
+	ASSERT( countC == 1 );
+	ASSERT( countA == 0 || countA == 1 );
+	ASSERT( countB == 0 || countB == 1 );
+
+	if( counta != 0 ) {
+		ASSERT( countA == 1 );
+	}
+
+	if( countb != 0 ) {
+		ASSERT( countB == 1 );
+	}
+
+	ASSERT( counta < 10 );
+	ASSERT( countb < 10 );
+	ASSERT( countc < 10 );
+}
+
+static void print_map(char *buffer, UNIVERSE *u, int width, int height, CELL *C0)
+{
+	int x, y;
+	char *p;
+	UNIVERSE_GRID ugrid;
+	GRID_TYPE gt;
+
+	p = buffer;
+
+	for(y=height-1; y >= 0; y--)
+	{
+		for(x=0; x < width; x++)
+		{
+			gt = Grid_Get(u, x, y, &ugrid);
+			switch(gt) {
+			case GT_BLANK:
+				*p++ = '.';
+				break;
+
+			case GT_BARRIER:
+				*p++ = '#';
+				break;
+
+			case GT_ORGANIC:
+				*p++ = 'O';
+				break;
+
+			case GT_CELL:
+				if( ugrid.u.cell == C0 )
+					*p++ = 'C';
+				else
+					*p++ = 'c';
+				break;
+
+			case GT_SPORE:
+				*p++ = 'S';
+				break;
+			}
+		}
+		*p++ = '\n';
+	}
+	*p++ = '\0';
+}
+
+//
+// Analyze the results of the CELL test
+// Returns 1 if the test passed, else 0.
+//
+// The format of the aftermap is same as 'Map{}' with
+// the addition of thesecharacters:
+//
+//	'X'		generic cell from strain 0
+//	'x'		generic cell from strain 1
+//
+//
+static int check_cell_test(UNIVERSE *u,
+				KFORTH_MACHINE *kfm,
+				int *expected_results, int len,
+				const char *aftermap,
+				CELL **A,
+				CELL **B,
+				CELL **C,
+				char *msg )
+{
+	ASSERT( u != NULL );
+	ASSERT( kfm != NULL );
+	ASSERT( expected_results != NULL );
+	ASSERT( len >= 0 );
+	ASSERT( msg != NULL );
+
+	int i, x, y;
+	int width, height;
+	char ch;
+	UNIVERSE_GRID ugrid;
+	GRID_TYPE gt;
+	char debug_map[1000];
+	char buf[ BUF_SIZE ];
+	int errors;
+
+	errors = 0;
+	msg[0] = '\0';
+
+	//
+	// check that expected_results match 'kfm'
+	//
+	for(i=0; i < len; i++) {
+		if( kfm->R[i] != expected_results[i] ) {
+			if( strlen(msg) > 0 )
+				strcat(msg, "\n");
+			errfmt(buf, "Register %d expected to be %d, but got %d", i, expected_results[i], kfm->R[i]);
+			strcat(msg, buf);
+			errors += 1;
+		}
+	}
+
+	if( errors > 0 )
+		return 0;
+
+	if( aftermap == NULL ) {
+		// no after map
+		return 1;
+	}
+
+	//
+	// check after map
+	//
+	measure_map(aftermap, &width, &height);
+	print_map(debug_map, u, width, height, C[0]);
+	for(x=0; x < width; x++) {
+		for(y=0; y < height; y++) {
+			gt = Grid_Get(u, x, y, &ugrid);
+//			ch = aftermap[ (width+1) * y + x ];
+			ch = aftermap[ (width+1) * (height-1 - y) + x ];
+
+			if( ch == '.' ) {
+				if( gt != GT_BLANK ) {
+					errfmt(msg, "Expecting blank at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == '#' ) {
+				if( gt != GT_BARRIER ) {
+					errfmt(msg, "Expecting barrier at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'X' ) {
+				if( gt != GT_CELL ) {
+					errfmt(msg, "Expecting cell at (%d, %d)", x, y);
+					goto error;
+				}
+
+				if( ugrid.u.cell->organism->strain != 0 ) {
+					errfmt(msg, "Expecting strain 0 at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'x' ) {
+				if( gt != GT_CELL ) {
+					errfmt(msg, "Expecting cell at (%d, %d)", x, y);
+					goto error;
+				}
+
+				if( ugrid.u.cell->organism->strain != 1 ) {
+					errfmt(msg, "Expecting strain 1 at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'C' ) {
+				if( gt != GT_CELL ) {
+					errfmt(msg, "Expecting cell at (%d, %d)", x, y);
+					goto error;
+				}
+
+				if( ugrid.u.cell != C[0] ) {
+					errfmt(msg, "Expecting C[0] at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'c' ) {
+				if( gt != GT_CELL ) {
+					errfmt(msg, "Expecting cell at (%d, %d)", x, y);
+					goto error;
+				}
+
+				if( ugrid.u.cell->organism != C[0]->organism ) {
+					errfmt(msg, "Expecting C[x] at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'B' ) {
+				if( gt != GT_CELL ) {
+					errfmt(msg, "Expecting cell at (%d, %d)", x, y);
+					goto error;
+				}
+
+				if( ugrid.u.cell != B[0] ) {
+					errfmt(msg, "Expecting B[0] at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'b' ) {
+				if( gt != GT_CELL ) {
+					errfmt(msg, "Expecting cell at (%d, %d)", x, y);
+					goto error;
+				}
+
+				if( ugrid.u.cell->organism != B[0]->organism ) {
+					errfmt(msg, "Expecting B[x] at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'A' ) {
+				if( gt != GT_CELL ) {
+					errfmt(msg, "Expecting cell at (%d, %d)", x, y);
+					goto error;
+				}
+
+				if( ugrid.u.cell != A[0] ) {
+					errfmt(msg, "Expecting A[0] at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'a' ) {
+				if( gt != GT_CELL ) {
+					errfmt(msg, "Expecting cell at (%d, %d)", x, y);
+					goto error;
+				}
+
+				if( ugrid.u.cell->organism != A[0]->organism ) {
+					errfmt(msg, "Expecting A[x] at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'O' ) {
+				if( gt != GT_ORGANIC ) {
+					errfmt(msg, "Expecting organic at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == '0' ) {
+				if( gt != GT_ORGANIC ) {
+					errfmt(msg, "Expecting organic at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'o' ) {
+				if( gt != GT_ORGANIC ) {
+					errfmt(msg, "Expecting organic at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 'S' ) {
+				if( gt != GT_SPORE ) {
+					errfmt(msg, "Expecting spore at (%d, %d)", x, y);
+					goto error;
+				}
+
+			} else if( ch == 's' ) {
+				if( gt != GT_SPORE ) {
+					errfmt(msg, "Expecting spore at (%d, %d)", x, y);
+					goto error;
+				}
+			}
+		}
+	}
+
+	return 1;
+
+error:
+	strcat(msg, "\n");
+	strcat(msg, debug_map);
+	strcat(msg, "\n");
+	return 0;
+}
+
+static CELL *add_cell(UNIVERSE *u, CELL *cell, int x, int y, int energy, int cb)
+{
+	ASSERT( u != NULL );
+	ASSERT( cell != NULL );
+
+	CELL *ncell;
+	ORGANISM *o;
+
+	o = cell->organism;
+
+	ncell = (CELL *) CALLOC(1, sizeof(CELL));
+	ASSERT( ncell != NULL );
+
+	*ncell = *cell;
+
+	kforth_machine_init(&ncell->kfm);
+	kforth_machine_copy2(&cell->kfm, &ncell->kfm);
+
+	ncell->kfm.loc.cb = cb;	// other_cell runs on whatever code block goes by the label 'other_cells'
+	ncell->kfm.loc.pc = 0;
+
+	ncell->x = x;
+	ncell->y = y;
+	ncell->next = o->cells;
+	o->cells = ncell;
+
+	o->ncells	+= 1;
+
+	ncell->u_next = u->cells;
+	ncell->u_prev = NULL;
+	if( u->cells ) {
+		u->cells->u_prev = ncell;
+	}
+	u->cells = ncell;
+
+	Grid_SetCell(u, ncell);
+
+	o->energy += energy;
+
+	return ncell;
+}
+
+//
+// scan program look for 'symbol' label. Return its code block
+// number, based on curly brace analysis.
+// returns -1 if that symbol was not found.
+//
+static int find_symbol(const char *program, const char *symbol)
+{
+	char buf[ 1000 ];
+	int cb;
+	int len;
+	const char *p;
+
+	strcpy(buf, symbol);
+	strcat(buf, ":");
+	len = strlen(buf);
+
+	cb = 0;
+
+	for(p=program; *p; p++)
+	{
+		if( strncmp(buf, p, len) == 0 ) {
+			return cb;
+		}
+
+		if( *p == '{' ) {
+			cb += 1;
+		}
+	}
+
+	return -1;
+}
+
+static int find_symbol_or_int(const char *program, const char *symbol)
+{
+	long int x;
+	char *p;
+
+	x = strtol(symbol, &p, 10);
+	if( *p == '\0' ) {
+		return x;
+	} else {
+		return find_symbol(program, symbol);
+	}
+}
+
+//
+// scan program look for "other_cells" label. Return its code block
+// number
+//
+static int find_other_cells_label(const char *program)
+{
+	return find_symbol(program, "other_cells");
+}
+
+//
+// The map string needs to be a box consisting of lines.
+// Each line needs to be the same length. No leading white.
+// Eg.
+//		#######\n
+//		#...o.#\n
+//		#.....#\n
+//		#.ACc.#\n
+//		#.A...#\n
+//		#....0#\n
+//		#######\n
+//   (0,0)
+//
+// Key:
+//	# - barrier
+//	. - blank cell
+//	o, 0, O	- Organic cells with energy 1, 10, 100
+//
+// Strain 0 Entities:
+//	C	- The Test Cell. the main cell being tested. uses strain0			Energy 1
+//	c	- more cells for the test organism. Running the 2nd code block		Energy 1
+//
+//	A	- another organism using strain 0 (multiple cells allowed, all running a_program, or infinite loop program) Energy=1 per cell
+//	a	- more cells for 'A'
+//  S   - spore from strain 0, energy 1
+//	X	- a genric cell from strain 0 (Only AfterMap)
+//
+// Strain 1 Entities
+//	B	- another organism using strain 1 (multiple cells allowed, all running infinite loop program) Energy=1 per cell
+//	b	- more cells for 'B'
+//  s   - spore from strain 1, energy 1
+//	x	- a generic cell from strain 1 (Only AfterMap)
+//
+// pcb0, pcb1 are the protected code block numbers for strain0 and strain1 config.
+//
+static UNIVERSE *Make_Universe_From_Map(
+				const char *program,
+				const char *a_program,
+				const char *map,
+				CELL **A,
+				CELL **B,
+				CELL **C,
+				int pcb0,
+				int pcb1,
+				KFORTH_OPERATIONS *kfops0,
+				KFORTH_OPERATIONS *kfops1 )
+{
+	static const char *loop_forever = "main: { 1 ?loop } other_cells: { 1 ?loop } data: { }";
+
+	int x, y;
+	int width, height;
+	UNIVERSE *u;
+	uint32_t seed;
+	char errbuf[ BUF_SIZE ];
+	int ch;
+	ORGANISM *o;
+	SPORE *s;
+	int a, b, c;
+	KFORTH_PROGRAM *loop_forever_kfp0;
+	KFORTH_PROGRAM *loop_forever_kfp1;
+	int cb;
+
+	if( a_program == NULL )
+	{
+		a_program = loop_forever;
+	}
+
+	loop_forever_kfp0 = kforth_compile(loop_forever, kfops0, errbuf);
+	ASSERT( loop_forever_kfp0 != NULL );
+
+	loop_forever_kfp0->nprotected = pcb0;
+
+	loop_forever_kfp1 = kforth_compile(loop_forever, kfops1, errbuf);
+	ASSERT( loop_forever_kfp1 != NULL );
+
+	loop_forever_kfp1->nprotected = pcb1;
+
+	seed = 123;
+	measure_map(map, &width, &height);
+
+	u = Universe_Make(seed, width, height);
+	ASSERT( u != NULL );
+
+	u->kfops[0] = *kfops0;
+	u->kfops[1] = *kfops1;
+
+	// reading/writing files requires this, and just proper config
+	u->kfmo[0].protected_codeblocks = pcb0;
+	u->kfmo[1].protected_codeblocks = pcb1;
+
+	// setup strain 0 for C and A cells
+	StrainOptions_Init(&u->strop[0]);
+	StrainOptions_Init(&u->strop[1]);
+
+	u->strop[0].enabled = 1;
+	u->strop[1].enabled = 1;
+
+	A[0] = NULL;
+	B[0] = NULL;
+	C[0] = NULL;
+
+	// pass 1: don't do secondary cells
+	for(y=0; y < height; y++) {
+		for(x=0; x < width; x++) {
+			ch = map[ (height-1-y)*(width+1) + x ];
+			switch(ch) {
+			case '#':
+				Grid_SetBarrier(u, x, y);
+				break;
+
+			case '.':
+				Grid_Clear(u, x, y);
+				break;
+
+			case 'A':
+				o = Organism_Make(x, y, 0, 1, kfops0, pcb0, a_program, errbuf);
+				if( o == NULL ) {
+					printf("error: A[0] %s\n", errbuf);
+					return NULL;
+				}
+				Universe_PasteOrganism(u, o);
+				A[0] = o->cells;
+				break;
+
+			case 'B':
+				o = Organism_Make(x, y, 1, 1, kfops1, pcb1, loop_forever, errbuf);
+				if( o == NULL ) {
+					printf("error: B[0] %s\n", errbuf);
+					return NULL;
+				}
+				Universe_PasteOrganism(u, o);
+				B[0] = o->cells;
+				break;
+
+			case 'C':
+				o = Organism_Make(x, y, 0, 1, kfops0, pcb0, program, errbuf);
+				if( o == NULL ) {
+					printf("error: C[0] %s\n", errbuf);
+					return NULL;
+				}
+				Universe_PasteOrganism(u, o);
+				C[0] = o->cells;
+				break;
+
+			case 'a':
+				// skip pass 1
+				break;
+
+			case 'b':
+				// skip pass 1
+				break;
+
+			case 'c':
+				// skip pass 1
+				break;
+
+			case 'S':
+				s = Spore_make(loop_forever_kfp0, 1, 111, 0);
+				Grid_SetSpore(u, x, y, s);
+				break;
+
+			case 's':
+				s = Spore_make(loop_forever_kfp1, 1, 222, 1);
+				Grid_SetSpore(u, x, y, s);
+				break;
+
+			case 'O':
+				Grid_SetOrganic(u, x, y, 100);
+				break;
+
+			case '0':
+				Grid_SetOrganic(u, x, y, 10);
+				break;
+
+			case 'o':
+				Grid_SetOrganic(u, x, y, 1);
+				break;
+			}
+		}
+	}
+
+	// pass 2: do secondary cells
+	a = 1;
+	b = 1;
+	c = 1;
+	for(y=0; y < height; y++) {
+		for(x=0; x < width; x++) {
+			ch = map[ (height-1-y)*(width+1) + x ];
+			switch(ch) {
+			case 'a':
+				A[a++] = add_cell(u, A[0], x, y, 1, 1);
+				break;
+
+			case 'b':
+				B[b++] = add_cell(u, B[0], x, y, 1, 1);
+				break;
+
+			case 'c':
+				cb = find_other_cells_label(program);
+				if( cb == -1 ) {
+					printf("error: C[0] program needs to have a code block with the label 'other_cells:', used for secondary cells.\n");
+					return NULL;
+				}
+
+				if( C[0]->organism->program.nblocks < 2 ) {
+					printf("error: C[0] program needs to have at least 2 code blocks, 'row1' used for secondary cell.\n");
+					return NULL;
+				}
+				C[c++] = add_cell(u, C[0], x, y, 1, cb);
+				break;
+			}
+		}
+	}
+
+	kforth_delete(loop_forever_kfp0);
+	kforth_delete(loop_forever_kfp1);
+
+	return u;
+}
+
+//
+// See if the simulation file survives being written and read back from file
+//
+static int read_write_rebuild(UNIVERSE **up, CELL **A, CELL **B, CELL **C, char* errbuf)
+{
+	UNIVERSE *u2, *u;
+	CELL *cell;
+	int success;
+	int a, b, c;
+
+	u = *up;
+
+	success = Universe_Write(u, "/tmp/kjs_test.txt", errbuf);
+	if( !success ) {
+		return 0;
+	}
+
+	u2 = Universe_Read("/tmp/kjs_test.txt", errbuf);
+	if( u2 == NULL ) {
+		return 0;
+	}
+
+	// rebind A[0], B[0], C[0]
+	for(cell=u2->cells; cell; cell=cell->u_next) {
+		if( A[0] != NULL && cell->x == A[0]->x && cell->y == A[0]->y ) {
+			A[0] = cell;
+		}
+
+		if( B[0] != NULL && cell->x == B[0]->x && cell->y == B[0]->y ) {
+			B[0] = cell;
+		}
+
+		if( cell->x == C[0]->x && cell->y == C[0]->y ) {
+			C[0] = cell;
+		}
+	}
+
+	// rebind A[n], B[n], C[n]
+	a = 1;
+	b = 1;
+	c = 1;
+	for(cell=u2->cells; cell; cell=cell->u_next) {
+		if( A[0] != NULL && cell->organism == A[0]->organism ) {
+			A[a++] = cell;
+		}
+
+		if( B[0] != NULL && cell->organism == B[0]->organism ) {
+			B[b++] = cell;
+		}
+
+		if( cell->organism == C[0]->organism ) {
+			C[c++] = cell;
+		}
+	}
+
+	Universe_Delete(u);
+
+	*up = u2;
+	return 1;
+}
+
+static int diff_programs(KFORTH_PROGRAM *kfp1, KFORTH_PROGRAM *kfp2)
+{
+	int cb, pc, cblen1, cblen2;
+
+	if( kfp1->nblocks != kfp2->nblocks )
+		return 0;
+
+	for(cb=0; cb < kfp1->nblocks; cb++) {
+		cblen1 = kforth_program_cblen(kfp1, cb);
+		cblen2 = kforth_program_cblen(kfp2, cb);
+		if( cblen1 != cblen2 )
+			return 0;
+
+		for(pc=0; pc < cblen1; pc++) {
+			if( kfp1->block[cb][pc] != kfp2->block[cb][pc] )
+				return 0;
+		}
+	}
+
+	return 1;
+}
+
+/*
+ * Returns 1 if they are equal
+ * If not equal print them out.
+ * kfp2 <--- expected
+ * kfp1 <--- actual
+ */
+static int compare_programs(KFORTH_OPERATIONS *kfops, KFORTH_PROGRAM *kfp1, KFORTH_PROGRAM *kfp2)
+{
+	KFORTH_DISASSEMBLY *kfd1, *kfd2;
+	int same;
+
+	same = diff_programs(kfp1, kfp2);
+	if( same )
+		return 1;
+
+	kfd1 = kforth_disassembly_make(kfops, kfp1, 40, 0);
+	kfd2 = kforth_disassembly_make(kfops, kfp2, 40, 0);
+
+	printf("\nEXPECTED\n");
+	printf("CodeAfter<<_EOF_\n");
+	printf("%s", kfd2->program_text);
+	printf("_EOF_\n\n");
+
+	printf("ACTUAL\n");
+	printf("CodeAfter<<_EOF_\n");
+	printf("%s", kfd1->program_text);
+	printf("_EOF_\n\n");
+
+	return 0;
+}
+
+static int do_mutation_test(KFORTH_OPERATIONS *kfops,
+								const char *program_text,
+								const char *after_program_text,
+								KFORTH_MUTATE_OPTIONS *kfmo,
+								uint32_t seed,
+								int times,
+								char *errbuf,
+								int *result,
+								int nresult )
+{
+	KFORTH_PROGRAM *kfp, *kfp2;
+	int i, success;
+	EVOLVE_RANDOM *er;
+
+	ASSERT( kfops != NULL );
+	ASSERT( program_text != NULL );
+	ASSERT( after_program_text != NULL );
+	ASSERT( kfmo != NULL );
+	ASSERT( errbuf != NULL );
+	ASSERT( result != NULL );
+	ASSERT( nresult >= 0 );
+
+	// KJS TODO - kfops should be generated from a well defined list, not the total list EvolveOperations().
+	// This way these tests will be much less fragile.
+
+	er = sim_random_make(seed);
+
+	kfp = kforth_compile(program_text, kfops, errbuf);
+	if( kfp == NULL ) {
+		sim_random_delete(er);
+		return 0;
+	}
+
+	kfp2 = kforth_compile(after_program_text, kfops, errbuf);
+	if( kfp2 == NULL ) {
+		sim_random_delete(er);
+		return 0;
+	}
+
+	// ASSERT( kfmo->protected_codeblocks <= kfp->nblocks ); // KJS Disabling. Prevents testing when the program is smaller
+	//																than the protected region
+
+	kfp->nprotected = kfmo->protected_codeblocks;
+
+	/*
+	 * Mutate the program
+	 */
+	for(i=0; i < times; i++) {
+		kforth_mutate(kfops, kfmo, er, kfp);
+	}
+
+	success = compare_programs(kfops, kfp, kfp2);
+
+	kforth_delete(kfp);
+	sim_random_delete(er);
+
+	if( success )
+		strcpy(errbuf, "Expected and Actual matched!");
+	else
+		strcpy(errbuf, "Expected and Actual DID NOT match");
+
+	return success;
+}
+
+static int do_merge_test(		const char *program_text1,
+								const char *program_text2,
+								const char *after_program_text,
+								uint32_t seed,
+								int merge_mode,
+								char *errbuf )
+{
+	KFORTH_PROGRAM *kfp1, *kfp2, *kfp_after, *kfp_actual;
+	EVOLVE_RANDOM *er;
+	KFORTH_OPERATIONS* kfops;
+	int i, success;
+
+	ASSERT( program_text1 != NULL );
+	ASSERT( program_text2 != NULL );
+	ASSERT( after_program_text != NULL );
+	ASSERT( errbuf != NULL );
+
+	kfops = EvolveOperations();
+
+	er = sim_random_make(seed);
+
+	kfp1 = kforth_compile(program_text1, kfops, errbuf);
+	if( kfp1 == NULL ) {
+		sim_random_delete(er);
+		return 0;
+	}
+
+	kfp2 = kforth_compile(program_text2, kfops, errbuf);
+	if( kfp2 == NULL ) {
+		sim_random_delete(er);
+		kforth_delete(kfp1);
+		return 0;
+	}
+
+	kfp_after = kforth_compile(after_program_text, kfops, errbuf);
+	if( kfp_after == NULL ) {
+		sim_random_delete(er);
+		kforth_delete(kfp1);
+		kforth_delete(kfp2);
+		return 0;
+	}
+
+	KFORTH_MUTATE_OPTIONS kfmo;
+	kforth_mutate_options_defaults(&kfmo);
+	kfmo.merge_mode = merge_mode;
+
+	kfp_actual = kforth_merge(er, &kfmo, kfp1, kfp2);
+
+	success = compare_programs(kfops, kfp_actual, kfp_after);
+
+	sim_random_delete(er);
+	kforth_delete(kfp1);
+	kforth_delete(kfp2);
+	kforth_delete(kfp_actual);
+
+	if( success )
+		strcpy(errbuf, "Expected and Actual matched!");
+	else
+		strcpy(errbuf, "Expected and Actual DID NOT match");
+
+	return success;
+}
+
+//////////////////////////////////////////////////////////////////////
+//
+// TEST CASES BEGIN HERE
+//
+//////////////////////////////////////////////////////////////////////
+
+{% for kt in kforth_tests %}
+//
+// From file "{{kt.file}}", line {{kt.line}}.
+//
+static void kforth_test_{{kt.id}}()
+{
+	int success;
+	int pcb = 0;
+	int actual_result[{{kt.expected|length}}];
+	char errbuf[ BUF_SIZE ];
+	char msg[ BUF_SIZE ];
+
+{%- if kt.expected|length == 0 %}
+{%- if kt.expected_error|length == 0 %}
+	static int expected_result[0];
+{% endif %}
+{%- else %}
+	static int expected_result[ {{kt.expected|length}} ] = {
+	{%- for e in kt.expected %}
+			{{e}}, {% if loop.last %} }; {% endif %}
+	{%- endfor %}
+{%- endif %}
+
+{% if kt.pin|length == 0 %}
+	static const char *protected_instructions[0] = { };
+{%- else %}
+	static const char *protected_instructions[ {{kt.pin|length}} ] = {
+	{%- for i in kt.pin %}
+			"{{i}}", {% if loop.last %} }; {% endif %}
+	{%- endfor %}
+{%- endif %}
+
+	static const char *program =
+{%- for ln in kt.code %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+
+{% if kt.pcb != nil %}
+	pcb = find_symbol_or_int(program, "{{kt.pcb}}" );
+	ASSERT( pcb >= 0 );
+{%- endif %}
+
+	success = do_kforth_test(
+					program,
+					pcb,
+					protected_instructions,
+					{{kt.pin|length}},
+					errbuf,
+					actual_result,
+					{{kt.expected|length}} );
+
+	if( ! success ) {
+{%- if kt.expected_error|length == 0 %}
+		snprintf(msg, sizeof(msg), "error: %s", errbuf);
+		FAIL( {{kt.id}}, "{{kt.file}}", {{kt.line}}, msg);
+{%- else %}
+		if( match_error(errbuf, "{{kt.expected_error}}") ) {
+			SUCCESS( {{kt.id}}, "{{kt.file}}", {{kt.line}} );
+		} else {
+			snprintf(msg, sizeof(msg), "error: %s", errbuf);
+			FAIL( {{kt.id}}, "{{kt.file}}", {{kt.line}}, msg);
+		}
+{% endif %}
+		return;
+	}
+
+{%- if kt.expected_error|length == 0 %}
+	if( match_result(actual_result, expected_result, {{kt.expected|length}}) ) {
+		SUCCESS( {{kt.id}}, "{{kt.file}}", {{kt.line}} );
+	} else {
+		fmt_result(msg, actual_result, expected_result, {{kt.expected|length}});
+		FAIL( {{kt.id}}, "{{kt.file}}", {{kt.line}}, msg);
+	}
+{%- else %}
+	FAIL( {{kt.id}}, "{{kt.file}}", {{kt.line}}, "should not reach here, because expected_error was defined");
+{% endif %}
+}
+
+{% endfor %}
+
+{% for ct in cell_tests %}
+//
+// From file "{{ct.file}}", line {{ct.line}}.
+//
+static void cell_test_{{ct.id}}()
+{
+	int success, found;
+	int pcb0 = 0, pcb1 = 0;
+	char msg[ BUF_SIZE ];
+	UNIVERSE *u;
+	CELL *c, *A[100], *B[100], *C[100];
+	KFORTH_OPERATIONS kfops0;
+	KFORTH_OPERATIONS kfops1;
+
+	static const char *map =
+{%- if ct.map != nil %}
+{%- for ln in ct.map %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+{%- else %}
+			NULL;
+{%- endif %}
+
+	static const char *aftermap =
+{%- if ct.aftermap != nil %}
+{%- for ln in ct.aftermap %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+{%- else %}
+			NULL;
+{%- endif %}
+
+	static int expected_results[ {{ct.expected|length}} ] = {
+{%- for e in ct.expected %}
+			{{e}}, {% if loop.last %} }; {% endif %}
+{%- endfor %}
+
+	static const char *program =
+{%- for ln in ct.code %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+
+	static const char *a_program =
+{%- if ct.acode != nil %}
+{%- for ln in ct.acode %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+{%- else %}
+			NULL;
+{%- endif %}
+
+	kfops0 = *EvolveOperations();
+
+{%- for d in ct['del0'] %}
+	kforth_ops_del(&kfops0, "{{d}}");
+{%- endfor %}
+
+{%- for d in ct['pin0'] %}
+	kforth_ops_set_protected(&kfops0, "{{d}}");
+{%- endfor %}
+
+	kfops1 = *EvolveOperations();
+
+{%- for d in ct['del1'] %}
+	kforth_ops_del(&kfops1, "{{d}}");
+{%- endfor %}
+
+{%- for d in ct['pin1'] %}
+	kforth_ops_set_protected(&kfops1, "{{d}}");
+{%- endfor %}
+
+{% if ct.pcb0 != nil %}
+	pcb0 = find_symbol_or_int(program, "{{ct.pcb0}}" );
+	ASSERT( pcb0 >= 0 );
+{%- endif %}
+{%- if ct.pcb1 != nil %}
+	pcb1 = {{ct.pcb1}};
+{%- endif %}
+
+	u = Make_Universe_From_Map(
+				program,
+				a_program,
+				map,
+				A,
+				B,
+				C,
+				pcb0,		// protected code blocks, strain 0
+				pcb1,		// protected code blocks, strain 1
+				&kfops0,
+				&kfops1 );
+
+	if( u == NULL ) {
+		FAIL( {{ct.id}}, "{{ct.file}}", {{ct.line}}, "Make_Universe_From_Map failed");
+		return;
+	}
+
+	// SETUP ////////////
+{%- for stmt in ct.setup %}
+	{{stmt}}
+{%- endfor %}
+	// END SETUP ////////
+
+	success = read_write_rebuild(&u, A, B, C, msg);
+	if( !success ) {
+		FAIL( {{ct.id}}, "{{ct.file}}", {{ct.line}}, msg);
+		return;
+	}
+
+	while( C[0]->kfm.R[9] == 0 ) {
+		Universe_Simulate(u);
+
+		found = 0;
+		for(c=u->cells; c != NULL; c=c->u_next) {
+			if( c == C[0] )
+				found = 1;
+		}
+
+		if( ! found ) {
+			FAIL( {{ct.id}}, "{{ct.file}}", {{ct.line}}, "C[0] cell died before setting R9 to 1");
+			return;
+		}
+	}
+
+	success = read_write_rebuild(&u, A, B, C, msg);
+	if( !success ) {
+		FAIL( {{ct.id}}, "{{ct.file}}", {{ct.line}}, msg);
+		return;
+	}
+
+	success = check_cell_test(u, &(C[0]->kfm), expected_results, {{ct.expected|length}}, aftermap, A, B, C, msg);
+
+	if( success )
+	{
+		SUCCESS( {{ct.id}}, "{{ct.file}}", {{ct.line}} );
+	}
+	else
+	{
+		FAIL( {{ct.id}}, "{{ct.file}}", {{ct.line}}, msg);
+	}
+
+	Universe_Delete(u);
+}
+{% endfor %}
+
+{% for mt in mutation_tests %}
+//
+// From file "{{mt.file}}", line {{mt.line}}.
+//
+static void mutation_test_{{mt.id}}()
+{
+	int success;
+	int pcb = 0;
+	KFORTH_OPERATIONS kfops;
+	int actual_result[{{mt.expected|length}}];
+	char errbuf[ BUF_SIZE ];
+	char msg[ BUF_SIZE ];
+	uint32_t seed;
+
+	static const char *program =
+{%- for ln in mt.code %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+
+	static const char *program_after =
+{%- for ln in mt.code_after %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+
+	kfops = *EvolveOperations();
+
+{%- for d in mt['del'] %}
+	kforth_ops_del(&kfops, "{{d}}");
+{%- endfor %}
+
+{%- for d in mt['pin'] %}
+	kforth_ops_set_protected(&kfops, "{{d}}");
+{%- endfor %}
+
+{% if mt.pcb != nil %}
+	pcb = find_symbol_or_int(program, "{{mt.pcb}}" );
+	ASSERT( pcb >= 0 );
+{%- endif %}
+
+	KFORTH_MUTATE_OPTIONS *kfmo;
+	kfmo = kforth_mutate_options_make(
+					{{mt.max_cbs}},				// max_code_blocks
+					{{mt.max_apply}},		// max_apply
+					{{mt.prob_cb}},			// double prob_mutate_codeblock
+					{{mt.pdup}},			// double prob_duplicate
+					{{mt.pdel}},			// double prob_delete
+					{{mt.pins}},			// double prob_insert
+					{{mt.ptsp}},			// double prob_transpose
+					{{mt.pmod}},			// double prob_modify
+					0,						// int merge_mode
+					{{mt.xlen}},			// int xlen
+					pcb );					// int protected_codeblocks
+
+	seed = {{mt.seed}};
+
+	success = do_mutation_test(
+							&kfops,
+							program,
+							program_after,
+							kfmo,
+							seed,
+							{{mt.times}},
+							errbuf,
+							actual_result,
+							{{mt.expected|length}} );
+
+	kforth_mutate_options_delete(kfmo);
+
+	if( ! success ) {
+{%- if mt.expected_error|length == 0 %}
+		snprintf(msg, sizeof(msg), "error: %s", errbuf);
+		FAIL( {{mt.id}}, "{{mt.file}}", {{mt.line}}, msg);
+{%- else %}
+		if( match_error(errbuf, "{{mt.expected_error}}") ) {
+			SUCCESS( {{mt.id}}, "{{mt.file}}", {{mt.line}} );
+		} else {
+			snprintf(msg, sizeof(msg), "error: %s", errbuf);
+			FAIL( {{mt.id}}, "{{mt.file}}", {{mt.line}}, msg);
+		}
+{% endif %}
+		return;
+	}
+
+	SUCCESS( {{mt.id}}, "{{mt.file}}", {{mt.line}} );
+}
+{% endfor %}
+
+{% for mt in merge_tests %}
+//
+// From file "{{mt.file}}", line {{mt.line}}.
+//
+static void merge_test_{{mt.id}}()
+{
+	int success;
+	int pcb = 0;
+	char errbuf[ BUF_SIZE ];
+	char msg[ BUF_SIZE ];
+	uint32_t seed;
+	int merge_mode;
+
+	static const char *program1 =
+{%- for ln in mt.code1 %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+
+	static const char *program2 =
+{%- for ln in mt.code2 %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+
+	static const char *program_after =
+{%- for ln in mt.code_after %}
+			"{{ln}}\n" {% if loop.last %} ; {% endif %}
+{%- endfor %}
+
+	seed = {{mt.seed}};
+	merge_mode = {{mt.merge}};
+
+	success = do_merge_test(
+							program1,
+							program2,
+							program_after,
+							seed,
+							merge_mode,
+							errbuf );
+
+	if( ! success ) {
+{%- if mt.expected_error|length == 0 %}
+		snprintf(msg, sizeof(msg), "error: %s", errbuf);
+		FAIL( {{mt.id}}, "{{mt.file}}", {{mt.line}}, msg);
+{%- else %}
+		if( match_error(errbuf, "{{mt.expected_error}}") ) {
+			SUCCESS( {{mt.id}}, "{{mt.file}}", {{mt.line}} );
+		} else {
+			snprintf(msg, sizeof(msg), "error: %s", errbuf);
+			FAIL( {{mt.id}}, "{{mt.file}}", {{mt.line}}, msg);
+		}
+{% endif %}
+		return;
+	}
+
+	SUCCESS( {{mt.id}}, "{{mt.file}}", {{mt.line}} );
+}
+{% endfor %}
+
+int main(int argc, char *argv[])
+{
+{%- for kt in kforth_tests %}
+	kforth_test_{{kt.id}}();		// "{{kt.file}}", line {{kt.line}}.
+{%- endfor %}
+
+{%- for ct in cell_tests %}
+	cell_test_{{ct.id}}();		// "{{ct.file}}", line {{ct.line}}.
+{%- endfor %}
+
+{%- for mt in mutation_tests %}
+	mutation_test_{{mt.id}}();		// "{{mt.file}}", line {{mt.line}}.
+{%- endfor %}
+
+{%- for mt in merge_tests %}
+	merge_test_{{mt.id}}();			// "{{mt.file}}", line {{mt.line}}.
+{%- endfor %}
+
+	REPORT();
+
+	return 0;
+}

@@ -1,0 +1,70 @@
+include{common.tt}
+MySite.window_title{ Keyboard Shortcuts }
+
+MySite.body{
+
+Section{Keyboard shorcuts}
+
+SubSection{Simulation Keys}
+
+BulletList{
+Item{ H{[F1]} - Start simulation (same as Icon{tb_continue.jpg}) }
+
+Item{ H{[F2]} - Strain Properties. }
+
+Item{ H{[F3]} - Simulate for 1 step. (same as Icon{tb_single.jpg}) }
+
+Item{ H{[F4]} - Stop simulation. (same as Icon{tb_stop.jpg}) }
+
+Item{ H{[F5]} - Clear Radio-active Tracers. }
+
+Item{ H{[F6]} - Strain Population Dialog. }
+
+Item{ H{[F7]} - View Universe properties. }
+
+Item{ H{[F8]} - Examine organism. (same as Icon{tb_examine.jpg}) }
+
+Item{ H{[F10]} - View all. (same as Icon{tb_viewall.jpg}) }
+
+Item{ H{[Ctrl-X]} - Cut organism. (same as Icon{tb_cut.jpg}) }
+
+Item{ H{[Ctrl-C]} - Copy organism. (same as Icon{tb_copy.jpg}) }
+
+Item{ H{[Ctrl-V]} - Paste organism. (same as Icon{tb_paste.jpg}) }
+
+Item{ H{[Ctrl-F]} - Find. }
+
+Item{ H{[Del]} - Delete organism. }
+
+Item{ H{[Up], [Down], [Left], [Right]} - Pan the simulation window. }
+
+Item{ H{[Command-M]} - Clear MOUSE-POS }
+
+}
+
+HRULE{}
+
+SubSection{Debugging Keys}
+P{
+When debugging KFORTH programs (view organism dialog, or kforth interpreter), these keys can be
+used:
+}
+
+BulletList{
+Item{ H{[F5]} - Run }
+
+Item{ H{[F8]} - Clear all breakpoints }
+
+Item{ H{[F9]} - Add/remove breakpoint (at the instruction where the cursor is) }
+
+Item{ H{[F6]} - Step over (skips over call if, ifelse) }
+
+Item{ H{[F7]} - Step }
+}
+
+P{
+Note: On MacOS use the TT{Command} key instead of
+the TT{Ctrl} key.
+}
+
+} //{ MySite.body }

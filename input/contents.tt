@@ -1,0 +1,67 @@
+include{common.tt}
+MySite.window_title{ EvolveName{} Users Manual }
+MySite.body{
+
+Section{Users Manual}
+P{
+Hello USER! Welcome to EvolveName{}. Hack away.
+}
+
+SubSection{Table of contents}
+BulletList{
+Item{ LINK{ URL{ screen_shots.html} Screen Shots}}
+Item{ LINK{ URL{ lightmode.html } Light Mode Screen Shots }}
+Item{ LINK{ URL{ overview.html } Overview }}
+Item{ LINK{ URL{ getting_started.html } Getting Started }}
+Item{ LINK{ URL{ organisms.html } Organisms and Cells }}
+Item{ LINK{ URL{ spores.html } Spores }}
+Item{ LINK{ URL{ genetics.html } Genetics }}
+Item{ LINK{ URL{ mutations.html#mutations } Mutations }}
+Item{ LINK{ URL{ mutations.html#replication } Replication }}
+Item{ LINK{ URL{ kforth.html } The KFORTH Language }}
+Item{ LINK{ URL{ new_universe_dialog.html } Create New Universe }}
+Item{ LINK{ URL{ kforth_interpreter_dialog.html } KFORTH Interpreter }}
+Item{ LINK{ URL{ strain_profiles_dialog.html } Strain Profiles Dialog }}
+Item{ LINK{ URL{ strain_properties_dialog.html } Strain Properties Dialog }}
+Item{ LINK{ URL{ strain_population_dialog.html } Strain Population }}
+Item{ LINK{ URL{ simulation_options_dialog.html } Mutation Settings }}
+Item{ LINK{ URL{ universe_dialog.html } Universe Properties }}
+Item{ LINK{ URL{ view_organism_dialog.html } View Organism }}
+Item{ LINK{ URL{ vision_dialog.html } Vision Data }}
+Item{ LINK{ URL{ sound_tab.html } Sound Data }}
+Item{ LINK{ URL{ odor_tab.html } Odor Data }}
+Item{ LINK{ URL{ viewing.html } Zooming and Panning }}
+Item{ LINK{ URL{ saveload.html } Saving and Loading Simulations }}
+Item{ LINK{ URL{ barriers.html } Barriers & boundries }}
+Item{ LINK{ URL{ cutpaste.html } Cut, Copy, & Paste Organisms }}
+Item{ LINK{ URL{ find_dialog.html } Find Dialog / Searching for Organisms }}
+Item{ LINK{ URL{ rctool.html } Right Click Tools }}
+Item{ LINK{ URL{ radioactive_tracers.html } Radioactive Tracers }}
+Item{ LINK{ URL{ tweak_energy.html } Tweak Energy }}
+Item{ LINK{ URL{ move_organism.html } Moving Organisms }}
+Item{ LINK{ URL{ set_mouse_pos.html } Set MOUSE-POS }}
+Item{ LINK{ URL{ toolbar.html } Toolbar Buttons }}
+Item{ LINK{ URL{ keys.html } Keyboard shortcuts }}
+Item{ LINK{ URL{ evolve_batch.html } Evolve Batch Utility }}
+Item{ LINK{ URL{ faq.html } Frequently Asked Questions }}
+Item{ LINK{ URL{ history.html } History of EvolveName{} }}
+Item{ LINK{ URL{ kforth.html#reference } KFORTH instruction reference }}
+Item{ LINK{ URL{ organisms.html#reference } Organism/Cell instruction reference }}
+Item{ LINK{ URL{ evolved_kforth_samples.html } Evolved KFORTH Examples }}
+Item{ LINK{ URL{ ascii_example.html } ASCII File Format Example }}
+Item{ LINK{ URL{ evolve_preferences.html } Evolve Preferences File "TT{~/.evolve5rc}" }}
+Item{ LINK{ URL{ hanoi_example.html } Example KFORTH (Towers of Hanoi) }}
+Item{ LINK{ URL{ kforth_reference.html } KFORTH instruction reference SEPERATE PAGE }}
+Item{ LINK{ URL{ organism_reference.html } Organism/Cell instruction reference SEPERATE PAGE}}
+Item{ LINK{ URL{ modes.html } Instruction Modes and Bits}}
+Item{ LINK{ URL{ find_reference.html } Find instruction reference SEPERATE PAGE}}
+Item{ LINK{ URL{ glossary.html } Glossary}}
+Item{ LINK{ URL{ executable.html } How to get the application}}
+Item{ LINK{ URL{ architecture.html } Cell CPU Architecture}}
+Item{ LINK{ URL{ simulation.html } Simulation}}
+Item{ LINK{ URL{ activities.html } Activities}}
+Item{ LINK{ URL{ releasenotesev4.html } Release Notes for Evolve4}}
+
+}
+
+} //{ MySite.body }

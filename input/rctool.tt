@@ -1,0 +1,68 @@
+include{common.tt}
+MySite.window_title{ Right Click Tools }
+MySite.body{
+
+Section{Right Click Tools}
+P{
+Clicking on the Icon{tb_rctool.jpg} button will show a menu of possible
+modes that can be assigned to the right mouse button. This menu includes these options:
+}
+
+P{
+IMG{rctool_menu.jpg}
+}
+
+P{
+A checkbox indicates the currently active right click tool. These options are
+also selectable from the main menu B{Edit >> Right Click Tool}.
+}
+
+SubSection{None}
+P{
+By default no right click behavior is specified. Whenever the simulator is started the right
+click tool is reset to "none".
+}
+
+SubSection{Draw Thick Barrier}
+P{
+This will cause the right mouse button to draw a thick barrier inside of the simulation window.
+See the section on LINK{ URL{barriers.html} barriers} for more information.
+}
+
+SubSection{Draw Thin Barrier}
+P{
+This will cause the right mouse button to draw a thin barrier inside of the simulation window.
+See the section on LINK{ URL{barriers.html} barriers} for more information.
+}
+
+SubSection{Radioactive Tracer}
+P{
+The right mouse button can be used to mark organisms with a radioactive tracer.
+See the section on LINK{ URL{radioactive_tracers.html} Radioactive Tracers} for more information.
+}
+
+SubSection{Move Organism}
+P{
+The right mouse can be used to move organisms around.
+See the section LINK{ URL{move_organism.html} Moving Organisms} for more information.
+}
+
+SubSection{Tweak Energy}
+P{
+Lets you modify the amount of energy for organisms, spores and organic material.
+See the section on LINK{ URL{tweak_energy.html} Tweak Energy} for more information.
+}
+
+SubSection{Set MOUSE-POS}
+P{
+This sets the mouse coordinates returned from the MOUSE-POS instruction. A B{red "X"} will be
+shown where the mouse was clicked. To clear the MOUSE-POS marker, click on it again.
+Any cell which executes the TT{MOUSE-POS} instruction will recieve these coordinates. When there
+is no "X" marker set, the TT{MOUSE-POS} instruction returns (-1, -1).
+}
+
+P{
+See the section on LINK{ URL{set_mouse_pos.html} Set MOUSE-POS} for more information.
+}
+
+} //{ MySite.body }

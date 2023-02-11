@@ -1,0 +1,88 @@
+include{common.tt}
+MySite.window_title{ Strain Profiles Dialog }
+MySite.body{
+
+SubSection{Strain Profiles Dialog}
+P{
+This dialog lets you create Strains, Edit Strains, Copy/Delete, Strains.
+This tab lets you change the default seed program, and other properties.
+}
+
+IMG{StrainProfilesDialog.jpg}
+
+P{
+B{Resource File:} shows the complete path to the B{TT{.evolve5rc}} file.
+This file contains all the strain profiles.
+The file has this LINK{ URL{evolve_preferences.html} format}.
+}
+
+HRULE{}
+P{
+This tab lets you customize the mutation rates for this strain profile.
+}
+IMG{StrainProfilesDialogMut.jpg}
+
+P{Detailed information about these mutations available LINK{ URL{simulation_options_dialog.html} here.}}
+
+HRULE{}
+P{
+This tab lets you customize the protected instructions and protected code blocks.
+}
+IMG{StrainProfilesDialogProt.jpg}
+
+P{Protections are explained LINK{ URL{architecture.html} here.}}
+
+P{
+B{Lookup Symbol:} This field allows you to lookup a symbol in
+the Default KFORTH Program and place its code block number into
+the B{Protected Code Blocks} field.
+}
+
+P{
+This is handy when you are
+developing a new program. It is annoying to constantly count
+code block numbers to just set the protections.
+}
+
+HRULE{}
+P{
+This tab lets you customize the behavior of many important instructions.
+}
+IMG{StrainProfilesDialogModes.jpg}
+
+P{Detailed information about these modes available LINK{ URL{modes.html} here.}}
+
+HRULE{}
+P{
+This tab lets you provide a description for your strain.
+}
+IMG{StrainProfilesDialogNotes.jpg}
+
+
+HRULE{}
+P{
+Behold! Look at all the wonderous strains you can choose from:
+}
+IMG{StrainProfilesDialogSelection.jpg}
+
+BulletList{
+Item{ LH{Add Strain Profile:} Click on B{[+]} button. The strain profile
+	which is currently being vieweed will be cloned.
+	Enter a name for the strain which is being added.
+}
+
+Item{ LH{Delete Strain Profile:} Click on B{[-]} button. The strain profile
+	which is currently being viewed will be deleted. The B{'Default'} strain cannot
+	be deleted.
+}
+
+Item{ LH{Rename Strain Profile:} There is no rename function. But you can
+copy the strain profile you want to rename. Enter the new name when prompted.
+Then as a second step, delete the original profile. Whala!!! Renaming has occured.
+}
+
+
+}
+
+
+} //{ MySite.body }

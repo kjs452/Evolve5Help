@@ -1,0 +1,72 @@
+include{common.tt}
+MySite.window_title{ XY Simulations }
+MySite.body{
+
+Section{XY Simulations}
+P{
+The term B{XY Simulation} refers to a specially created simulation in which all
+organisms must reproduce sexually. An XY organism cannot fertilize any spores created
+by itself. It can only fertilize spores that were created by other organisms, which is
+how sexual reproduction occurs in Evolve 4.0.
+}
+
+P{
+The name "xy" refers to the sex chromosomes in human biology.
+}
+
+SubSection{How to create XY simulations}
+P{
+Preceed the KFORTH program with special characters, like this:
+}
+
+IMG{xy_newuniverse.jpg}
+
+P{
+This causes the organisms in that strain to be marked with a special "sex-only" flag.
+You'll need to specify a population number (like 100 and 50 as in this example).
+}
+
+P{
+Boot strapping such a population will require a specially written KFORTH program that looks for
+spores and fertilizes them. Included in the distro are two
+files B{sex_seed.kf} and B{xy_seed.kf} which should get you started.
+}
+
+P{
+These types of simulations are difficult to sustain, but definately are cool things to experiment
+with as they offer a real "gene pool" to observe.
+}
+
+P{
+You can verify the organism is sex-only by examining it. The letters B{XY} will appear
+in this dialog to indicate that the organism is a sex-only reproducer:
+}
+
+P{
+IMG{xy_examine.jpg}
+}
+
+P{
+Your population will spiral out as shown here:
+}
+
+P{
+IMG{xy_spiral.jpg}
+}
+
+Section{Conclusion}
+P{
+XY Simulations are quit different from the normal ones. When the organism is forced to
+reproduce sexually (rarther than asexually), suddenly its job becomes much harder. You'll
+notice that it is very hard to get a good simulation up and running. If it doesn't die off,
+the sim may get crazy creatures that grow to huge proportions.
+}
+
+P{
+B{Update:} A new merge algorithm has been implemented. A random bit string is
+used to control the code block that is chosen from the first and second organism that
+donates a spore. This new algorithm has greatly improved the stability and usefulness
+of XY simulations. (you no longer get "crazy" creatures).
+}
+
+} //{ MySite.body }

@@ -1,0 +1,10 @@
+//{
+// this document triggers the generation of the redirect .htrml pages for each
+// instruction. Any additional redirects can be manually added here
+//}
+
+Redirect_Set_Output_Dir{../output}
+
+Redirect_Make{ref_EXAMPLE.html organism_reference.html ref_CSHIFT}
+
+Instruction_Redirect_Pages{}

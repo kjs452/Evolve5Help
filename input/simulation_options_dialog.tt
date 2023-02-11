@@ -1,0 +1,87 @@
+include{common.tt}
+MySite.window_title{ Mutation Settings Dialog }
+MySite.body{
+
+SubSection{Mutation Settings Dialog}
+P{
+This dialog lets you change the mutation rates. The defaults should be fine though. But
+knock yourself out.
+}
+
+IMG{SimulationOptions.jpg}
+P{
+You can control the probability that a mutation will occur by going to
+the simulation options dialog. The mutation algorithm first decides if
+it will act at the B{instructon-level}, or B{code block-level}.
+}
+
+TableL{
+TH{ B{Mutation Type} }
+TH{ B{Instruction-level} }
+TH{ B{Code Block-level} }
+
+TD{ B{Duplication} }
+	TD{ Pick a random strand of instructions and repeat it at the same spot }
+	TD{ Pick a random code block and add a copy to end of program }
+
+TD{ B{Deletion} }
+	TD{ Pick a random strand of instructions and remove it }
+	TD{ Pick a random code block and remove it. }
+
+TD{ B{Insertion} }
+	TD{ Pick a random strand of instructions and insert it into a random spot. }
+	TD{ insert a new code block and fill with random instructions. }
+
+TD{ B{Transposition} }
+	TD{ Swap 2 random instruction strands }
+	TD{ Swap 2 random code blocks }
+
+TD{ B{Modification} }
+	TD{ Pick a random strand of instruction and modify it. }
+	TD{ Pick a random code block and modify every single instruction or number }
+}
+
+P{
+The setting B{Mutate Code Block} controls the probability of
+performing a code block-level mutation versus an instruction-level mutation.
+The default is B{25%}, which means 1 out of 4 mutations will be code block-level
+mutations.
+}
+
+P{
+The setting B{Max. Code Blocks} limits the size of mutated programs to never
+exceed this maximum number of code blocks. The default is B{100}.
+}
+
+P{
+The setting B{Max. Apply} controls the number of time the mutation algorithm is applied
+before a new organism is born. The default is B{10}. This means that a random number from
+1 to 10 is chosen before mutating a KFORTH program. The mutation algorithm is then applied
+this many times. To disable mutations you can set this to 0. This setting can be any number
+from 0 to 20.
+}
+
+P{
+B{Merge Mode:} Select between different ways of merging programs when MAKE-SPORE
+fertilizes a spore from different parents.
+}
+
+BulletList{ 
+Item{S{0} - interlace code blocks between parents randomly. }
+Item{S{1} - alternate code blocks between parents, starting with parent 1. }
+Item{S{2} - alternate code blocks between parents, starting with parent 2. }
+}
+
+P{
+B{Strand Length:} Defines the average strand length used during mutations.
+When a short sequence of instructions are to be mutated, this parameter is
+used to define the size. A random value between B{1} ... B{Strand Length} is chosen.
+The default is B{4}, but can be B{1} to B{20}.
+}
+
+P{
+See the section, LINK{ URL{mutations.html#mutations} Mutations/Replication} for more information on
+how these probabilities control the mutation algorithm.
+}
+
+} //{ MySite.body }

@@ -1,0 +1,61 @@
+/*
+ * Help me!
+ *
+ * This file produced from help.tmpl and help.tt
+ * (processed by render_code.py)
+ *
+ * This file contains static help strings which were generated
+ * from tagged text documentation.
+ *
+ * kforth instruction documentation is the only help data so far.
+ */
+#include "evolve_simulator.h"
+#include "evolve_simulator_private.h"
+
+//
+// This dialog is used in several contexts
+// The core KFORTH instructions will always be displayed in
+// this list (all masks use MASK_K).
+//
+// MASK_XXXX flags are or'd together and associated
+// with each entry in the KFI table.
+//
+// The contexts are:
+//	Showing instructions in view organism dialog
+//	showing instructions for the kforth interpreter dialog
+//	showing valid instruction for Find expressions (MASK_F)
+//
+//
+
+#define MASK_K			1	/* kforth core instructions */
+#define MASK_C			2	/* cell instruction */
+#define MASK_F			4	/* find instructions */
+
+#define MASK_CORE		8
+#define MASK_INTERACT	16
+#define MASK_VISION		32
+#define MASK_COMMS		64
+#define MASK_QUERY		128
+#define MASK_UNIVERSE	256
+#define MASK_MISC		512
+#define MASK_FIND		1024
+
+static KFORTH_IHELP Kforth_Instruction_Help_Table[] =
+{
+{%- for i in instr %}
+	{{instr[i].mask}},
+	"{{instr[i].name}}",
+	"{{instr[i].csymbol}}",
+	"{{instr[i].usage}}",
+{%- for ln in instr[i].help %}
+	"{{ln}} "{% if loop.last %},{% endif -%}
+{% endfor %}
+
+{% endfor %}
+
+};
+
+KFORTH_IHELP* Kforth_Instruction_Help = &Kforth_Instruction_Help_Table[0];
+
+int Kforth_Instruction_Help_len = sizeof(Kforth_Instruction_Help_Table)/sizeof(KFORTH_IHELP);
+

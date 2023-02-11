@@ -1,0 +1,50 @@
+include{common.tt}
+MySite.window_title{ Toolbar Buttons }
+MySite.body{
+
+Section{Toolbar Buttons}
+
+SubSection{Toolbar}
+
+IMGC{tool_bar.jpg}
+
+BulletList{
+Item{ H{Icon{tb_new.jpg}} - brings up the new simulation wizard. }
+
+Item{ H{Icon{tb_open.jpg}} - open an existing simulation. }
+
+Item{ H{Icon{tb_save.jpg}} - save current simulation. }
+
+Item{ H{Icon{tb_cut.jpg}} - cut selected organism (removes it from the current
+	simulation). }
+
+Item{ H{Icon{tb_copy.jpg}} - copy the selected organism to the clip board. }
+
+Item{ H{Icon{tb_paste.jpg}} - paste the organism from the clip board into the current simulation. }
+
+Item{ H{Icon{tb_single.jpg}} - Simulate the universe 1 step. (Each cell will be simulted for one instruction)}
+
+Item{ H{Icon{tb_continue.jpg}} - start the simulator, but update the display after every step. Use this
+	button to watch the organisms interact. }
+
+Item{ H{Icon{tb_stop.jpg}} - stop the simulation. }
+
+Item{ H{Icon{tb_zoomin.jpg}} - Zoom in. First drag a rectangle using the left mouse, then click
+	this button to zoom into the region. }
+
+Item{ H{Icon{tb_zoomout.jpg}} - Zoom out. }
+
+Item{ H{Icon{tb_viewall.jpg}} - View all. Zoom all the way out and display entire universe. }
+
+Item{ H{Icon{tb_examine.jpg}} - Examine an organism. After selecting an organism, press this button
+	to examine the inner details of the organism. ( LINK{ URL{view_organism_dialog.html} View Organism}). }
+
+Item{ H{Icon{tb_rctool.jpg}} - Right Click Tool. Configure the behavior of the right mouse button.
+		See the section LINK{ URL{rctool.html} right click tools}. }
+}
+
+Item{ Icon{speedctrl.jpg} - This is the speed control. It allows you to control the smoothness of the simulation.
+	These slider and checkbox define the number of simulation steps between redraws.
+}
+
+} //{ MySite.body }

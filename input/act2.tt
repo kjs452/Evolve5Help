@@ -1,0 +1,50 @@
+include{common.tt}
+MySite.window_title{ Activity 2: Bullet }
+MySite.body{
+
+Title{Activity 2: Bullet}
+
+P{
+This example shows how you can add a new capability to the simulator. We
+are going to create a bullet capability. A bullet will be triggered from TT{TRAP1}
+and TT{TRAP6}. These instructions will cause a bullet to be emitted in a particular direction.
+}
+
+IMG{NewUniverse.jpg}
+
+P{
+Create a new I{strain profile} called B{Uneatable}. To make a strain uneatable, set
+the B{EAT Mode} to be B{8}. Install the uneatable strain profile in slot B{5}.
+}
+
+P{
+Create a new I{strain profile} called B{e_bullet}. Configure it with the shoot3.kf seed file.
+Configure B{SPAWN-MODE} to be B{5} (so that this strain has the power to spawn new organisms
+of a different strain).
+}
+
+P{
+Make sure to protect all of this instruction: B{SPAWN} (in the e_bullet strain).
+}
+
+P{
+Make sure to protect all code blocks up to 'evolve'.
+}
+
+P{
+A bullet is just another organism, but it is running a bullet program. This file is
+provided in the application resource folder TT{ev5stuff}. Make sure to use the file B{shoot3.kf}.
+}
+
+BREAK{}
+
+//{ **************************************** }
+
+HEREDOC{ CodeSample{shoot3.kf} }
+
+//{ **************************************** }
+
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }
