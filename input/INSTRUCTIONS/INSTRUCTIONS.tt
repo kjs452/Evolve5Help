@@ -3445,7 +3445,7 @@ Instruction{
 	Returns{
 		BulletList{
 		Item{ B{0} - move failed. }
-		Item{ B{n} - success. where n is the number of cells moved was successful. }
+		Item{ B{n} - success. where n is the number of cells moved. }
 		}
 	}
 
@@ -3472,7 +3472,7 @@ Instruction{
 	Move organism. Organism will move in the direction 
 	specified by (x, y). These coordinates are normalized, 
 	so that (-20, 15) maps to a direction of (-1, 1). 
-	r is 1 on success, else r is 0. 
+	r is non-zero on success, else r is 0. 
 	_EOF_
 }
 
@@ -3487,7 +3487,7 @@ Instruction{
 	Max{ }
 	Flags{
 		Bit0{
-			0={use my location as the orgin of rotation}
+			0={use my location as the origin of rotation}
 			1={use the organism center as the origin of rotation}
 		}
 		Bit1{
@@ -3507,8 +3507,8 @@ Instruction{
 	Description{
 		Rotate the organism by 45 degree units around the cell that executes
 		this instruction. The rotate direction is given by 'n'. A positive 'n' rotates the
-		organism is a clock-wise direction. A negative 'n' rotates the
-		organism by 45 degrees counter-clockwise.
+		organism clock-wise 45 degrees. A negative 'n' rotates the
+		organism 45 degrees counter-clockwise.
 
 		P{
 		If 'n' is zero don't rotate the
@@ -3525,14 +3525,15 @@ Instruction{
 		Item{ Translate all cells in the organism to the new location, and check that
 			the spot is vacant (or contains cells from this organism). If not, return 0. }
 		Item{ Else, rotate organism and return 1. }
-		Item{ A rotation value of B{0} always fails, and returns 0. }
+		Item{ A rotation value of B{0} does nothing, and returns 0. }
 		}
 	}
 
 	Help<<_EOF_
-	rotate organism. 
-	rotate in 45 degree units. positive values are 
-	clockwise rotations, and negative values are counter-clockwise.
+	Rotate the organism by 45 degree units around the cell that executes
+	this instruction. The rotate direction is given by 'n'. A positive 'n' rotates the
+	organism clock-wise 45 degrees. A negative 'n' rotates the
+	organism 45 degrees counter-clockwise.
 	On success r is number of cells rotated.
 	_EOF_
 }
@@ -3569,10 +3570,11 @@ Instruction{
 		}
 
 		Bit4{
-			0={when calculating energy eaten, include remainder:
-					ENERGY_EATEN = ENERGY / NCELLS + ENERGY % NCELLS}
-			1={when calculating energy eaten, don't include remainder:
-					ENERGY_EATEN = ENERGY / NCELLS}
+			0={energy eaten is: cell energy + remainder
+				(this bit is respected only if bits 5, 6, 7,8 are off)
+			}
+			1={energy eaten is: cell energy
+			}
 		}
 
 		Bit5{
@@ -3592,7 +3594,7 @@ Instruction{
 
 		Bit8{
 			0={off}
-			1={take as much energy as possible up to the number of units this cell has}
+			1={use cell energy/3 + remainder }
 		}
 
 		Bit9{
@@ -5263,8 +5265,8 @@ Instruction{
 		Bit3{	0={i can write to spores}
 				1={i cannot write to spores}
 		}
-		Bit4{	0={i can write to cells}
-				1={i cannot write to cells}
+		Bit4{	0={i cannot write to cells}
+				1={i can write to cells}
 		}
 		Bit5{	0={other strains can write to me}
 				1={other strains cannot write to at me}

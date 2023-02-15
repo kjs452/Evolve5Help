@@ -4,7 +4,14 @@ MySite.body{
 
 Section{EvolveName{} Source Code}
 P{
-The Evolve source code is available on github: LINK{ URL{GitHubRepo{}} GitHubRepo{} }
+The Evolve source code is available on github: LINK{ URL{GitHubRepo{}} GitHubRepo{} }.
+The repository names are:
+}
+
+BulletList{
+Item{ H{Evolve5:} The MacOS Xcode project for the EvolveName{} GUI.}
+Item{ H{Evolve5Batch:} The command line utility to run the simulator without any GUI. multi-platform. }
+Item{ H{Evolve5Help:} The help files, unit tests, scripts, instruction documentation, static site generation, Tagged{Text}. }
 }
 
 SubSection{License}

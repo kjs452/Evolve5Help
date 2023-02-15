@@ -56,8 +56,13 @@ Item{ S{# of living children:} number of organism that have this organism as a p
 Item{ S{Age:} The number of simulation steps this organism has survived through.
 }
 
-Item{ S{Energy:} How much energy does this organism have? This excludes the amount of energy
-	that went into stack elements.
+Item{ S{Energy:} How much energy does this organism have? The first number is
+energy B{per cell}. The second number is total energy for the entire organism.
+Energy per cell is calculated by TT{total_energy / number_of_cells}.
+
+P{
+I{Energy per cell} is useful to see because the TT{EAT, GROW, MAKE-SPORE} instructions use it.
+}
 }
 
 Item{ S{Strain #:} This is the strain number for the whole organism. The color of the organism

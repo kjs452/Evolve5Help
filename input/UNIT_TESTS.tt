@@ -17,6 +17,7 @@
 RenderCode{}
 
 IFEQUAL{ foo foo THEN{
+}} //{ ==== IFEQUAL foo fooOFF ===================== USE THIS TO DISABLE/ENABLE SECTIONS }
 
 UnitTest_KFORTH{
 	Code<<_EOF_
@@ -2692,7 +2693,7 @@ UnitTest_CELL{
 
 
 //{ ======================================================================
-// ROTATE - not diagonal, not centered, counter-clockwise
+// ROTATE - not diagonal, not centered, clockwise
 //}
 UnitTest_CELL{
 	Setup<<_EOF_
@@ -2730,105 +2731,56 @@ UnitTest_CELL{
 
 	Code<<_EOF_
 		main: {
+			1 ROTATE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{5}
+}
+
+
+//{ ======================================================================
+// ROTATE - not diagonal, not centered, counter clockwise
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 0;
+		u->strop[0].rotate_mode = 2;
+	_EOF_
+
+	Map<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#......cC......#
+		#.......c......#
+		#......cc......#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	AfterMap<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#.......Ccc....#
+		#.......c.c....#
+		#..............#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	Code<<_EOF_
+		main: {
 			-1 ROTATE R0!
-			1 R9!
-		}
-		other_cells: { 1 ?loop }
-	_EOF_
-
-	Expected{5}
-}
-
-
-//{ ======================================================================
-// ROTATE - not diagonal, not centered, clockwise
-//}
-UnitTest_CELL{
-	Setup<<_EOF_
-		//u->strop[0].diagonal = 0;
-		u->strop[0].rotate_mode = 2;
-	_EOF_
-
-	Map<<_EOF_
-		################
-		#..............#
-		#..............#
-		#..............#
-		#..............#
-		#......cC......#
-		#.......c......#
-		#......cc......#
-		#..............#
-		#..............#
-		################
-	_EOF_
-
-	AfterMap<<_EOF_
-		################
-		#..............#
-		#..............#
-		#..............#
-		#..............#
-		#.......Ccc....#
-		#.......c.c....#
-		#..............#
-		#..............#
-		#..............#
-		################
-	_EOF_
-
-	Code<<_EOF_
-		main: {
-			1 ROTATE R0!
-			1 R9!
-		}
-		other_cells: { 1 ?loop }
-	_EOF_
-
-	Expected{5}
-}
-
-
-//{ ======================================================================
-// ROTATE - not diagonal, centered, clockwise
-//}
-UnitTest_CELL{
-	Setup<<_EOF_
-		//u->strop[0].diagonal = 0;
-		u->strop[0].rotate_mode = 2;
-	_EOF_
-
-	Map<<_EOF_
-		################
-		#..............#
-		#..............#
-		#..............#
-		#..............#
-		#......cC......#
-		#.......c......#
-		#......cc......#
-		#..............#
-		#..............#
-		################
-	_EOF_
-
-	AfterMap<<_EOF_
-		################
-		#..............#
-		#..............#
-		#..............#
-		#..............#
-		#.......Ccc....#
-		#.......c.c....#
-		#..............#
-		#..............#
-		#..............#
-		################
-	_EOF_
-
-	Code<<_EOF_
-		main: {
-			1 ROTATE R0!
 			1 R9!
 		}
 		other_cells: { 1 ?loop }
@@ -2866,9 +2818,9 @@ UnitTest_CELL{
 		#..............#
 		#..............#
 		#..............#
-		#.....c.c......#
-		#.....ccC......#
 		#..............#
+		#.......Ccc....#
+		#.......c.c....#
 		#..............#
 		#..............#
 		#..............#
@@ -2888,12 +2840,12 @@ UnitTest_CELL{
 
 
 //{ ======================================================================
-// ROTATE - diagonal, not centered, clockwise
+// ROTATE - not diagonal, centered, clockwise
 //}
 UnitTest_CELL{
 	Setup<<_EOF_
-		//u->strop[0].diagonal = 1;
-		u->strop[0].rotate_mode = 0;
+		//u->strop[0].diagonal = 0;
+		u->strop[0].rotate_mode = 2;
 	_EOF_
 
 	Map<<_EOF_
@@ -2915,10 +2867,10 @@ UnitTest_CELL{
 		#..............#
 		#..............#
 		#..............#
+		#.....c.c......#
+		#.....ccC......#
 		#..............#
-		#.......C......#
-		#......c.c.....#
-		#........cc....#
+		#..............#
 		#..............#
 		#..............#
 		################
@@ -2964,6 +2916,55 @@ UnitTest_CELL{
 		#..............#
 		#..............#
 		#..............#
+		#..............#
+		#.......C......#
+		#......c.c.....#
+		#........cc....#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			-1 ROTATE R0!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{5}
+}
+
+
+//{ ======================================================================
+// ROTATE - diagonal, not centered, clockwise
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		//u->strop[0].diagonal = 1;
+		u->strop[0].rotate_mode = 0;
+	_EOF_
+
+	Map<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
+		#..............#
+		#......cC......#
+		#.......c......#
+		#......cc......#
+		#..............#
+		#..............#
+		################
+	_EOF_
+
+	AfterMap<<_EOF_
+		################
+		#..............#
+		#..............#
+		#..............#
 		#......c.......#
 		#.......C......#
 		#.....cc.......#
@@ -2975,7 +2976,7 @@ UnitTest_CELL{
 
 	Code<<_EOF_
 		main: {
-			-1 ROTATE R0!
+			1 ROTATE R0!
 			1 R9!
 		}
 		other_cells: { 1 ?loop }
@@ -3328,8 +3329,6 @@ UnitTest_CELL{
 	Expected{1 101}
 }
 
-}} //{ ==== IFEQUAL foo fooOFF ===================== KJS KJS END OF DISABLED SECTION, RE-ENABLE }
-
 //{ ======================================================================
 // EAT - interrupt test
 //
@@ -3382,6 +3381,60 @@ UnitTest_CELL{
 	_EOF_
 
 	Expected{50 60 123}
+}
+
+//{ ======================================================================
+// EAT - take 1/3 energy + remainder
+//
+//}
+UnitTest_CELL{
+	Setup<<_EOF_
+		u->strop[0].eat_mode = 4096 + 2048 + 256 + 512;		// trap6, (Half+Remainder), don't terminate cell
+		C[0]->organism->energy = 10;
+		A[0]->organism->energy = 1024;
+	_EOF_
+
+	Map<<_EOF_
+		#########
+		#.......#
+		#.......#
+		#...C...#
+		#...A...#
+		#.......#
+		#########
+	_EOF_
+
+	Code<<_EOF_
+		main: {
+			0 -1 EAT R0!
+			ENERGY R1!
+			wait10 call
+			0 -1 LISTEN pop R2!
+			1 R9!
+		}
+		other_cells: { 1 ?loop }
+		wait10: { 10 { 1- dup 0 > ?loop } call }
+	_EOF_
+
+	ACode<<_EOF_
+		main: {
+			other_cells call
+		}
+
+		_trap1: {}
+		_trap2: {}
+		_trap3: {}
+		_trap4: {}
+		_trap5: {}
+		_trap6: { 710 MOOD! }
+		_trap7: {}
+		_trap8: {}
+		_trap9: {}
+
+		other_cells: { 1 ?loop }
+	_EOF_
+
+	Expected{342 352 710}
 }
 
 //{ ======================================================================
@@ -8843,7 +8896,7 @@ UnitTest_CELL{
 		u->strop[0].read_mode = 4 + 1;
 		u->strop[1].read_mode = 0;
 
-		u->strop[0].write_mode = 4 + 1;
+		u->strop[0].write_mode = 4 + 1 + 16;
 		u->strop[1].write_mode = 0;
 	_EOF_
 
@@ -8937,8 +8990,8 @@ UnitTest_CELL{
 //}
 UnitTest_CELL{
 	Setup<<_EOF_
-		u->strop[0].write_mode = 4 + 1 + 128 + 64;		// trap1
-		u->strop[1].write_mode = 4 + 1 + 128 + 64;		// trap1
+		u->strop[0].write_mode = 4 + 1 + 128 + 64 + 16;		// trap1
+		u->strop[1].write_mode = 4 + 1 + 128 + 64 + 16;		// trap1
 	_EOF_
 
 	Map<<_EOF_

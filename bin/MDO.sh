@@ -76,9 +76,9 @@ generate_file_list		Evolve5Help		TURD/markupsafe			.py
 
 generate_files			Evolve5			README.md
 generate_file_list		Evolve5			Evolve5					.swift .xib
-generate_files			Evolve5			Evolve5/Base.lproj
 generate_files			Evolve5			Evolve5/Evolve5.entitlements
 generate_files			Evolve5			Evolve5/Info.plist
+generate_files			Evolve5			Evolve5.xcodeproj/project.pbxproj
 generate_file_list		Evolve5			Simulator				.cpp .h
 generate_file_list		Evolve5			bmp						.png .bmp
 generate_file_list		Evolve5			help					.html .jpg .gif .css .png

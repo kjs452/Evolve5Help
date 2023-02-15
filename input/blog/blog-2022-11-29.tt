@@ -18,6 +18,41 @@ first paragraph
 
 //{
 Blog{
+Title{In Praise of Xcode/Swift/Apple}
+Date{ yyyy-mm-dd }
+Time{hh:mm}
+P{
+And app store stuff. I just want to tell apple that my development experience going from
+zero to this application was amazing. I knew no swift, xcode or macos GUI programming when i started.
+}
+
+P{
+I had frustrations, but the tools damn well worked. My Mac Mini M2 chip thingy was amazing. Everything just
+worked and I was productive. Swift was a wierd language, but overall the fact that you can interface to C nicely was
+much appreicated.
+}
+
+P{
+The Gui builder was outstanding if you avoided story boards and constraints. I stuck with simple things.
+The apple documentation (online and offline) was superb. And all this Xcode is free! Thank you apple.
+}
+
+P{
+Old school C programming support seemed awesome out of the box, I didn't have to mess with anything.
+}
+
+P{
+Publishing to the app store scared the shit out of me. I have been through hellish app review processes
+before. And it sucks. Back and forth between reviewer and yourself... ts nerve wracking. Anyway, my experience
+was awesome. The website was clear and easy to use. The status updates made sense. The errors made sense and were
+fixable.
+}
+
+}
+//}
+
+//{
+Blog{
 Title{Meme Machine}
 Date{ yyyy-mm-dd }
 Time{hh:mm}

@@ -964,10 +964,53 @@ static UNIVERSE *Make_Universe_From_Map(
 		}
 	}
 
+	A[a] = NULL;
+	B[b] = NULL;
+	C[c] = NULL;
+
 	kforth_delete(loop_forever_kfp0);
 	kforth_delete(loop_forever_kfp1);
 
 	return u;
+}
+
+//
+// Set the CELL X[i] to NULL if it is not found in 'u'
+// The array X[] is NULL terminated.
+//
+static void clear_if_not_found(UNIVERSE *u, CELL **X)
+{
+	int found, x;
+	CELL *cell;
+
+	for(x=0; X[x] != NULL; x++) {
+		found = 0;
+		for(cell=u->cells; cell; cell=cell->u_next) {
+			if( X[x] == cell ) {
+				found = 1;
+			}
+		}
+
+		if( ! found ) {
+			X[x] = NULL;
+		}
+	}
+}
+
+//
+// Set A[0], B[0], C[0] to  NULL if they are no longer valid references
+// cells located in 'u'.
+//
+// This clears these variables before they are used to rebuild the universe and
+// check for correctness.
+//
+// A cell could have died, so we need to unbind any invalid reference.
+//
+static void unbind_variables(UNIVERSE *u, CELL **A, CELL **B, CELL **C)
+{
+	clear_if_not_found(u, A);
+	clear_if_not_found(u, B);
+	clear_if_not_found(u, C);
 }
 
 //
@@ -1419,6 +1462,8 @@ static void cell_test_{{ct.id}}()
 			return;
 		}
 	}
+
+	unbind_variables(u, A, B, C);
 
 	success = read_write_rebuild(&u, A, B, C, msg);
 	if( !success ) {

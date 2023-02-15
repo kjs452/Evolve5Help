@@ -17,8 +17,8 @@ Item{ LINK{ URL{#protected_codeblock} Protected Code Blocks} }
 Item{ LINK{ URL{#protected_instructions} Protected Instructions} }
 Item{ LINK{ URL{#maxcb} Maximum Code Blocks} }
 Item{ LINK{ URL{#traps} Traps} }
-Item{ LINK{ URL{#interrupts} Interrupts} }
 Item{ LINK{ URL{#trap_safety} Trap Safety} }
+Item{ LINK{ URL{#interrupts} Interrupts} }
 Item{ LINK{ URL{#strains} Strains and Modes} }
 }
 
@@ -116,7 +116,7 @@ REF{maxcb}
 SubSection{Maximum Code Blocks}
 P{
 This value controls the number of un-protected code blocks
-that can be mutated into existence. You can set this value from the Mutations tab of the
+that can be mutated into existence. You can set this value from the LINK{ URL{strain_properties_dialog.html#mutations} Mutations tab} of the
 strain settings dialog.
 }
 
@@ -128,21 +128,6 @@ P{
 A trap is an instruction which calls one of the special code block numbers. The special code blocks numbers are: TT{1, 2, 3, ..., 9}.
 These numbers correspond to code block numbers 1,2,3, ...9. When unprotected code wants to call protected code,
 it would use a TRAP instruction. For example, the TT{TRAP7} instruciton calls code block 7.
-}
-
-HRULE{}
-
-REF{interrupts}
-SubSection{Interrupts}
-P{
-Some instructions can be configured to interupt the target cell. For example,
-the TT{SEND} instruction can interrupt the cell in which the SEND operation was applied to.
-An interrupt uses the trap code blocks. By setting bits in the TT{SEND} mode, it can be configured to trigger an interupt using
-the TT{TRAP3} code block.
-}
-
-P{
-The cell that is interrupted will finds its flow of control transferred to the appropriate trap code block.
 }
 
 HRULE{}
@@ -173,6 +158,21 @@ P{
 This checks that there are enough call stack and data stack elements to perform
 the operation. If not, then exit. The third statement checks if there are the right
 number of arguments provided.
+}
+
+HRULE{}
+
+REF{interrupts}
+SubSection{Interrupts}
+P{
+Some instructions can be configured to interupt the target cell. For example,
+the TT{SEND} instruction can interrupt the cell in which the SEND operation was applied to.
+An interrupt uses the trap code blocks. By setting bits in the TT{SEND} mode, it can be configured to trigger an interupt using
+the TT{TRAP3} code block.
+}
+
+P{
+The cell that is interrupted will finds its flow of control transferred to the appropriate trap code block.
 }
 
 HRULE{}
