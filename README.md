@@ -13,5 +13,4 @@ This scripts here support the Evolve 5.0 application. This application is explai
 That website is created by the python scripts in this repo.
 
 Here is a screen shot of the application:
-![alt text](https://github.com/kjs452/blob/Evolve5Help/input/IMAGES/hanoi3.jpg "screen shot")
-
+![alt text](https://github.com/kjs452/Evolve5Help/blob/main/input/IMAGES/hanoi3.jpg "screen shot")
