@@ -6,7 +6,7 @@ Section{Towers of Hanoi}
 
 //{ **************************************** }
 
-HEREDOC{ CodeSample{code_hanoi.kf} }
+HEREDOC{ CodeSample{towers_of_hanoi.kf} }
 
 //{ **************************************** }
 

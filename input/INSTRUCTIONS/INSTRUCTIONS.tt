@@ -5780,7 +5780,7 @@ Instruction{
 	}
 
 	Help<<_EOF_
-		Query the mouse position. Returns (0, 0) if no mouse position set.
+		Query the mouse position. Returns (-1, -1) if no mouse position set.
 	_EOF_
 }
 

@@ -32,29 +32,29 @@ Here's some KFORTH instructions and what they will return, assuming the data sho
 
 CodeSample<<_EOF_
 
-      1 NEAREST		; returns (-1, 1)
+      1 NEAREST		; returns (1, 0)
 
 _EOF_
 
 P{
-The mask is '1' meaning find the nearest CELL. Which would be direction (-1, 1). There
-are three cells visible to this cell, and the one at (-1, 1) has the smallest distance; 29.
+The mask is '1' meaning find the nearest CELL. Which would be direction (1, 0). There
+are six cells visible to this cell, and the one at (1, 0) has the smallest distance: 3.
 }
 
 CodeSample<<_EOF_
 
-      3 NEAREST		; returns (-1, -1)
+      3 NEAREST		; returns (1, 0)
 
 _EOF_
 
 P{
-The mask is '3' meaning find the nearest CELL or SPORE. Which would be direction (-1, -1) as the
+The mask is '3' meaning find the nearest CELL or SPORE. Which would be direction (1, 0) as the
 distance 11 is the smallest containing a SPORE.
 }
 
 CodeSample<<_EOF_
 
-      8 FARTHEST	; returns (1, 1)
+      8 FARTHEST	; returns (-1, 0)
 
 _EOF_
 
@@ -67,47 +67,25 @@ may differ.
 
 CodeSample<<_EOF_
 
-      1 -1 WHERE	; returns 46.
-
-_EOF_
-
-P{
-The WHERE instruction returns the distance value for the what is seen along direction (1, -1). The result
-would be 46.
-}
-
-CodeSample<<_EOF_
-
-      0 1 WHAT		; returns 8.
-
-_EOF_
-
-P{
-The WHAT instruction returns the type of thing seen (a 'what' value). In this case it returns
-8, because the along direction (0, 1) we see a barrier. And a BARRIER's 'what' value is 8.
-}
-
-CodeSample<<_EOF_
-
-      15 NEAREST		; returns (-1, -1)
+      15 NEAREST		; returns (1, 0)
 
 _EOF_
 
 P{
 The NEAREST and FARTHEST instructions take a mask, so OR'ing 1, 2, 4, and 8 is "everything". The OR'ing
 of all what-values is 15. This instruction therefore will return the direction to nearest CELL, SPORE,
-ORGANIC, or BARRIER. The result is direction (-1, -1) because 11 is the smallest distance.
+ORGANIC, or BARRIER. The result is direction (1, 0) because 3 is the smallest distance.
 }
 
 CodeSample<<_EOF_
 
-      15 FARTHEST		; returns (1, 0)
+      15 FARTHEST		; returns (0, -1)
 
 _EOF_
 
 P{
-Here we get (1, 0). Looing along direction (1, 0) we see something at a distance of 87. This is the largest
-distance.
+Here we get (0, -1). Looing along direction (0, -1) we see something at a distance of 49. This is the largest
+distance
 }
 
 HRULE{}
@@ -123,6 +101,10 @@ P{
 SubSection{HOTTEST, COLDEST and TEMPERATURE Examples}
 The TEMPERATURE of the organism is how much energy it has. The HOTTEST thing is the thing
 with the most energy. The COLDEST thing is the thing with the least energy.
+}
+
+P{
+More information about vision instructions LINK{ URL{organisms.html#look} here}.
 }
 
 

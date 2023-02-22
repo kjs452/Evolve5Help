@@ -16,7 +16,7 @@ DEFINE{ PHONE{+1 (999) 999-9999} }
 DEFINE{ CRYEARS{2006-2023} }
 DEFINE{ EvolveTitle{Evolve Ver{}} }
 DEFINE{ EvolveName{Evolve Ver{}} }
-DEFINE{ ReleasedOn{February 15, 2023} }			//{ date that this version was released }
+DEFINE{ ReleasedOn{February 22, 2023} }			//{ date that this version was released }
 DEFINE{ EvolvePrice{$20 USD} }					//{ Application Prive }
 DEFINE{ PLATFORM{Mac} }
 

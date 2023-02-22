@@ -27,7 +27,7 @@ Here's some KFORTH instructions and what they will return, assuming the data sho
 }
 
 CodeSample<<_EOF_
-    34 1 0 SAY      ; send '34' along vector (1,0)
+    -21431 1 0 SAY      ; send '-21431' along vector (1,0)
 _EOF_
 
 BREAK{}
@@ -48,5 +48,8 @@ IMG{cell_com.gif}
 
 BREAK{}
 
+P{
+More information about sound instructions LINK{ URL{organisms.html#cellular_communications} here}.
+}
 
 } //{ MySite.body }

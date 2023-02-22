@@ -28,11 +28,16 @@ Here's some KFORTH instructions and what they will return, assuming the data sho
 }
 
 CodeSample<<_EOF_
-      1 1 SMELL     ; returns -8
-      0 0 SMELL     ; returns 62
+      1 1 SMELL     ; returns -42
+      0 0 SMELL     ; returns -42
 
      62 -1 1 EXUDE   ; write '62' to grid at the offset (-1, 1)
 _EOF_
+
+P{
+More information about SMELL/EXUDE instructions LINK{ URL{organisms.html#smell} here}.
+}
+
 
 
 } //{ MySite.body }

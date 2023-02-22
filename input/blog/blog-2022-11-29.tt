@@ -62,6 +62,7 @@ One of the new things since 2007 was reading meme machine.
 }
 //}
 
+//{
 Blog{
 Title{Energy Concentrations}
 Date{ 2023-02-15 }
@@ -136,15 +137,43 @@ evolve:
 _EOF_
 
 }
+//}
+
+//{
+Blog{
+Title{If the design takes too long implement...}
+Date{ 2023-02-22 }
+Time{2:22}
+P{
+I{...the design is wrong.}. I decided to not implement the I{Edit Organism} feature. It was too complex. It sounded simple on paper, but
+it had too many corner cases to be worthwhile.
+When I implemented the Biomorphs program, which was a substantial bit of programming, I had no need for a "edit organism". I got by
+just fine with simpler workflows. Since then my love for the Edit Organism feature has diminished a lot.
+}
+
+P{
+My procrastination was probably related to the muddled concept of Edit Organism. I think this is an example of, "If
+the designing is taking too long to create the design is wrong.". But, my procrastination meant I got lots of other stuff
+done on the simulator. Good stuff.
+}
+
+P{
+This means a great version has been submitted to apple. It has a super useful feature set. It is extremely well
+documented. It is highly tested and polished. EvolveName{} is ready.
+}
+
+}
+//}
+
 
 Blog{
-Title{Relaxed MacOS Requirements (10.15)}
+Title{Relaxed MacOS Requirements}
 Date{ 2023-02-15 }
 Time{1:00}
 P{
 Good news!
 The free B{Evolve4} application has had its MacOS version requirement relaxed.
-You can download the application if you have a MacOS version 10.15 or above.
+You can download the application if you have a MacOS version B{10.15} or above.
 }
 
 P{
@@ -156,7 +185,13 @@ documentation for the application. And these files are included with the applica
 in a folder called 'help'. This program is B{100%} offline, even for documentation.
 }
 
+P{
+The full version is going great, but it is not done. I am still finishing up
+the Edit Organism feature. Estimated release is now: B{Feb 22}
 }
+
+}
+
 
 Blog{
 Title{Still working 2}
@@ -194,6 +229,22 @@ P{
 These instructions are how the LINK{ URL{../act4.html} tank activity} works.
 }
 
+}
+
+Blog{
+Title{Biomorphs Activity}
+Date{ 2023-02-20 }
+Time{1:00}
+P{
+While I drag my feet on finishing the Edit Organism feature, I wrote a new KFORTH program to demonstrate
+the features of EvolveName{}. This is a B{biomorphs} clone. It turned out really well, even though I
+could still tweak it B{a lot}. It proves out a lot of concepts
+like B{interrupts}, B{mouse-pos}, B{protections}, and the value of B{strain profiles}.
+}
+
+P{
+I'm happy to present the LINK{ URL{../act3.html} biomorphs activity}.
+}
 }
 
 Blog{

@@ -12,7 +12,6 @@
 ;   R5 - y
 ;   R6 - random dir index
 ;
-
 main:
 {
     7 R2!               ; Strain 7. set the strain number here (0-7)
@@ -41,7 +40,7 @@ main:
 
         excrete call
 
-        ; reproduce call ; don't do this, it doesn't work
+        ; reproduce call ; turned off
 
     1 ?loop } call
 }

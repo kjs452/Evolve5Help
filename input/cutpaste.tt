@@ -45,4 +45,10 @@ P{
 B{Move Organism} features useful for this kind of experimentation.)
 }
 
+Section{Blank Universe}
+P{
+The LINK{ URL{toolbar.html} toolbar} button Icon{tb_new.jpg} brings up a B{blank} simulation. This provides a quick
+place to paste your organism's into.
+}
+
 } //{ MySite.body }

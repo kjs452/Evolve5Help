@@ -15,7 +15,7 @@ All of the physics of the simulation are embodied by these instructions. The
 general physics to be maintained are: (1) Locality (most instructions operate on nearest neighbors).
 (2) Conservation of energy (energy is only ever transferred). (3) Exclusion principle (nothing
 can occupy the same grid location as something else).
-(4) Organism connectivity maintained.
+(4) Connectivity of the cells in an organism.
 }
 
 P{
@@ -123,7 +123,7 @@ REF{connectivity}
 SubSection{Organism Connectivity}
 P{
 Organisms consists of one or more cells. To ensure the shape of
-an organism remains coherent Evolve will enforce the connectivity constrain
+an organism remains coherent Evolve will enforce the connectivity constraint
 that B{a cell much be reachable in one of the 8 directions surrounding the cell}.
 }
 
@@ -145,19 +145,14 @@ one neighbor in one of the 8 directions.
 }
 
 P{
-In this example, after the dead cell is removed, we have a properly connected organism.
+In this example, after the dead cell is removed, we still have a properly connected organism.
 }
 
 IMG{connect3.gif}
 
 P{
-The "L" shaped region had the smaller number of cells, so it was killed off. This
-is how "organic material" gets created. It is left over material from such interactions.
-Each white square has a fraction of the original organisms energy amount.
-}
-
-P{
-Let's look at another example:
+Sometimes the connectivity between the cells is broken. If a cell is kills,
+the largest region is kept, and the smaller regions will be converted to organic material.
 }
 
 IMG{connect4.gif}
@@ -170,21 +165,15 @@ So in this case we just kill of the cell in question.
 IMG{connect5.gif}
 
 P{
-The following are examples of bogus organisms:
+These are properly connected:
 }
 
 IMG{organism_bad1.gif}
 
-P{
-This is bogus because cell 2 doesn't connect to cell 4. And cell 4 doesn't
-connect to cell 5.
-}
-
 IMG{organism_bad2.gif}
 
 P{
-This organism is bogus because cell 1 doesn't connect to cell 3. The
-rest of the organism is okay though.
+This is because all the cells are touching in at least one of the 8 directions.
 }
 
 HRULE{}

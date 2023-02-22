@@ -9,7 +9,7 @@ SubSection{Toolbar}
 IMGC{tool_bar.jpg}
 
 BulletList{
-Item{ H{Icon{tb_new.jpg}} - brings up the new simulation wizard. }
+Item{ H{Icon{tb_new.jpg}} - create a blank universe. this is useful as a place to paste organisms which were cut/copied. }
 
 Item{ H{Icon{tb_open.jpg}} - open an existing simulation. }
 

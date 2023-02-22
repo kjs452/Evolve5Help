@@ -1,0 +1,89 @@
+include{common.tt}
+MySite.window_title{ Activity 3: Biomorphs }
+MySite.body{
+
+Title{Activity 3: Biomorphs}
+
+P{
+This organism will play the B{Biomorphs} game.
+}
+
+IMGCB{act3.jpg}
+
+BREAK{}
+
+P{
+These mutation settings are important for making this simulation work.
+}
+
+BulletList{
+Item{ S{Max. Code Blocks:}
+	Make sure this is B{1}.
+}
+Item{ S{Mutate Code Block:}
+	Make sure this is B{0.00 %}.
+}
+Item{ S{Deletion:}
+	Recommended B{1.50 %}.
+}
+}
+
+P{
+This is important. Protect all these instructions, have fun checking them all:
+B{
+ call if ifelse ?loop ?exit CB 
+    CBLEN CSLEN DSLEN R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R0! 
+    R1! R2! R3! R4! R5! R6! R7! R8! R9! R0++ R1++ R2++ 
+    R3++ R4++ R5++ R6++ R7++ R8++ R9++ --R0 --R1 --R2 
+    --R3 --R4 --R5 --R6 --R7 --R8 --R9 PEEK POKE NUMBER 
+    NUMBER! ?NUMBER! OPCODE OPCODE! OPCODE' TRAP1 TRAP2 
+    TRAP3 TRAP4 TRAP5 TRAP6 TRAP7 TRAP8 TRAP9 MAX_INT 
+    MIN_INT HALT nop OMOVE EAT MAKE-SPORE MAKE-ORGANIC 
+    MAKE-BARRIER GROW.CB EXUDE LOOK NEAREST FARTHEST SIZE 
+    BIGGEST SMALLEST TEMPERATURE HOTTEST COLDEST SMELL 
+    MOOD MOOD! BROADCAST SEND RECV ENERGY AGE NUM-CELLS 
+    HAS-NEIGHBOR SEND-ENERGY POPULATION POPULATION.S SHOUT 
+    LISTEN SAY READ WRITE KEY-PRESS MOUSE-POS SPAWN S0 
+    S0! G0 G0! 
+}
+}
+
+P{
+These instruction modes must be configured:
+}
+
+BulletList{
+Item{ S{Look Mode:} recommended be: B{1}.
+}
+Item{ S{Grow Size:} recommended to be: B{100}.
+}
+Item{ S{Rotate Mode:} should be: B{1}.
+}
+Item{ S{KEY-PRESS Mode:} must be: B{16}. Sets up interrupt TT{trap2}.
+}
+}
+
+P{
+Protect all the code blocks up to the symbol B{'evolve'}. This number will vary based on the latest code.
+}
+
+P{
+The strain number is hard coded in the function B{'clone'}. If you use a strain # number different
+than B{0}, then change the hard coded B{0} in B{'clone'}.
+}
+
+P{
+B{Energy:} Must be at least B{32} units of energy, just use 1,000.
+}
+
+
+//{ **************************************** }
+
+HEREDOC{ CodeSample{biomorphs.kf} }
+
+//{ **************************************** }
+
+BREAK{}
+BREAK{}
+
+} //{ MySite.body }
