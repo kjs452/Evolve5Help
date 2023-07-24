@@ -1,4 +1,4 @@
-include{common.tt}
+include{../common.tt}
 
 //{
 //
@@ -16,136 +16,22 @@ first paragraph
 
 //}
 
-//{
 Blog{
-Title{In Praise of Xcode/Swift/Apple}
-Date{ yyyy-mm-dd }
-Time{hh:mm}
-P{
-And app store stuff. I just want to tell apple that my development experience going from
-zero to this application was amazing. I knew no swift, xcode or macos GUI programming when i started.
-}
-
-P{
-I had frustrations, but the tools damn well worked. My Mac Mini M2 chip thingy was amazing. Everything just
-worked and I was productive. Swift was a wierd language, but overall the fact that you can interface to C nicely was
-much appreicated.
-}
-
-P{
-The Gui builder was outstanding if you avoided story boards and constraints. I stuck with simple things.
-The apple documentation (online and offline) was superb. And all this Xcode is free! Thank you apple.
-}
-
-P{
-Old school C programming support seemed awesome out of the box, I didn't have to mess with anything.
-}
-
-P{
-Publishing to the app store scared the shit out of me. I have been through hellish app review processes
-before. And it sucks. Back and forth between reviewer and yourself... ts nerve wracking. Anyway, my experience
-was awesome. The website was clear and easy to use. The status updates made sense. The errors made sense and were
-fixable.
-}
-
-}
-//}
-
-//{
-Blog{
-Title{Meme Machine}
-Date{ yyyy-mm-dd }
-Time{hh:mm}
-P{
-One of the new things since 2007 was reading meme machine.
-}
-}
-//}
-
-//{
-Blog{
-Title{Energy Concentrations}
-Date{ 2023-02-15 }
-Time{2:00}
-P{
-I think I noticed a reason for a boring part of my simulations.
-At the beginning of most simulations
-you will see cool organisms exploring the grid everywhere. With lots of
-interesting things to watch. But then after a while,
-all the cells cluster into tight bunches of one or two groups.
-}
-
-P{
-It makes sense to me. What I think I understand now is this: Only where the highest concentrations
-of energy are, are the most populations. It is a selection process, you don't surive without going where
-the energy is. Anyway, I don't know how to fix. I have ideas. Energy needs to be distributed away from
-main cluster. Energy needs to be conserved too. Until recently energy could only be transferred
-gdirectly. I enhance the TT{SEND-ENERGY} instruction to allow energy to be sent remotely.
-}
-
-P{
-I quickly tested an idea. I hid OMOVE behind a trap. I used the TRAP instruction to replace OMOVE.
-The new implementation would send energy in the opposite direction as well as doing the normal OMOVE.
-It didn't work, the organisms all froze and refused to move.
-}
-
-CodeSample<<_EOF_
-; Strain 2: emit-omove
-; Protected Code Blocks: 13
-; Protected Instructions: OMOVE MAKE-BARRIER SPAWN 
-; Instruction Modes: EAM=1664 MSE=100 GE=100 GS=20 ROM=1 
-;    SHM=112 SAM=160 SEM=1024 WRM=784 SNDM=4 
-; MaxApply=5 MaxCB=50 StrandLen=4 
-main:
-{
-	evolve call
-}
-
-_trap1: { }
-
-;
-; OMOVE replacement
-;
-_trap2: {
-	DSLEN 55 > ?exit
-	CSLEN 60 > ?exit
-	DSLEN 2 < ?exit
-	do_omove call
-}
-
-_trap3: { }
-_trap4: { }
-_trap5: { }
-_trap6: { }
-_trap7: { }
-_trap8: { }
-_trap9: { }
-
-do_omove: {
-	2dup OMOVE
-	dup
-	{ -rot 2negate 1 -rot SEND-ENERGY pop }
-	{ -rot 2pop }
-	ifelse
-}
-
-evolve:
-{
-... standard seed program ...
-... replace 'OMOVE' with 'TRAP2' ....
-}
-_EOF_
-
-}
-//}
-
-//{
-Blog{
-Title{If the design takes too long implement...}
+Title{EvolveName{}}
 Date{ 2023-02-22 }
+Time{2:23}
+P{
+I have met the deadline! I give you EvolveName{}. It has a super useful feature set. It is extremely well documented. It is highly tested and polished.
+B{EvolveName{}} is ready.
+}
+}
+
+Blog{
+Title{If the design takes too long...}
+Date{ 2023-02-21 }
 Time{2:22}
 P{
-I{...the design is wrong.}. I decided to not implement the I{Edit Organism} feature. It was too complex. It sounded simple on paper, but
+I{...the design is wrong.}. I decided not to implement the I{Edit Organism} feature. It was too complex. It sounded simple on paper, but
 it had too many corner cases to be worthwhile.
 When I implemented the Biomorphs program, which was a substantial bit of programming, I had no need for a "edit organism". I got by
 just fine with simpler workflows. Since then my love for the Edit Organism feature has diminished a lot.
@@ -153,17 +39,11 @@ just fine with simpler workflows. Since then my love for the Edit Organism featu
 
 P{
 My procrastination was probably related to the muddled concept of Edit Organism. I think this is an example of, "If
-the designing is taking too long to create the design is wrong.". But, my procrastination meant I got lots of other stuff
-done on the simulator. Good stuff.
-}
-
-P{
-This means a great version has been submitted to apple. It has a super useful feature set. It is extremely well
-documented. It is highly tested and polished. EvolveName{} is ready.
+the designing is taking too long to create the design is wrong.". But, my procrastination meant I got lots
+of other stuff done on the simulator.
 }
 
 }
-//}
 
 
 Blog{
@@ -352,34 +232,6 @@ Item{ H{READ/WRITE instructions} - need to implement these instructions}
 }
 
 
-//{Blog{
-Title{USER Requirements to use EvolveName{}}
-Date{ 2022-12-31 }
-Time{1:00}
-P{
-This program uses tons of advanced programming concepts all in one programming environment.
-Operating Syetem concepts such as I{Traps}. Low-level control concepts such as I{Interrupts}.
-}
-
-P{
-The user is expected to know much of this low-level programming/operating system knowledge.
-But the user manual helps to gently explain the concepts as they arise.
-}
-
-P{
-When developing programs for EvolveName{} it is very much like writting any complex program.
-Debugging sessions ensue. Frustrating bugs will happen. So I think the users of EvolveName{}
-need to be ready to program. However there are ways to enjoy this program which don't involve programming.
-If you utilize the programs written by others you can also enjoy the program.
-}
-
-P{
-I expect the user of EvolveName{} to be pretty smart, and motivated some strange intellectual
-curiosity involving evolving agents.
-}
-}
-}
-
 
 Blog{
 Title{Energy Transfer Rules and the Simulation}
@@ -411,20 +263,6 @@ live for millions of steps, and run much larger sections of the code. It looks l
 
 }
 
-
-//{
-Blog{
-Title{Procedurally generated procedures}
-Date{ 2022-12-26 }
-Time{9:00}
-P{
-Just noting the humor and accuracy in this phrase when applied to alife sims.
-Evolve is like turtle graphics, the logo language is very simular to kforth, but in Evole the turtle can fuck.
-}
-}
-}
-
-
 Blog{
 Title{Simulator Performance}
 Date{ 2022-12-26 }
@@ -437,43 +275,6 @@ A simulation consisting of B{20,000} cells, each cell
 is executing at 5.25 Khz (525 instructions per second). Not too bad considering you have 20,000 of them!
 }
 }
-
-
-
-//{
-Blog{
-Title{EvolveName{}: Toy or Tool?}
-Date{ 2022-12-26 }
-Time{1:00}
-P{
-When I was a kid
-whenever I would get a new toy. For this blog post i will use the example of red plastic PlaySchool binoculars.
-Somewhere was the PlaySchool logo plastered on it. The first thing I would do is customize my toy
-to make it look like the adult versions. First thing I would do is scratch off the logo (anybody else do that?).
-I would replace the strap with a real leather on or something. Whatever I could do to match my Dad's binoculars.
-}
-
-P{
-What I wanted my toy to be was the I{real} or I{serious} version. Philosophically what is a toy?
-My Dad's binoculars were as much a toy for him as were my toys.
-}
-
-P{
-Toy's are generally not meant to last or be used to solve real problems. I intend Evolve to
-be usable as a tool not a toy, I guess. I indend EvolveName{} to actually support thousands of
-complext evolving programs to run without crashing. I want the simulator to be of the highest quality, not
-toy quality.
-}
-
-P{
-Other aspects help define this program as a tool is the file interfaces and 
-the EvolveBatch command line utility. These details help make evolve usable as a tool
-rather than a stand alone game. The user interface is also geared toward being a tool rather than a game.
-It uses standard GUI controls, rather than a custom gui.
-}
-}
-}
-
 
 Blog{
 Title{Eroded Away by Evolution}
@@ -574,28 +375,6 @@ patterns of information exchange.
 }
 
 }
-
-//{ DO NOT PUBLISH
-Blog{
-Title{Code Rot}
-Date{ 2022-12-18 }
-Time{01:00}
-P{
-I was thinking about code rot and why Evolve 4.0 wasn't usable anymore. The code rot wasn't MY stuff, it
-was all the surrounding stuff. This isn't suprising, as my stuff didn't change. It's a funny concept "rot". Usually
-the thing that rots is the thing, not the surroding environment. What happened was the surrounding environment changed,
-and my software was in cold storage for years. It's like brining back a dinosaur, it won't be able to "run" in the new environment.
-The dinosaur hasn't rotted, in fact it is in atomically perfect condition.
-}
-
-P{
-Code Rot maybe isn't right word. The code got old. That doesn't work either. It got old relative to the environment. Yes, the
-rate of change to some code is different than the rate of change of others. Had Evolve 4.0 been under continious development, it
-would always be up to date.
-}
-}
-}
-
 
 Blog{
 Title{Physics & Genetics}

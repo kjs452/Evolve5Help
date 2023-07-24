@@ -319,10 +319,17 @@ in the previous versions LOOK'ing  around was rare.
 
 P{
 It is my goal to see creatures evolve that will make heavy use of the vision instructions. For
-me this represents a special kind of awareness for organisms. I believe evolution is progressive,
-in the sense that it tends to foster more and more awareness in creatures. Humans
-are therefore the best example of this trend in evolution. Hopefully this simulator
-will demonstrate a similar trend.
+me this represents a special kind of awareness for organisms.
+}
+
+P{
+I think the trend in life forms is to become more and more I{aware} up to the available information
+in the environment.
+So rich awareness requires a lot of information to be aware of.
+EvolveName{} has Vision, Sound and Odor as channels of information. Additionally,
+all the instructions returns useful success/error codes, which can be a form of awareness.
+(For example TT{OMOVE} returns if it worked or not. This tells the organism when it "bumps" into
+something, a form of awareness)
 }
 
 HRULE{}

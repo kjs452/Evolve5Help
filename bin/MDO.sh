@@ -57,9 +57,9 @@ generate_file_list		Evolve5Help		bin						.sh	.py
 generate_file_list		Evolve5Help		lib						.py
 generate_file_list		Evolve5Help		input					.tt .css .tmpl .kf
 generate_file_list		Evolve5Help		input/INSTRUCTIONS		.tt
-generate_file_list		Evolve5Help		input/blog				.tt
+generate_file_list		Evolve5Help		input/blog				.tt .kf .jpg .png .gif
 generate_file_list		Evolve5Help		input/IMAGES			.jpg .png .gif
-generate_files			Evolve5Help		README.md
+generate_files			Evolve5Help		README.md LICENSE
 generate_files			Evolve5Help		bin/DOIT
 generate_files			Evolve5Help		bin/ENV
 generate_files			Evolve5Help		bin/blog_maker
@@ -74,7 +74,7 @@ generate_file_list		Evolve5Help		TURD					.py
 generate_file_list		Evolve5Help		TURD/jinja2				.py
 generate_file_list		Evolve5Help		TURD/markupsafe			.py
 
-generate_files			Evolve5			README.md
+generate_files			Evolve5			README.md LICENSE
 generate_file_list		Evolve5			Evolve5					.swift .xib
 generate_files			Evolve5			Evolve5/Evolve5.entitlements
 generate_files			Evolve5			Evolve5/Info.plist
@@ -84,7 +84,7 @@ generate_file_list		Evolve5			bmp						.png .bmp
 generate_file_list		Evolve5			help					.html .jpg .gif .css .png
 generate_file_list		Evolve5			ev5stuff				.kf .txt
 
-generate_files			Evolve5Batch	README.md
+generate_files			Evolve5Batch	README.md LICENSE
 generate_file_list		Evolve5Batch	Evolve5Batch			.cpp .h
 generate_file_list		Evolve5Batch	Simulator				.cpp .h
 generate_file_list		Evolve5Batch	ev5scripts				.py
@@ -92,7 +92,7 @@ generate_file_list		Evolve5Batch	ev5scripts				.py
 #
 # Test does not need to be published, it is all derived files
 #
-#generate_file			Evolve5Test		README.md
+#generate_file			Evolve5Test		README.md LICENSE
 #generate_file_list		Evolve5Test		Evolve5Test				.cpp
 #generate_file_list		Evolve5Test		Simulator				.cpp .h
 

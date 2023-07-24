@@ -1,0 +1,251 @@
+; Strain 0: killer
+; Protected Code Blocks: 0
+; Protected Instructions: MAKE-BARRIER SPAWN 
+; Instruction Modes: LM=1 EAM=6400 MSE=100 GE=100 GS=50 
+;    ROM=1 SEM=768 
+; MaxApply=10 MaxCB=40 StrandLen=4 
+main:
+{
+      EAT  -65  MOUSE-POS  -39  EAT  GROW  EAT
+      10  call  -100  -25  EAT  -57 
+}
+
+row1:
+{
+      ENERGY  4  /  R0!  -95  0  R0  MAKE-SPORE
+      1  -1  0  100  MAKE-SPORE  HOTTEST  91  invert
+      -76  >>  ?loop  NEIGHBORS  -18  1-  TRAP7
+      SEND  *  -69  -62  -36  21  3  SMALLEST
+      -79  ?exit  HOTTEST  -42  <>  dup  call
+      TRAP4  -92 
+}
+
+row2:
+{
+     
+}
+
+row3:
+{
+      ?exit  2over  HAS-NEIGHBOR 
+}
+
+row4:
+{
+      ?NUMBER!  TRAP2  ROTATE  OPCODE!  -34  <<
+      39  -80  72  -62  63  10  CSLEN  ?dup  R6++ 
+}
+
+row5:
+{
+      OPCODE!  34  POKE  --R2  GROW.CB  47  -52
+      -66  -10  unpack2 
+}
+
+row6:
+{
+      34  SAY  POKE  abs 
+}
+
+row7:
+{
+      /mod  CBLEN  -36  -94  41  EAT  =  ifelse
+      90  SMALLEST 
+}
+
+row8:
+{
+      1-  31  61  -47  -95  TEMPERATURE  ENERGY
+      RND  min  ROTATE  OPCODE!  -34  --R2  MOUSE-POS
+      -94  SEND-ENERGY  CSLEN  36  <<  OMOVE  R2
+      HALT 
+}
+
+row9:
+{
+      -62  -85  -60 
+}
+
+row10:
+{
+      MIN_INT  15  19  call  19  call  13  call
+      19  call  call  KEY-PRESS  call  CBLEN  RECV
+      MAKE-SPORE  96  NUMBER  DIST  PEEK  /mod
+      71  13  call  19  call  PEEK  OPCODE  -17
+      -2  EAT  R0!  -17  -92  POKE  SEND  -36
+      <>  2/  and  GROW  EAT  =  ifelse  R3!  -9
+      >=  TRAP9  -23  CSLEN  80  GROW.CB  -101 
+}
+
+row11:
+{
+     
+}
+
+row12:
+{
+      not  HALT  <  POKE  -55  HALT  39  GPS  -34
+      -27  R5!  EAT  1+  40  14  pop  R1++  call
+      98  OPCODE  R0!  GPS 
+}
+
+row13:
+{
+      26  61  POPULATION  FARTHEST  OMOVE  EAT
+      100  -21  -1  EAT  R5!  EAT  1+  -47 
+}
+
+row14:
+{
+      -63  R2++  /  2/  87  R6++  call  EAT  not
+      MAX_INT  9  -10  R5  -41  -30  20  R7!  CB
+      -23  -19  -9  OMOVE  2over  -80  -86  45
+      35  18  R8  25  swap  R5  max  36  10 
+}
+
+row15:
+{
+      2pop 
+}
+
+row16:
+{
+      R0!  -8  38  15  44 
+}
+
+row17:
+{
+      MIN_INT  13  76  -22  -  R4!  over  -64
+      14  -66  MOUSE-POS  -37  CBLEN  R6++  call
+      EAT  EAT  36  -34  SAY  CBLEN  NUMBER  OPCODE
+      R0!  11  -38  -87  DSLEN  99  55  EAT  GROW
+      34  POPULATION.S  READ  94 
+}
+
+row18:
+{
+      -82  -17  -76  SIZE  -34  R3!  -59  66  -57
+      R0!  5  3  R1  R2  nip  FARTHEST  24  -48
+      8 
+}
+
+row19:
+{
+      EAT  GROW.CB  0=  EAT  52  BIGGEST  EAT
+      -81  xor  -38  -90  FARTHEST  OMOVE  SHOUT
+      EAT  EAT  20  POPULATION.S  2dup  EAT  1-
+      EAT  -65  EAT 
+}
+
+row20:
+{
+      MIN_INT  R9++  42  -54  15  77  22  WRITE
+      over  -67  PEEK  13  -36  80  OPCODE  -65
+      MOUSE-POS  -39  --R8  CBLEN  BROADCAST  EAT
+      32  34  SAY  CBLEN  NUMBER  96  -80  <>
+      MOOD  -37  -90  51  EAT  GROW  33  POPULATION.S
+      -55  -49  -85  R0!  READ  -94 
+}
+
+row21:
+{
+      62  TRAP6  -82  -37  ROTATE  OPCODE!  -13
+      not  18  TRAP9  NEAREST  R1++ 
+}
+
+row22:
+{
+      -57  45  unpack2  97  >  MIN_INT  90  not
+      R0!  -8  38 
+}
+
+row23:
+{
+      66  67  2swap 
+}
+
+row24:
+{
+     
+}
+
+row25:
+{
+      71  HALT  BROADCAST  nip  FARTHEST 
+}
+
+row26:
+{
+      -74  >>  ?loop  2over  nip  MAKE-SPORE  TEMPERATURE
+      23  -76  MOUSE-POS  18  BROADCAST  KEY-PRESS 
+}
+
+row27:
+{
+      CBLEN 
+}
+
+row28:
+{
+     
+}
+
+row29:
+{
+      MIN_INT  15  77  22  WRITE  R4!  over  -67
+      13  -65  MOUSE-POS  -39  CBLEN  R6++  ?exit
+      -90  64  2swap  51  min  2+  34  SAY  CBLEN
+      NUMBER  67  2swap  -11  15  R1  69  MOOD
+      -37  -90  64  2swap  51  EAT  POPULATION.S
+      -55  R0!  READ  -94 
+}
+
+row30:
+{
+      -42 
+}
+
+row31:
+{
+      67  59  33  -45 
+}
+
+row32:
+{
+      R6  -59  nip  FARTHEST  24  -74  54  -36 
+}
+
+row33:
+{
+      G0  29  59  MAKE-ORGANIC  -32  --R9  TRAP7
+      invert  BROADCAST  22 
+}
+
+row34:
+{
+      27  pop  <> 
+}
+
+row35:
+{
+      27  -40  S0 
+}
+
+row36:
+{
+      *  S0!  -10  ifelse  -99  101  10  MOOD
+      64  60  77  SMELL  -15  OPCODE  LOOK  unpack2
+      9  R6  pack2  EAT  2*  33  EAT  63  or  -80
+      HALT  NUMBER  22  SEND 
+}
+
+row37:
+{
+     
+}
+
+row38:
+{
+      max  36  pop  <> 
+}
+

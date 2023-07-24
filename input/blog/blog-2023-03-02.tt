@@ -1,0 +1,647 @@
+include{../common.tt}
+
+//{
+//
+// INSTRUCTIONS: Just keep adding to TOP OF FILE. Use this template:
+//
+
+Blog{
+Title{title}
+Date{ yyyy-mm-dd }
+Time{hh:mm}
+P{
+first paragraph
+}
+}
+
+//}
+
+//{
+Blog{
+Title{Idea Flaw Theory Mutation}
+Date{ yyyy-mm-dd }
+Time{hh:mm}
+P{
+I think i see an issue with the code block mutation system. I only cut and paste a single
+code block. What if a use a stretch of code blocks to manipulate?
+
+I think this is limiting the set of algorithms being explored. I am most disappoonted
+the code does branch out more and become more spagetti like. To me, this represents
+more moving degrees of freedom in which evolution can operate on.
+
+Anyway, one of the many ideas I am working on for Evolve 5.1.
+}
+}
+}
+
+//{
+Blog{
+Title{Brownian Motion}
+Date{ 2023-03-11 }
+Time{hh:mm}
+P{
+This is a simple brownian motion creature.
+}
+
+CodeSample<<_EOF_
+;
+; Brownian motion
+;
+main:
+{
+	ENERGY 4 / R2!
+	RND R0! RND R1!
+	R0 R1 R2 MAKE-SPORE pop
+	R0 R1 0 MAKE-SPORE pop
+
+	RND R0! RND R1!
+	{ R0 R1 OMOVE ?loop } call
+
+	1 ?loop
+}
+
+_EOF_
+
+P{
+If you don't set it to evolve, then it reproduces itself
+until all energy used up. It fills the space and randomly moves around.
+}
+
+P{
+Whenever I am in doubt about if I am seeing intellegent behavior evolve in this
+simulator, I always ask, I{"What would brownian.kf do?"} My reasoning is that
+simple random motion can look intellegent. So I always remind myself of what
+this organism looks like in a simulation. This is like the ground state or
+bare minimum benchmark for anything more intellegent to be judged.
+}
+
+P{
+You could use this organism with another organism which opens and closes
+a gate based on a keypress. Then you have a laplacian deamon simulator.
+Let's do that!
+}
+
+P{
+Here is a the B{gate keeper} organism:
+}
+
+P{
+Place this on the grid. It becomes a vertical line of many cells.
+This is the gate. It will open and close based on key-press.
+}
+
+
+}
+}
+
+//{
+Blog{
+Title{Universal Darwinism and Statistical Mechanics}
+Date{ 2023-03-10 }
+Time{1:00}
+P{
+I think Universal Darwinism is a branch of statistical mechanics
+but applied to informational/algorithmic structures.
+}
+
+P{
+Its all a numbers game on which informational patterns dominate.
+Its also very easy to describe informational structures in terms
+of macro/micro states. A high-level software module could be thought
+of as a macro state. A larger building block with less degrees of freedom.
+(Contrast a random chunk of "code" versus a chunk of high level
+functions like "sine()", composed together.
+}
+
+P{
+Universal Darwinism is about what patterns emerge when information can copy itself.
+}
+
+P{
+Universal Darwinism is weird. It creates its own macro states.
+}
+
+P{
+So this is a different way to think about universal darwinism.
+}
+
+P{
+By the way, let me highly recommend the book B{Meme Machine} by I{Susan Blackmore}.
+I found it radical and opened my eyes about universal darwinism in many ways.
+The bootstrapping of us humans was one such topic in which this book addresses with
+the idea, "The Meme's Did It".
+}
+
+P{
+When I write creatures that don't evolve, like the B{sokoban blocks}, i end up
+writting I{brownian motion} creatures. What is that? It is a dumb organism that just
+moves in random directions. Bounces and continues to move around. It is suprising how much
+intentionality is ascribed to such random motion.
+}
+
+P{
+These types of creatures behave just like gas molecules in a gas. All the rules of entropy would apply
+to them. The only difference between such creatures and an evolving creature, is
+if the informational structure can reproduce and mutate.
+}
+
+P{
+With so little differences, the gas particle is described by statistical mechanics. The
+evolving particle should also be described in the same way. Evolution is trying ot maximize its
+entropy maybe? What does that mean for an informational structure.
+}
+
+P{
+Would the creation of more moving parts or less moving parts be more or less entropic?
+Consider super clean code with lots of modules and code which is limited and constrained by
+well defined abstractions for the problem domain.
+Is this code high or low entropy? If subroutines and modules are like macro states, then clean code
+which is highly abstract and crafted for a very specific problem domain.
+}
+
+P{
+Consider a turtle graphics system with primitives like CIRCLE, PEN DOWN, LEFT, SQUARE....
+A turtle graphics program is a constrained program. It defines a set of macro states.
+Hmmmm, the analogy doesn't seem to hold.
+}
+
+P{
+I suck at explaining what i mean, here is a paper that is in the ballpark of what i
+was musing about:
+
+https://www.pnas.org/doi/10.1073/pnas.0501865102
+}
+
+
+}
+}
+
+Blog{
+Title{Update}
+Date{ 2023-07-24 }
+Time{1:00}
+P{
+Just an update to indicate I am still active.
+}
+}
+
+
+Blog{
+Title{Me}
+Date{ 2023-03-17 }
+Time{1:00}
+IMGC{../ken_ev5_done.jpg}
+Caption{Me, after finishing Evolve 5.0}
+P{
+Hello, this is a picture of me.
+}
+
+P{
+I am working on content for evolve. I am writting simple seed programs. I am assembling simple simulations
+to provide some content for helping users get started. All this content is on my github LINK{ URL{https://github.com/kjs452/Evolve5Sims} Evolve5Sims}.
+}
+
+P{
+I am thinking about a cool simulation based on Pong, Soccer, or Hockey like universe. Two teams evolved from the same parent bounce a ball or puck around.
+Each time the ball reaches the a goal, it updates the score. Eventually one of the teams wins. That team breeds a child which it plays against. The other team
+dies off.
+}
+
+P{
+To B{Evovle5Sims}, I just added the: B{evolving tank} which is kinda cool. It needs refinement to actually work. But the essence of the idea is
+present in this tank.
+}
+}
+
+Blog{
+Title{In Praise of Xcode/Swift/Apple}
+Date{ 2023-03-09 }
+Time{4:00}
+P{
+I just want to publically compliment Apple that my development experience going from
+zero to this application was amazing. I knew no swift, Xcode or MacOS GUI programming when I started this application.
+}
+
+P{
+I had many frustrations, but the tools damn well worked. My Mac Mini M2 chip thingy was amazing. Everything just
+worked and I was productive. Swift was a wierd language, but overall the fact that you can interface to C nicely was
+much appreciated.
+}
+
+P{
+The GUI builder was outstanding if you avoided story boards and constraints. I stuck with simple things.
+The Apple documentation (online and offline) was superb. And all this Xcode is free! Thank you Apple.
+}
+
+P{
+Old school C programming support seemed awesome out of the box, I didn't have to mess with anything.
+}
+
+P{
+Publishing to the app store scared the shit out of me. I have been through hellish app review processes
+before. And it sucks. Back and forth between reviewer and yourself... is nerve wracking. My apple review process
+experience was awesome. They found legit crashes in my application! The website was clear and easy to use. The status updates made sense. The errors made sense and were
+fixable.
+}
+
+}
+
+Blog{
+Title{My workflow for running simulations}
+Date{ 2023-03-08 }
+Time{03:00}
+P{
+Let me explain how I run simulations, and use EvolveBatch as part my workflow.
+I am always experimenting and running simulations. But I want long term simulations to be
+cranking away at various simulation ideas that I want to experiment with.
+}
+
+P{
+On my mac mini I have a terminal window in which I simply run EvolveBatch with a 10 minute I{write interval}.
+From this window I just run whatever long term simulation I want at the time. I will get a fresh dump of the simulation file
+written every 10 minutes. So whenever I wish to sample the universe, I just load the latest file in the GUI program.
+}
+
+P{
+You'll want to use the B{sf} command line option, which stands for B{Simulate Forever}.
+}
+
+P{
+I have raspberry pi's in which I can B{ssh} into. I can read and write a shared
+NFS mounted directory on my macintosh. On the raspberry pi I can run evolvebatch in the
+same way.
+}
+
+}
+
+
+Blog{
+Title{Checkers, Chess, Tomb Raider: Part 2}
+Date{ 2023-03-07 }
+Time{02:00}
+P{
+My observations on getting the B{bullet} object to work.... finally. It took many versions
+to get it to work. Some simulations simply did not evolve to use it. In some simulations, the
+rules caused unfair advantage to some creature causing mass die off.
+And this lead to a "dead" simulation in which nothing is reproducing anymore.
+}
+
+P{
+My new insight is not to give up. Tweaking of the rules and behavior is important
+to getting the next new "bullet" object to work correctly. The cool thing is evolution will
+explore the rule for you. A good rule or law of physics then should be one in which evolution utilizes
+the rule and doesn't exploit it unfairly.
+}
+
+}
+
+
+Blog{
+Title{Checkers, Chess, Tomb Raider}
+Date{ 2023-03-06 }
+Time{01:00}
+P{
+I{
+Summary: Grid based mechanics is pretty much explored
+	by now, but it is still interesting because we are humans and
+	geometry is a big deal.
+}
+}
+
+P{
+The rules are given by two dimensional geometry and our human
+grasp of locality and symbols. On a grid game you basically move
+up to a thing and attack the thing. The player that attacks the most
+things wins.
+}
+P{
+Then came Chess, Othello, Sokoban. Everything was still two
+dimensional but the rules were richer. One feature of these complex rules are
+path finding problems.
+}
+P{
+Sokoban creates path finding challenges.
+The rules forces the player (evolving entity) to
+explore questions like: How can I get from A to B on this grid? How can I move things around?
+}
+P{
+Tomb Raider, most first person shooters actually, the grid domain jumped from 2d
+to 3d and a fresh set of geometric puzzles emerged. But they were just path finding
+puzzles converted from 2D to 3D. But that's pretty fun when you are an evolved chimpanzee
+used to flying thru the trees.
+}
+P{
+I added a new simulation B{'first'} to the git hub repo LINK{ URL{https://github.com/kjs452/Evolve5Sims} 'Evolve5Sims'}.
+This is a simulation that has a bullet object which has actually evolved! Prior to this all my bullet
+attempts never got selected for. The creatures I{could shoot a bullet}, but for
+some reason they never evolved to do so. Well, now they have with this example.
+}
+P{
+The examples in 'first' show a cool new
+sim I never saw before. It really uplifted me because it shows how the
+grid physics can be changed in a major way and see a whole new simulation
+behaviors.
+}
+P{
+The reason I started with Checkers and Chess is ultimately we are limited in how much
+coolness that can be packed onto a 2D grid. This space has been done to death before.
+}
+P{
+I think EvolveName{} adds the flexibility to roll your own rules in a limited way...
+then see evolution learn to exploit those rules.
+But, if the thing you wish to see is much more sophisticated than chess or tetris then it
+probbaly isn't something EvolveName{} can demonstrate.
+}
+}
+
+//{
+Blog{
+Title{Simulation Tips: Whats a "good" sim}
+Date{ 2023-03-02 }
+Time{01:00}
+P{
+Here's a list of things to look for in a simulation, to know if it
+is worth running or if it is going to be boring.
+}
+
+BulletList{
+Item{
+	The creatures move.
+}
+
+Item{
+	The birth rate is  high.
+}
+
+Item{
+	cells distributed differently over time. when you check in on your simulation, all the stuff
+has moved.
+}
+
+Item{
+	Things change over time. when you check in on your simulation, all the stuff
+has moved.
+}
+
+Item{
+The genetic program is calling lots of code blocks and jumping around a lot in the code.
+}
+
+Item{
+lots of Blob like creatures. Immobile things that seem to never die. Other organisms steer cleer
+of these.
+}
+
+Item{
+Lots of desserted areas on the grid. Areas with nothing going on. And all the action
+is focused in one region. Sadly this is where most sims end up. I am thinking of reasons.
+I believe I understand. ENERGY Need lots of energy.
+}
+
+}
+
+P{
+If you see a sim that runs for a long time and all these things are happeneing i would
+keep running the sim. If instead the same boring behavior is stuck happening in the same
+place for long time, then the simulation has probably maxed out what is ever going
+to evolve.
+}
+}
+}
+
+//{
+Blog{
+Title{I am the main USER}
+Date{ 2023-03-02 }
+Time{01:00}
+P{
+I like running sims. I am the person who uses this the most. I'll
+explain how I use it in these posts.
+}
+}
+}
+
+Blog{
+Title{EAT Mode 6,400}
+Date{ 2023-03-03 }
+Time{01:00}
+P{
+Here is the DNA of a creature that has evolved for many generations. It is from a simulation I have
+been running for about a week. The comment includes all the strain setup values you need to replicate
+the environment.
+}
+
+HEREDOC{ CodeSample{pp34.kf} }
+
+P{
+The comment is part of the B{SAVE} feature. Only modes that are non-zero will be shown.
+This allows the strain to be I{re-create-able} if you send this code to someone.
+The main mode I want to highlight is B{EAT MODE = 6,400}. This means:
+	terminate cell, take 1/3 of the cells energy and interrupt cell with trap 6.
+}
+
+P{
+This is a good example of hunting/evading behavior. The patterns B{NEAREST OMOVE}  and B{FARTHEST OMOVE}
+are being used. Also B{HOTTEST} and B{SIZE} instructions are being used. I have seen this creature hunt down
+cells that are only 1 cell in size, because they know they can win. Bigger organisms they avoid.
+}
+
+}
+
+
+//{
+Blog{
+Title{How I use Evolve_Batch}
+Date{ 2023-03-02 }
+Time{01:00}
+P{
+I use the CLI tool to always be running a long term simulation in another window.
+It dumps the current file every 10 minutes. this means i get the benefit of a full speed
+simulation long term without having to do it in the GUI. Anyway, it is a very nice workflow for me.
+Many other such workflows are possible.
+}
+}
+}
+
+//{
+Blog{
+Title{Meme Machine}
+Date{ yyyy-mm-dd }
+Time{hh:mm}
+P{
+One of the new things since 2007 was reading meme machine.
+}
+}
+//}
+
+//{
+Blog{
+Title{Energy Concentrations}
+Date{ 2023-02-15 }
+Time{2:00}
+P{
+I think I noticed a reason for a boring part of my simulations.
+At the beginning of most simulations
+you will see cool organisms exploring the grid everywhere. With lots of
+interesting things to watch. But then after a while,
+all the cells cluster into tight bunches of one or two groups.
+}
+
+P{
+It makes sense to me. What I think I understand now is this: Only where the highest concentrations
+of energy are, are the most populations. It is a selection process, you don't surive without going where
+the energy is. Anyway, I don't know how to fix. I have ideas. Energy needs to be distributed away from
+main cluster. Energy needs to be conserved too. Until recently energy could only be transferred
+gdirectly. I enhance the TT{SEND-ENERGY} instruction to allow energy to be sent remotely.
+}
+
+P{
+I quickly tested an idea. I hid OMOVE behind a trap. I used the TRAP instruction to replace OMOVE.
+The new implementation would send energy in the opposite direction as well as doing the normal OMOVE.
+It didn't work, the organisms all froze and refused to move.
+}
+
+CodeSample<<_EOF_
+; Strain 2: emit-omove
+; Protected Code Blocks: 13
+; Protected Instructions: OMOVE MAKE-BARRIER SPAWN 
+; Instruction Modes: EAM=1664 MSE=100 GE=100 GS=20 ROM=1 
+;    SHM=112 SAM=160 SEM=1024 WRM=784 SNDM=4 
+; MaxApply=5 MaxCB=50 StrandLen=4 
+main:
+{
+	evolve call
+}
+
+_trap1: { }
+
+;
+; OMOVE replacement
+;
+_trap2: {
+	DSLEN 55 > ?exit
+	CSLEN 60 > ?exit
+	DSLEN 2 < ?exit
+	do_omove call
+}
+
+_trap3: { }
+_trap4: { }
+_trap5: { }
+_trap6: { }
+_trap7: { }
+_trap8: { }
+_trap9: { }
+
+do_omove: {
+	2dup OMOVE
+	dup
+	{ -rot 2negate 1 -rot SEND-ENERGY pop }
+	{ -rot 2pop }
+	ifelse
+}
+
+evolve:
+{
+... standard seed program ...
+... replace 'OMOVE' with 'TRAP2' ....
+}
+_EOF_
+
+}
+//}
+
+//{Blog{
+Title{USER Requirements to use EvolveName{}}
+Date{ 2022-12-31 }
+Time{1:00}
+P{
+This program uses tons of advanced programming concepts all in one programming environment.
+Operating Syetem concepts such as I{Traps}. Low-level control concepts such as I{Interrupts}.
+}
+
+P{
+The user is expected to know much of this low-level programming/operating system knowledge.
+But the user manual helps to gently explain the concepts as they arise.
+}
+
+P{
+When developing programs for EvolveName{} it is very much like writting any complex program.
+Debugging sessions ensue. Frustrating bugs will happen. So I think the users of EvolveName{}
+need to be ready to program. However there are ways to enjoy this program which don't involve programming.
+If you utilize the programs written by others you can also enjoy the program.
+}
+
+P{
+I expect the user of EvolveName{} to be pretty smart, and motivated some strange intellectual
+curiosity involving evolving agents.
+}
+}
+}
+
+//{
+Blog{
+Title{Procedurally generated procedures}
+Date{ 2022-12-26 }
+Time{9:00}
+P{
+Just noting the humor and accuracy in this phrase when applied to alife sims.
+Evolve is like turtle graphics, the logo language is very simular to kforth, but in Evole the turtle can fuck.
+}
+}
+}
+
+//{
+Blog{
+Title{EvolveName{}: Toy or Tool?}
+Date{ 2022-12-26 }
+Time{1:00}
+P{
+When I was a kid
+whenever I would get a new toy. For this blog post i will use the example of red plastic PlaySchool binoculars.
+Somewhere was the PlaySchool logo plastered on it. The first thing I would do is customize my toy
+to make it look like the adult versions. First thing I would do is scratch off the logo (anybody else do that?).
+I would replace the strap with a real leather on or something. Whatever I could do to match my Dad's binoculars.
+}
+
+P{
+What I wanted my toy to be was the I{real} or I{serious} version. Philosophically what is a toy?
+My Dad's binoculars were as much a toy for him as were my toys.
+}
+
+P{
+Toy's are generally not meant to last or be used to solve real problems. I intend Evolve to
+be usable as a tool not a toy, I guess. I indend EvolveName{} to actually support thousands of
+complext evolving programs to run without crashing. I want the simulator to be of the highest quality, not
+toy quality.
+}
+
+P{
+Other aspects help define this program as a tool is the file interfaces and 
+the EvolveBatch command line utility. These details help make evolve usable as a tool
+rather than a stand alone game. The user interface is also geared toward being a tool rather than a game.
+It uses standard GUI controls, rather than a custom gui.
+}
+}
+}
+
+//{ DO NOT PUBLISH
+Blog{
+Title{Code Rot}
+Date{ 2022-12-18 }
+Time{01:00}
+P{
+I was thinking about code rot and why Evolve 4.0 wasn't usable anymore. The code rot wasn't MY stuff, it
+was all the surrounding stuff. This isn't suprising, as my stuff didn't change. It's a funny concept "rot". Usually
+the thing that rots is the thing, not the surroding environment. What happened was the surrounding environment changed,
+and my software was in cold storage for years. It's like brining back a dinosaur, it won't be able to "run" in the new environment.
+The dinosaur hasn't rotted, in fact it is in atomically perfect condition.
+}
+
+P{
+Code Rot maybe isn't right word. The code got old. That doesn't work either. It got old relative to the environment. Yes, the
+rate of change to some code is different than the rate of change of others. Had Evolve 4.0 been under continious development, it
+would always be up to date.
+}
+}
+}

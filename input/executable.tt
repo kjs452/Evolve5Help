@@ -2,22 +2,22 @@ include{common.tt}
 MySite.window_title{ EvolveName{} Application }
 MySite.body{
 
-Section{Evolve4 Application}
+Section{Feature Complete Version}
 P{
-Search for B{"Evolve4"} on the MacOS app store.This version is free! It
-lacks a few features that the full version will have.
-Here are the LINK{ URL{releasenotesev4.html} release notes } for this version.
+The feature complete version of EvolveName{}
+is available for purchase from the Apple App Store. Search for B{"Evolve5"}.
+
+P{ Release Date: B{ReleasedOn{}}. }
+P{ Price: B{ EvolvePrice{} }. }
 }
 
 HRULE{}
 
-Section{Feature Complete Version}
+Section{Free Version}
 P{
-The complete Evolve application will be available soon. It will be available
-for purchase from the Apple B{App Store}. Search for "Evolve 5.0".
-
-P{ Estimated Release Date: B{ReleasedOn{}}. }
-P{ Estimated Price: B{ EvolvePrice{} }. }
+Search for B{"Evolve4"} in the MacOS app store.This version is free! It
+lacks a few features that the full version will have.
+Here are the LINK{ URL{releasenotesev4.html} release notes } for this version.
 }
 
 BREAK{}

@@ -37,7 +37,7 @@ fi
 #
 # Render 'tt' files to output
 #
-cd $INPUT
+cd $INPUT/blog
 $BIN/blog_maker $INPUT/blog_index.tmpl $INPUT/blog_each.tmpl $INPUT/common.tt $INPUT/blog/*.tt $OUTPUT/blog
 
 echo cp $INPUT/blog.css $OUTPUT/blog/blog.css
